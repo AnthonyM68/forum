@@ -1,0 +1,70 @@
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /*--primary-color:;
+  --secondary-color:;*/
+  --border-color: #ccc;
+  --background-color: rgba(154, 159, 189, 0.5);
+  /*--highlight-color: rgba(248, 248, 121, 0.6);*/
+  --color: #000;
+  /* --text-color:;*/
+  --accent-color: transparent;
+  --link-color: rgb(0, 122, 156);
+  /*--error-color:;
+  --warning-color:;
+  --success-color:;*/
+  --hover-color: rgb(33, 53, 52);
+  /*--background-color-light:;*/
+}
+html, body {
+  /*background-color: var(--background-color);*/
+}
+h1 {
+  color: var(--link-color) !important;
+}
+/* la couleur des liens */
+a {
+  color: var(--link-color) !important;
+}
+/* couleur de fond au survol */
+a:hover {
+  color: var(--hover-color) !important;
+}
+#loginSignin .uk-modal-dialog {
+  background-color: var(--accent-color) !important;
+}
+#loginSignin .uk-section {
+  background-color: var(--accent-color) !important;
+}
+#header {
+  background-color: var(--background-color) !important;
+}
+header nav {
+  background-color: var(--background-color) !important;
+}
+#news {
+  background-color: var(--background-color) !important;
+}
+#forum {
+  background-color: var(--background-color) !important;
+}
+#footer {
+  background-color: var(--background-color) !important;
+}
+.uk-section {
+  background-color: var(--background-color) !important;
+}
+tbody,
+td,
+tfoot,
+th,
+thead,
+tr {
+  color: var(--color) !important;
+}

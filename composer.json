@@ -1,0 +1,17 @@
+{
+    "name": "anthony/forum",
+    "autoload": {
+        "psr-4": {
+            "Anthony\\Forum\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "AnthonyM68",
+            "email": "anthony.montmirail@gmail.com"
+        }
+    ],
+    "require": {
+        "fakerphp/faker": "^1.23"
+    }
+}
