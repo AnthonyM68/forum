@@ -7,18 +7,6 @@ require_once 'vendor/autoload.php';
 use Faker\Factory;
 // Créer une instance de Faker
 $fakerFr = Factory::create('fr_FR');
-// Générer des données aléatoires
-/*echo "Nom: " . $faker->name . "\n";
-echo "Adresse: " . $faker->address . "\n";
-echo "E-mail: " . $faker->email . "\n";
-echo "Numéro de téléphone: " . $faker->phoneNumber . "\n";
-echo "Texte aléatoire: " . $faker->text . "\n";
-
-// Vous pouvez également spécifier une langue spécifique si nécessaire
-$fakerFr = Factory::create('fr_FR');
-echo "Nom français: " . $fakerFr->name . "\n";
-echo "Adresse française: " . $fakerFr->address . "\n";*/
-
 
 define('DS', DIRECTORY_SEPARATOR); // le caractère séparateur de dossier (/ ou \)
 // meilleure portabilité sur les différents systêmes.

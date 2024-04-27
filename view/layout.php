@@ -15,25 +15,21 @@
 </head>
 
 <body>
-    <div id="mainpage">
-        <header id="header">
-            <div class="uk-container">
-                <?= $header ?>
-                <?= $news ?>
-                <!-- c'est ici que les messages (erreur ou succès) s'affichent
+    <header id="header">
+        <div class="uk-container">
+            <?= $header ?>
+            <?= $news ?>
+            <!-- c'est ici que les messages (erreur ou succès) s'affichent
                 <h3 class="message uk-alert-danger"><?= App\Session::getFlash("error") ?></h3>
                 <h3 class="message uk-alert-success"><?= App\Session::getFlash("success") ?></h3>-->
-            </div>
-        </header>
-    </div>
-
+        </div>
+    </header>
     <main id="forum">
         <div class="uk-container">
             <?= $page ?>
         </div>
     </main>
     <footer id="footer"><?= $footer ?></footer>
-    </div>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous">
     </script>
     <script src="<?= PUBLIC_DIR ?>/js/uikit.js"></script>

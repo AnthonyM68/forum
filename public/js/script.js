@@ -13,28 +13,6 @@ $(document).ready(function () {
         $(this).text(`${texteLimite}...`); // Réaffiche le texte 
     });
 
-
-    // Sélectionnez la colonne de gauche
-    var colLeft = document.querySelector('.uk-resize-vertical');
-    // Sélectionnez la section parente
-    var section = document.querySelector('.uk-section');
-    // Sélectionnez l'élément parallaxe
-    var parallaxElement = document.querySelector('#test-start-end .uk-card');
-
-    // Si les éléments existent
-    if (colLeft && section && parallaxElement) {
-        // Obtenez la hauteur de la colonne de gauche
-        var colLeftHeight = colLeft.offsetHeight;
-        
-        // Définir la hauteur de la section parente
-        section.style.height = colLeftHeight + 'px';
-        // Définir la position de départ du parallaxe en fonction de la hauteur de la colonne de gauche
-        parallaxElement.setAttribute('uk-parallax', 'target: #test-start-end; start: -100; end: 0; y: 398; easing: 0;');
-    }
-
-
-
-
     /* Elan */
     $(".message").each(function () {
         if ($(this).text().length > 0) {
