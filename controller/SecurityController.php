@@ -71,20 +71,15 @@ class SecurityController extends AbstractController
                 ]);
                 $subject = "Merci pour votre inscription au Forum@";
                 $content = "<p>Veuillez confirmer votre inscription en cliquant sur le lien suivant:</p>
-                <a href='http://localhost/forum/index.php?ctrl=user?action=login?token=" .$token. "'>Cliquez ici</a>";
+                <a href='http://localhost/forum/index.php?ctrl=security&action=login&token=" . $token . "'>Cliquez ici</a>";
                 // <a href='".BASE_DIR."?ctrl=user?action=login?token=" .$token. "'>Cliquez ici</a>";
-                var_dump($this->sentEmailTo($email, $subject, $content));
+                $result = $this->sentEmailTo($email, $subject, $content);
 
+                $result ? $_SESSION["success"] = "Votre inscription est terminée, veuillez vérifier vos email"
+                    : $_SESSION["error"] = "Une erreur est survenue lors de l'envois de la confirmation par Email";
+            } else $_SESSION["error"] = "Nom d'utilisateur déjà utilisé";
 
-
-
-
-                $_SESSION["success"] = "Votre inscription est terminée, veuillez vérifier vos email";
-                //$this->redirectTo("home", "index");
-            } else {
-                $_SESSION["error"] = "Nom d'utilisateur déjà utilisé";
-                $this->redirectTo("home", "index");
-            }
+            $this->redirectTo("home", "index");
         } else {
             return [
                 "view" => VIEW_DIR . "security/loginSignin.php",
@@ -95,14 +90,36 @@ class SecurityController extends AbstractController
     }
     public function login()
     {
-        if(isset($_GET['token']) && !empty($_GET['token'])) {
-            
+        // si la requête provient d'une inscription et validation par email
+        if (isset($_GET['token']) && !empty($_GET['token'])) {
+            // on filtre le token bin2hex {32} caractères
+            $token = filter_input(INPUT_GET, 'token', FILTER_VALIDATE_REGEXP, array(
+                "options" => array("regexp" => "/^[a-f0-9]{64}$/")
+            ));
+            // on instancie UserManager
+            $userManager = new UserManager();
+            // si l'on trouve le token en bdd on le vide 
+            // et retournons l'id_user
+            $id_user = $userManager->searchIfTokenlExist($token);
+            // si le token vaux false la confirmation a déjà eu lieu 
+            // ou le token est erroné
+            if(!$token) {
+                $_SESSION["error"] = "L'inscription à déjà été confirmer";
+                $this->redirectTo("home", "index");
+            }
+            // On modifie le role de visiteur à user
+            $role = ["ROLE_USER"];
+            $userManager->updateRoleUser(json_encode($role), $id_user);
+            $_SESSION["success"] = "Votre inscription a bien été validé";
+            $this->redirectTo("home", "index");
+
+        } else {
+            return [
+                "view" => VIEW_DIR . "security/login.php",
+                "meta_description" => "Connectez-vous pour participer au Forum",
+                "data" => []
+            ];
         }
-        return [
-            "view" => VIEW_DIR . "security/login.php",
-            "meta_description" => "Connectez-vous pour participer au Forum",
-            "data" => []
-        ];
     }
     public function logout()
     {
@@ -112,5 +129,4 @@ class SecurityController extends AbstractController
             "data" => []
         ];
     }
-   
 }

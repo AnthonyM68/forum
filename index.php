@@ -50,7 +50,6 @@ $action = "index"; //action par défaut de n'importe quel contrôleur
 //si l'action est présente dans l'url ET que la méthode correspondante existe dans le ctrl
 if (isset($_GET['action']) && method_exists($ctrl, $_GET['action'])) {
     //la méthode à appeller sera celle de l'url
-   
     $action = filter_input(INPUT_GET, 'action', FILTER_SANITIZE_SPECIAL_CHARS);
 }
 if (isset($_GET['id'])) {
