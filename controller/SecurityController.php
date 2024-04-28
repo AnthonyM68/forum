@@ -4,6 +4,8 @@ namespace Controller;
 
 use App\AbstractController;
 use App\ControllerInterface;
+use App\Session;
+
 use Model\Managers\UserManager;
 
 use DateTime;
@@ -42,7 +44,7 @@ class SecurityController extends AbstractController
 
             if (!$password || !$repeat_password) {
                 // on affiche une alert a l'utilisateur
-                $_SESSION["error"] = "Les mots ne respectent pas les critères de soumission";
+                $_SESSION["error"] = "Les mots de passe ne respectent pas les critères de soumission";
                 $this->redirectTo("home", "index");
             }
             if ($password !== $repeat_password) {
@@ -98,35 +100,78 @@ class SecurityController extends AbstractController
             ));
             // on instancie UserManager
             $userManager = new UserManager();
+
             // si l'on trouve le token en bdd on le vide 
-            // et retournons l'id_user
-            $id_user = $userManager->searchIfTokenlExist($token);
-            // si le token vaux false la confirmation a déjà eu lieu 
-            // ou le token est erroné
-            if(!$token) {
+            // et retournons l'id_user, email
+            $userInfos = $userManager->searchIfTokenlExist($token);
+
+            if (!$userInfos) {
                 $_SESSION["error"] = "L'inscription à déjà été confirmer";
+                // $this->redirectTo("home", "index");
+            }
+            if (!empty($userInfos->getToken())) {
+                $resetToken = $userManager->resetToken($userInfos->getToken());
+                // On modifie le role de visiteur à user
+                $role = json_encode(["ROLE_USER"]);
+                if ($resetToken) {
+                    $update = $userManager->updateRoleUser($role, $userInfos->getId());
+                    if ($update) {
+                        // on prépare l'email de confirmation
+                        $subject = "Inscription confirmé";
+                        $content = "<p>Votre inscription est confirmé</p>";
+                        // on envois l'email
+                        $result = $this->sentEmailTo($userInfos->getEmail(), $subject, $content);
+                        $_SESSION["success"] = "Votre inscription a bien été validé";
+
+                        $this->redirectTo("home", "index");
+                    }
+                    $_SESSION["success"] = "La mise à jour du rôle a échouée, veuillez recommencer";
+                }
+                $_SESSION["success"] = "La vérification a échouée, veuillez recommencer";
+            }
+        } else if (isset($_POST['email']) && !empty($_POST['email']
+            && isset($_POST["password"]) && !empty($_POST["password"]))) {
+            // on instancie UserManager
+            $userManager = new UserManager();
+            // on filtre toutes les entrées
+            $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+            $password = filter_input(INPUT_POST, 'password', FILTER_VALIDATE_REGEXP, array("options" => array("regexp" => "/.{6,25}/")));
+            if (!$password) {
+                // on affiche une alert a l'utilisateur
+                $_SESSION["error"] = "Le mot de passe ne respecte pas les critères de soumission";
+                //$this->redirectTo("home", "index");
+            }
+            // on vérifie si l'email existe dans la base de données table user
+            $userInfos = $userManager->searchPasswordByEmail($email);
+
+            if (!$userInfos) {
+                // on affiche une alert a l'utilisateur
+                $_SESSION["error"] = "Vous n'êtes pas inscrit sur le Forum";
                 $this->redirectTo("home", "index");
             }
-            // On modifie le role de visiteur à user
-            $role = ["ROLE_USER"];
-            $userManager->updateRoleUser(json_encode($role), $id_user);
-            $_SESSION["success"] = "Votre inscription a bien été validé";
+            // on vérifie que le hash correspond au password
+            $checkPassword = $this->deHashPassword($password, $userInfos->getpassword());
+            
+            if($checkPassword) {
+                $infosSession = $userManager->infosUserConnectSession($email);
+                $_SESSION["success"] = "Bienvenue " . $infosSession->getUsername();
+                Session::setUser($infosSession);
+            }
             $this->redirectTo("home", "index");
-
-        } else {
-            return [
-                "view" => VIEW_DIR . "security/login.php",
-                "meta_description" => "Connectez-vous pour participer au Forum",
-                "data" => []
-            ];
         }
+        return [
+            "view" => VIEW_DIR . "security/loginSignin.php",
+            "meta_description" => "Connectez-vous pour participer au Forum",
+            "data" => []
+        ];
     }
     public function logout()
     {
-        return [
-            "view" => VIEW_DIR . "security/loginSignin.php",
-            "meta_description" => "Page de dé--connexion au Forum",
-            "data" => []
-        ];
+        $_SESSION["success"] = "Au revoir " . $_SESSION['username'];
+        if($_SESSION['user']) {
+            unset($_SESSION['user']);
+        }
+        
+        $this->redirectTo("home", "index");
     }
 }

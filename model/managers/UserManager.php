@@ -24,7 +24,27 @@ class UserManager extends Manager
      */
     public function searchIfEmailExist($email)
     {
-        $sql = "SELECT email 
+        $sql = "SELECT
+        t.email
+        FROM " . $this->tableName . " t
+        WHERE t.email = :email";
+
+        // la requête renvoie plusieurs enregistrements --> getMultipleResults
+        return $this->getOneOrNullResult(
+            DAO::select($sql, ['email' => $email], false),
+            $this->className
+        );
+    }
+        /**
+     * Return email if exist
+     *
+     * @param [type] $email
+     * @return void
+     */
+    public function searchPasswordByEmail($email)
+    {
+        $sql = "SELECT
+        t.password
         FROM " . $this->tableName . " t
         WHERE t.email = :email";
 
@@ -42,7 +62,8 @@ class UserManager extends Manager
      */
     public function searchIfUsernamelExist($username)
     {
-        $sql = "SELECT username 
+        $sql = "SELECT 
+        username 
         FROM " . $this->tableName . " t
         WHERE t.username = :username";
 
@@ -62,39 +83,46 @@ class UserManager extends Manager
     {
         $sql = "SELECT 
         t.id_user,
+        t.email,
         t.token 
         FROM " . $this->tableName . " t
         WHERE t.token = :token";
 
         // la requête renvoie plusieurs enregistrements --> getMultipleResults
-        $result =  $this->getOneOrNullResult(
+        return $this->getOneOrNullResult(
             DAO::select($sql, ['token' => $token], false),
             $this->className
         );
-        if ($result && !empty($result->getToken())) {
-
-            $deleteSql = "UPDATE " . $this->tableName . " t 
-                      SET t.token = NULL 
-                      WHERE t.token = :token";
-            $deleteSql = DAO::update($deleteSql, ['token' => $token]);
-            if ($deleteSql) {
-                return $result->getId();
-            }
-        }
-        return false;
+    }
+    public function resetToken($token)
+    {
+        $updateSql = "UPDATE 
+        " . $this->tableName . " t 
+        SET t.token = NULL 
+        WHERE t.token = :token";
+        return DAO::update($updateSql, ['token' => $token]);
     }
     public function updateRoleUser($role, $id)
     {
-        $sql = "UPDATE role 
-        FROM " . $this->tableName . " t
-        WHERE t.token = :token";
-
-        $deleteSql = "UPDATE " . $this->tableName . " t
-                      SET t.role = :role 
-                      WHERE t.id_user = :id_user";
-        return DAO::update($deleteSql, [
-            'role' => $role,
-            "id_user" => $id
-        ]);
+        $updateSql = "UPDATE 
+        " . $this->tableName . " t
+        SET t.role = :role 
+        WHERE t.id_user = :id_user";
+        return DAO::update($updateSql, ['role' => $role, "id_user" => $id]);
     }
+    public function infosUserConnectSession($email)
+    {
+        $sql = "SELECT
+        t.username,
+        t.role
+        FROM " . $this->tableName . " t
+        WHERE t.email = :email";
+
+        // la requête renvoie plusieurs enregistrements --> getMultipleResults
+        return $this->getOneOrNullResult(
+            DAO::select($sql, ['email' => $email], false),
+            $this->className
+        );
+    }
+    
 }

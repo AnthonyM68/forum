@@ -22,8 +22,8 @@
     // si l'utilisateur est connecté 
     if (App\Session::getUser()) {
     ?>
-        <a href="index.php?ctrl=security&action=profile"><span class="fas fa-user"></span>&nbsp;<?= App\Session::getUser() ?></a>
-        <a href="index.php?ctrl=security&action=logout">Déconnexion</a>
+        <a href="index.php?ctrl=security&action=profile"><span class="fas fa-user"><?= App\Session::getUser() ?></span></a>
+        <a href="index.php?ctrl=security&action=logout"><span class="fas fa-sign-out-alt">Déconnexion</span></a>
     <?php
     } else {
     ?>

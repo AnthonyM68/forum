@@ -13,12 +13,10 @@ final class User extends Entity
 
     private $id;
     private $username;
-
     private $password;
     private $email;
     private $dataRegister;
     private $roles;
-
     private $token;
 
     public function __construct($data)
@@ -146,6 +144,13 @@ final class User extends Entity
     {
         $this->token = $token;
         return $this;
+    }
+
+    // on vérifie si l'utilisateur possède un rôle
+    public function hasRole($role)
+    {
+        // Vérifie si le rôle  est présent dans le tableau des rôles 
+        return in_array($role, $this->roles);
     }
     public function __toString()
     {

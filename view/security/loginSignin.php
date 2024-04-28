@@ -18,7 +18,7 @@
                                 <ul class="uk-switcher uk-margin">
                                     <li>
                                         <h3 class="uk-card-title uk-text-center">Connectez-vous</h3>
-                                        <form  id="login" name="login" action="./index.php?ctrl=security&action=login" method="post" required>
+                                        <form id="login" name="login" action="./index.php?ctrl=security&action=login" method="post" required>
                                             <div class="uk-margin">
                                                 <div class="uk-inline uk-width-1-1">
                                                     <span class="uk-form-icon" uk-icon="icon: mail"></span>

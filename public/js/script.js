@@ -2,8 +2,8 @@ $(document).ready(function () {
 
     // on affiche le modal si dans la vue rendu il existe
     let modal = UIkit.modal("#loginSignin");
-    if(modal) {modal.show();  }
-    
+    if (modal) { modal.show(); }
+
     // on modifie la taille des titre des accordéons
     $('.uk-accordion-title').each(function () {
         var texteComplet = $(this).text(); // Récupère le texte 
@@ -15,11 +15,15 @@ $(document).ready(function () {
     /* Elan */
     $(".message").each(function () {
         if ($(this).text().length > 0) {
+            $(this).addClass("message-padding");
             $(this).slideDown(500, function () {
-                $(this).delay(3000).slideUp(500)
-            })
+                $(this).delay(3000).slideUp(500, function() {
+                    $(this).removeClass("message-padding");
+                });
+            });
         }
-    })
+    });
+    
     $(".delete-btn").on("click", function () {
         return confirm("Etes-vous sûr de vouloir supprimer?")
     })

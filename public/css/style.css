@@ -22,7 +22,8 @@
   --hover-color: rgb(33, 53, 52);
   /*--background-color-light:;*/
 }
-html, body {
+html,
+body {
   /*background-color: var(--background-color);*/
 }
 h1 {
@@ -67,4 +68,8 @@ th,
 thead,
 tr {
   color: var(--color) !important;
+}
+
+.message-padding {
+  padding: 2rem;
 }
