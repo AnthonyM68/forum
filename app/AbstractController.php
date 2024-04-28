@@ -1,4 +1,5 @@
 <?php
+
 namespace App;
 
 /*
@@ -10,26 +11,39 @@ namespace App;
     -- permettent de fournir une certaine implémentation de base.
 */
 
-abstract class AbstractController{
+abstract class AbstractController
+{
 
-    public function index() {}
+    public function index()
+    {
+    }
 
-    public function redirectTo($ctrl = null, $action = null, $id = null){
-
-        $url = $ctrl ? "?ctrl=".$ctrl : "";
-        $url.= $action ? "&action=".$action : "";
-        $url.= $id ? "&id=".$id : "";
+    public function redirectTo($ctrl = null, $action = null, $id = null)
+    {
+        $url = $ctrl ? "?ctrl=" . $ctrl : "";
+        $url .= $action ? "&action=" . $action : "";
+        $url .= $id ? "&id=" . $id : "";
 
         header("Location: $url");
         die();
     }
 
-    public function restrictTo($role){
-        
-        if(!Session::getUser() || !Session::getUser()->hasRole($role)){
+    public function restrictTo($role)
+    {
+        // s'il n'y a pas de session de démarrer
+        if (!Session::getUser() || !Session::getUser()->hasRole($role)) {
             $this->redirectTo("security", "login");
         }
         return;
     }
-
+    public function generateTokenUnique()
+    {
+        $length = 32;
+        // méthode pour générer un jeton unique
+        return  bin2hex(random_bytes($length));
+    }
+    public function generatePasswordHash($password)
+    {
+        return password_hash($password, PASSWORD_DEFAULT);
+    }
 }

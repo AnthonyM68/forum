@@ -1,3 +1,4 @@
+
 <div id="loginSignin" class="uk-flex-top" uk-modal>
     <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
         <div class="uk-section uk-section-muted uk-flex uk-flex-middle uk-animation-fade" uk-height-viewport>
@@ -17,24 +18,24 @@
                                 <ul class="uk-switcher uk-margin">
                                     <li>
                                         <h3 class="uk-card-title uk-text-center">Connectez-vous</h3>
-                                        <form>
+                                        <form  id="login" name="login" action="./index.php?ctrl=security&action=login" method="post" required>
                                             <div class="uk-margin">
                                                 <div class="uk-inline uk-width-1-1">
                                                     <span class="uk-form-icon" uk-icon="icon: mail"></span>
-                                                    <input class="uk-input uk-form-large" type="text" placeholder="Email address">
+                                                    <input name="email" class="uk-input uk-form-large" type="text" placeholder="Email address" required>
                                                 </div>
                                             </div>
                                             <div class="uk-margin">
                                                 <div class="uk-inline uk-width-1-1">
                                                     <span class="uk-form-icon" uk-icon="icon: lock"></span>
-                                                    <input class="uk-input uk-form-large" type="password" placeholder="Password" autocomplete="cc-csc">
+                                                    <input name="password" class="uk-input uk-form-large" type="password" placeholder="Password" autocomplete="cc-csc" required>
                                                 </div>
                                             </div>
                                             <div class="uk-margin uk-text-right@s uk-text-center uk-text-small">
                                                 <a href="#" uk-switcher-item="2">Mot de pass perdu?</a>
                                             </div>
                                             <div class="uk-margin">
-                                                <button class="uk-button uk-button-primary uk-button-large uk-width-1-1">Connexion</button>
+                                                <input type="submit" class="uk-button uk-button-primary uk-button-large uk-width-1-1">
                                             </div>
                                             <div class="uk-text-small uk-text-center">
                                                 Non enregistré? <a href="#" uk-switcher-item="1">Créer un compte</a>
@@ -43,30 +44,36 @@
                                     </li>
                                     <li>
                                         <h3 class="uk-card-title uk-text-center">Inscrivez-vous. C'est gratuit!</h3>
-                                        <form>
+                                        <form id="register" name="register" action="./index.php?ctrl=security&action=register" method="post">
                                             <div class="uk-margin">
                                                 <div class="uk-inline uk-width-1-1">
                                                     <span class="uk-form-icon" uk-icon="icon: user"></span>
-                                                    <input class="uk-input uk-form-large" type="text" placeholder="Nom d'utilisateur">
+                                                    <input name="username" class="uk-input uk-form-large" type="text" placeholder="Nom d'utilisateur" >
                                                 </div>
                                             </div>
                                             <div class="uk-margin">
                                                 <div class="uk-inline uk-width-1-1">
                                                     <span class="uk-form-icon" uk-icon="icon: mail"></span>
-                                                    <input class="uk-input uk-form-large" type="text" placeholder="Adresse Email">
+                                                    <input name="email" class="uk-input uk-form-large" type="text" placeholder="Adresse Email" >
                                                 </div>
                                             </div>
                                             <div class="uk-margin">
                                                 <div class="uk-inline uk-width-1-1">
                                                     <span class="uk-form-icon" uk-icon="icon: lock"></span>
-                                                    <input class="uk-input uk-form-large" type="password" placeholder="Set a password" autocomplete="cc-csc">
+                                                    <input name="password" class="uk-input uk-form-large" type="password" placeholder="Choisir mot de passe" autocomplete="cc-csc" >
+                                                </div>
+                                            </div>
+                                            <div class="uk-margin">
+                                                <div class="uk-inline uk-width-1-1">
+                                                    <span class="uk-form-icon" uk-icon="icon: lock"></span>
+                                                    <input name="repeat_password" class="uk-input uk-form-large" type="password" placeholder="Confirmez" autocomplete="cc-csc" >
                                                 </div>
                                             </div>
                                             <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid">
                                                 <label><input class="uk-checkbox" type="checkbox">J'accèpte les conditions d'utilisation.</label>
                                             </div>
                                             <div class="uk-margin">
-                                                <button class="uk-button uk-button-primary uk-button-large uk-width-1-1">Créer compte</button>
+                                                <input type="submit" class="uk-button uk-button-primary uk-button-large uk-width-1-1" value="Créer compte">
                                             </div>
                                             <div class="uk-text-small uk-text-center">
                                                 Vous avez déjà un compte? <a href="#" uk-switcher-item="0">Connexion</a>
@@ -76,11 +83,11 @@
                                     <li>
                                         <h3 class="uk-card-title uk-text-center">Mot de passe perdu?</h3>
                                         <p class="uk-text-center uk-width-medium@s uk-margin-auto">Entrez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.</p>
-                                        <form>
+                                        <form id="forget" name="forget" action="./index.php?ctrl=security&action=forget" method="post">
                                             <div class="uk-margin">
                                                 <div class="uk-inline uk-width-1-1">
                                                     <span class="uk-form-icon" uk-icon="icon: mail"></span>
-                                                    <input class="uk-input uk-form-large" type="text" placeholder="Adresse Email">
+                                                    <input class="uk-input uk-form-large" type="text" placeholder="Adresse Email" required>
                                                 </div>
                                             </div>
                                             <div class="uk-margin">

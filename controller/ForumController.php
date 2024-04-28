@@ -1,4 +1,5 @@
 <?php
+
 namespace Controller;
 
 use App\Session;
@@ -7,20 +8,23 @@ use App\ControllerInterface;
 use Model\Managers\CategoryManager;
 use Model\Managers\TopicManager;
 use Model\Managers\PostManager;
+use Model\Managers\EmailManager;
 
-class ForumController extends AbstractController implements ControllerInterface{
+class ForumController extends AbstractController implements ControllerInterface
+{
 
-    public function index() {
-        
+    public function index()
+    {
+
         // créer une nouvelle instance de CategoryManager
         $categoryManager = new CategoryManager();
         // récupérer la liste de toutes les catégories grâce à la méthode 
         // findAll de Manager.php (triés par nom)
         $categories = $categoryManager->findAll(["name", "DESC"]);
-        
+
         // le controller communique avec la vue "listCategories" (view) pour lui envoyer la liste des catégories (data)
         return [
-            "view" => VIEW_DIR."forum/listCategories.php",
+            "view" => VIEW_DIR . "forum/listCategories.php",
             "meta_description" => "Liste des catégories du forum",
             "data" => [
                 "categories" => $categories
@@ -28,7 +32,8 @@ class ForumController extends AbstractController implements ControllerInterface{
         ];
     }
 
-    public function listTopicsByCategory($id) {
+    public function listTopicsByCategory($id)
+    {
 
         $topicManager = new TopicManager();
         $categoryManager = new CategoryManager();
@@ -36,22 +41,23 @@ class ForumController extends AbstractController implements ControllerInterface{
         $topics = $topicManager->findTopicsByCategory($id);
 
         return [
-            "view" => VIEW_DIR."forum/listTopics.php",
-            "meta_description" => "Liste des topics par catégorie : ".$category,
+            "view" => VIEW_DIR . "forum/listTopics.php",
+            "meta_description" => "Liste des topics par catégorie : " . $category,
             "data" => [
                 "category" => $category,
                 "topics" => $topics
             ]
         ];
     }
-    public function listLast5Topics() {
+    public function listLast5Topics()
+    {
 
         $topicManager = new TopicManager();
         //$categoryManager = new CategoryManager();
         //$category = $categoryManager->findOneById($id);
         $topics = $topicManager->findLast5Topics();
         return [
-            "view" => VIEW_DIR."forum/home.php",
+            "view" => VIEW_DIR . "forum/home.php",
             "meta_description" => "Liste des topics : ",
             "data" => [
                 //"category" => $category,
@@ -59,14 +65,15 @@ class ForumController extends AbstractController implements ControllerInterface{
             ]
         ];
     }
-    public function listLast5Posts() {
+    public function listLast5Posts()
+    {
 
         $topicManager = new PostManager();
         //$categoryManager = new CategoryManager();
         //$category = $categoryManager->findOneById($id);
         $posts = $topicManager->findLast5Posts();
         return [
-            "view" => VIEW_DIR."forum/home.php",
+            "view" => VIEW_DIR . "forum/home.php",
             "meta_description" => "Liste des articles : ",
             "data" => [
                 //"category" => $category,
@@ -74,4 +81,5 @@ class ForumController extends AbstractController implements ControllerInterface{
             ]
         ];
     }
+
 }

@@ -1,9 +1,8 @@
-
 $(document).ready(function () {
 
+    // on affiche le modal si dans la vue rendu il existe
     let modal = UIkit.modal("#loginSignin");
-    modal.show();
-
+    if(modal) {modal.show();  }
     
     // on modifie la taille des titre des accordéons
     $('.uk-accordion-title').each(function () {

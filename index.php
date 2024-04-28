@@ -1,12 +1,17 @@
 <?php
 
 namespace App;
-// Inclure l'autoloader de Faker pour générer des données
+// Inclure l'autoloader de Faker pour générer des données 
 require_once 'vendor/autoload.php';
 // Importer la classe Faker
 use Faker\Factory;
 // Créer une instance de Faker
 $fakerFr = Factory::create('fr_FR');
+// on iclude la dépendance qui nous permet l'envois d'email de test en local
+// si le site est réellement héberger cette méthode sera ignoré et la fonction
+// native mail() de php sera utiliser
+require_once 'vendor/phpmailer/phpmailer/src/PHPMailer.php';
+
 
 define('DS', DIRECTORY_SEPARATOR); // le caractère séparateur de dossier (/ ou \)
 // meilleure portabilité sur les différents systêmes.
@@ -45,10 +50,11 @@ $action = "index"; //action par défaut de n'importe quel contrôleur
 //si l'action est présente dans l'url ET que la méthode correspondante existe dans le ctrl
 if (isset($_GET['action']) && method_exists($ctrl, $_GET['action'])) {
     //la méthode à appeller sera celle de l'url
-    $action = $_GET['action'];
+   
+    $action = filter_input(INPUT_GET, 'action', FILTER_SANITIZE_SPECIAL_CHARS);
 }
 if (isset($_GET['id'])) {
-    $id = $_GET['id'];
+    $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 } else $id = null;
 //ex : HomeController->users(null)
 $result = $ctrl->$action($id);
@@ -73,7 +79,6 @@ if ($action == "ajax") { //si l'action était ajax
     include VIEW_DIR . "forum/sections/footer/footer.php";
     $footer = ob_get_contents();
     ob_clean(); // Nettoie le tampon de sortie
-    
 
     $meta_description = $result['meta_description'];
     /* la vue s'insère dans le buffer qui devra être vidé au milieu du layout */

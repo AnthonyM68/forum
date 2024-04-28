@@ -31,7 +31,6 @@ Utilisez la base de données fournie dans le dépot et modifiez le fichier si be
 
 > app\DAO.php
 
-
 ```php
 abstract class DAO{
 
@@ -43,7 +42,6 @@ abstract class DAO{
     private static $bdd;
 
 ```
-
 
 <h3 align="left">Schémas :</h3>
 <p align="left">
