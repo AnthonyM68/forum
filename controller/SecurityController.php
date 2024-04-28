@@ -5,8 +5,7 @@ namespace Controller;
 use App\AbstractController;
 use App\ControllerInterface;
 use Model\Managers\UserManager;
-// on indique le namespace de la dépendance pour que la class PHPMailer soit trouvée
-use PHPMailer\PHPMailer\PHPMailer;
+
 use DateTime;
 
 class SecurityController extends AbstractController
@@ -56,6 +55,8 @@ class SecurityController extends AbstractController
                 "options" => array("regexp" => "/^[a-zA-Z0-9_]{3,25}$/")
             ));*/
             $usernameExist = $userManager->searchIfUsernamelExist($username);
+            $token = $this->generateTokenUnique();
+
             if (!$usernameExist) {
                 $date = new DateTime("now");
                 $userManager->add([
@@ -66,10 +67,20 @@ class SecurityController extends AbstractController
                     "role" => json_encode([
                         "ROLE_VISITOR" // l'insciption n'étant pas fini il reste visiteur
                     ]),
-                    "token" => $this->generateTokenUnique()
+                    "token" => $token
                 ]);
+                $subject = "Merci pour votre inscription au Forum@";
+                $content = "<p>Veuillez confirmer votre inscription en cliquant sur le lien suivant:</p>
+                <a href='http://localhost/forum/index.php?ctrl=user?action=login?token=" .$token. "'>Cliquez ici</a>";
+                // <a href='".BASE_DIR."?ctrl=user?action=login?token=" .$token. "'>Cliquez ici</a>";
+                var_dump($this->sentEmailTo($email, $subject, $content));
+
+
+
+
+
                 $_SESSION["success"] = "Votre inscription est terminée, veuillez vérifier vos email";
-                $this->redirectTo("home", "index");
+                //$this->redirectTo("home", "index");
             } else {
                 $_SESSION["error"] = "Nom d'utilisateur déjà utilisé";
                 $this->redirectTo("home", "index");
@@ -84,6 +95,9 @@ class SecurityController extends AbstractController
     }
     public function login()
     {
+        if(isset($_GET['token']) && !empty($_GET['token'])) {
+            
+        }
         return [
             "view" => VIEW_DIR . "security/login.php",
             "meta_description" => "Connectez-vous pour participer au Forum",
@@ -98,49 +112,5 @@ class SecurityController extends AbstractController
             "data" => []
         ];
     }
-    // nous renseignons les informations avec les arguments demandé
-    public function sentEmailTo(string $to, string $subject, string $body)
-    {
-        // si on se trouve sur un serveur local on utilise phpmailer
-        if ($_SERVER['SERVER_NAME'] === 'localhost') {
-            $phpmail = new PHPMailer();
-            // ici c'est la configuration su server de messagerie mailtrap
-            $phpmail->isSMTP();
-            $phpmail->Host = 'sandbox.smtp.mailtrap.io';
-            $phpmail->SMTPAuth = true;
-            $phpmail->Username = '1115a6ea5b4a74';
-            $phpmail->Password = '4fa1184cc03b34';
-            $phpmail->Port = 2525;
-            // ici on immagine avoir une messagerie 
-            $phpmail->setFrom('@gmail.com', 'Services Forum');
-            // on indique a PHPMailer l'adresse de destination 
-            $phpmail->addAddress($to, 'Recipient Name');
-            // Sujet de l'e-mail
-            $phpmail->Subject = $subject;
-            // Contenu de l'e-mail 
-            $phpmail->isHTML(true);
-            // Indique que le contenu est au format HTML
-            $phpmail->CharSet = 'UTF-8';
-            // Définit l'encodage des caractères
-            $phpmail->Body = $body;
-            // on envois le mail et retournons la reponse de l'envois (true or false)
-            return $phpmail->send();
-        }
-        //si on se trouve sur un serveur distant on utilise la fonction nativ de php mail()
-        else {
-            // En-têtes de l'email
-            $headers = "MIME-Version: 1.0" . "\r\n";
-            $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-            $headers .= 'From: expéditeur@example.com' . "\r\n";
-            $headers .= 'Reply-To: expéditeur@example.com' . "\r\n";
-            $headers .= 'X-Mailer: PHP/' . phpversion();
-            // on envois le mail et retournons la reponse de l'envois (true or false)
-            return mail($to, $subject, $body, $headers);
-        }
-        return [
-            "view" => VIEW_DIR . "home.php",
-            "meta_description" => "Créer un compte pour participer au Forum",
-            "data" => []
-        ];
-    }
+   
 }

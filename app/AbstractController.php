@@ -1,7 +1,8 @@
 <?php
 
 namespace App;
-
+// on indique le namespace de la dépendance pour que la class PHPMailer soit trouvée
+use PHPMailer\PHPMailer\PHPMailer;
 /*
     En programmation orientée objet, une classe abstraite est une classe qui ne peut pas être instanciée directement. Cela signifie que vous ne pouvez pas créer un objet directement à partir d'une classe abstraite.
     Les classes abstraites : 
@@ -46,4 +47,52 @@ abstract class AbstractController
     {
         return password_hash($password, PASSWORD_DEFAULT);
     }
+     // nous renseignons les informations avec les arguments demandé
+     public function sentEmailTo(string $to, string $subject, string $body)
+     {
+        
+         // si on se trouve sur un serveur local on utilise phpmailer
+         if ($_SERVER['SERVER_NAME'] === 'localhost') {
+             $phpmailer = new PHPMailer();
+             
+             // ici c'est la configuration su server de messagerie mailtrap
+             $phpmailer->isSMTP();
+             $phpmailer->Host = 'sandbox.smtp.mailtrap.io';
+             $phpmailer->SMTPAuth = true;
+             $phpmailer->Port = 2525;
+             $phpmailer->Username = '1115a6ea5b4a74';
+             $phpmailer->Password = '4fa1184cc03b34';
+             // ici on immagine avoir une messagerie 
+             $phpmailer->setFrom('forum@gmail.com', 'Services Forum');
+             // on indique a PHPMailer l'adresse de destination 
+             $phpmailer->addAddress($to, 'Recipient Name');
+             // Sujet de l'e-mail
+             $phpmailer->Subject = $subject;
+             // Contenu de l'e-mail 
+             $phpmailer->isHTML(true);
+             // Indique que le contenu est au format HTML
+             $phpmailer->CharSet = 'UTF-8';
+             // Définit l'encodage des caractères
+             $phpmailer->Body = $body;
+             // on envois le mail et retournons la reponse de l'envois (true or false)
+             var_dump($phpmailer);
+             return $phpmailer->send();
+         }
+         //si on se trouve sur un serveur distant on utilise la fonction nativ de php mail()
+         else {
+             // En-têtes de l'email
+             $headers = "MIME-Version: 1.0" . "\r\n";
+             $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+             $headers .= 'From: expéditeur@example.com' . "\r\n";
+             $headers .= 'Reply-To: expéditeur@example.com' . "\r\n";
+             $headers .= 'X-Mailer: PHP/' . phpversion();
+             // on envois le mail et retournons la reponse de l'envois (true or false)
+             return mail($to, $subject, $body, $headers);
+         }
+         return [
+             "view" => VIEW_DIR . "home.php",
+             "meta_description" => "Créer un compte pour participer au Forum",
+             "data" => []
+         ];
+     }
 }
