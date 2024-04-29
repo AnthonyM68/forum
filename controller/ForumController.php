@@ -137,12 +137,9 @@ class ForumController extends AbstractController implements ControllerInterface
 
     public function addPost()
     {
-        var_dump($_POST);
         if (isset($_POST['content']) && !empty($_POST['content'])) {
             $contentPost = filter_input(INPUT_POST, 'content', FILTER_SANITIZE_SPECIAL_CHARS);
             $topic_id = filter_input(INPUT_POST, 'topic_id', FILTER_VALIDATE_INT);
-
-
             $categoryManager = new CategoryManager();
             $date = new DateTime();
             $result = $categoryManager->add([
@@ -163,7 +160,6 @@ class ForumController extends AbstractController implements ControllerInterface
                 "id" => [
                     "id_topic" => $_GET['id']]
             ];
-
         }
         return [
             "view" => VIEW_DIR . "forum/addPost.php",
