@@ -5,6 +5,7 @@ namespace Model\Managers;
 use App\Manager;
 use App\DAO;
 
+use DateTime;
 class UserManager extends Manager
 {
 
@@ -114,7 +115,8 @@ class UserManager extends Manager
     {
         $sql = "SELECT
         t.username,
-        t.role
+        t.role,
+        t.id_user
         FROM " . $this->tableName . " t
         WHERE t.email = :email";
 

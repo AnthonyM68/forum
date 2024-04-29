@@ -4,41 +4,45 @@ namespace Model\Managers;
 use App\Manager;
 use App\DAO;
 
-class TopicManager extends Manager{
+class TopicManager extends Manager
+{
 
     // on indique la classe POO et la table correspondante en BDD pour le manager concerné
     protected $className = "Model\Entities\Topic";
     protected $tableName = "topic";
 
-    public function __construct(){
+    public function __construct()
+    {
         parent::connect();
     }
 
     // récupérer tous les topics d'une catégorie spécifique (par son id)
-    public function findTopicsByCategory($id) {
+    public function findTopicsByCategory($id)
+    {
 
         $sql = "SELECT * 
-                FROM ".$this->tableName." t 
+                FROM " . $this->tableName . " t 
                 WHERE t.category_id = :id";
-       
+
         // la requête renvoie plusieurs enregistrements --> getMultipleResults
-        return  $this->getMultipleResults(
-            DAO::select($sql, ['id' => $id]), 
+        return $this->getMultipleResults(
+            DAO::select($sql, ['id' => $id]),
             $this->className
         );
     }
-    public function findLast5Topics() {
+    public function findLast5Topics()
+    {
 
         $sql = "SELECT * 
-                FROM ".$this->tableName." t
+                FROM " . $this->tableName . " t
                 ORDER BY t.dateCreation DESC
                 LIMIT 5";
-       
+
         // la requête renvoie plusieurs enregistrements --> getMultipleResults
-        return  $this->getMultipleResults(
-            DAO::select($sql), 
+        return $this->getMultipleResults(
+            DAO::select($sql),
             $this->className
         );
-    }
 
+    }
 }

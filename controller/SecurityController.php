@@ -60,16 +60,19 @@ class SecurityController extends AbstractController
             $token = $this->generateTokenUnique();
 
             if (!$usernameExist) {
+
                 $date = new DateTime("now");
                 $userManager->add([
                     "username" => $username,
                     "password" => $this->generatePasswordHash($repeat_password),
                     "email" => $email,
+                    "token" => $token,
                     "dateRegister" => $date->format('Y-m-d H:i:s'),
+                    "token_validity"=> null,
                     "role" => json_encode([
                         "ROLE_VISITOR" // l'insciption n'étant pas fini il reste visiteur
                     ]),
-                    "token" => $token
+                    
                 ]);
                 $subject = "Merci pour votre inscription au Forum@";
                 $content = "<p>Veuillez confirmer votre inscription en cliquant sur le lien suivant:</p>
@@ -105,13 +108,19 @@ class SecurityController extends AbstractController
             // et retournons l'id_user, email
             $userInfos = $userManager->searchIfTokenlExist($token);
 
+
             if (!$userInfos) {
                 $_SESSION["error"] = "L'inscription à déjà été confirmer";
                 // $this->redirectTo("home", "index");
             }
             if (!empty($userInfos->getToken())) {
                 $resetToken = $userManager->resetToken($userInfos->getToken());
-                // On modifie le role de visiteur à user
+                var_dump($resetToken);
+
+                /**
+                 *   On modifie le role de visiteur à user
+                 * */
+
                 $role = json_encode(["ROLE_USER"]);
                 if ($resetToken) {
                     $update = $userManager->updateRoleUser($role, $userInfos->getId());
@@ -129,7 +138,9 @@ class SecurityController extends AbstractController
                 }
                 $_SESSION["success"] = "La vérification a échouée, veuillez recommencer";
             }
-        } else if (isset($_POST['email']) && !empty($_POST['email']
+         } 
+        // si l'utilisateur se connecte
+        else if (isset($_POST['email']) && !empty($_POST['email']
             && isset($_POST["password"]) && !empty($_POST["password"]))) {
             // on instancie UserManager
             $userManager = new UserManager();
@@ -139,7 +150,7 @@ class SecurityController extends AbstractController
             if (!$password) {
                 // on affiche une alert a l'utilisateur
                 $_SESSION["error"] = "Le mot de passe ne respecte pas les critères de soumission";
-                //$this->redirectTo("home", "index");
+                $this->redirectTo("home", "index");
             }
             // on vérifie si l'email existe dans la base de données table user
             $userInfos = $userManager->searchPasswordByEmail($email);
@@ -155,6 +166,7 @@ class SecurityController extends AbstractController
             if($checkPassword) {
                 $infosSession = $userManager->infosUserConnectSession($email);
                 $_SESSION["success"] = "Bienvenue " . $infosSession->getUsername();
+
                 Session::setUser($infosSession);
             }
             $this->redirectTo("home", "index");

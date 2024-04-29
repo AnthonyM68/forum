@@ -22,7 +22,6 @@
             <h3 class="message uk-alert-danger"><?= App\Session::getFlash("error") ?></h3>
             <h3 class="message uk-alert-success"><?= App\Session::getFlash("success") ?></h3>
             <?= $news ?>
-
         </div>
     </header>
     <main id="forum">

@@ -7,5 +7,6 @@ $topics = $result["data"]['topics'];
 
 <?php
 foreach ($topics as $topic) { ?>
-    <p><a href="#"><?= $topic ?></a> par <?= $topic->getUser() ?></p>
+    <p><a href="#"><?= $topic ?></a> par <?= $topic->getUser()->getEmail() ?></p>
+
 <?php }

@@ -5,6 +5,7 @@
 
                 <li><a href="./">Accueil</a></li>
                 <li><a href="index.php?ctrl=forum&action=index">Liste des catégories</a></li>
+                <li><a href="index.php?ctrl=forum&action=addCategory">Ajouter une catégories</a></li>
                 <li><input class="uk-search-input" type="search" aria-label="…"></li>
                 <?php
                 if (App\Session::isAdmin()) { ?>

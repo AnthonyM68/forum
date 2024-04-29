@@ -149,8 +149,11 @@ final class User extends Entity
     // on vérifie si l'utilisateur possède un rôle
     public function hasRole($role)
     {
-        // Vérifie si le rôle  est présent dans le tableau des rôles 
-        return in_array($role, $this->roles);
+         /*foreach ($this->roles as $r) {
+            $array = json_decode($r); 
+            var_dump(is_array($role, $array));
+        }
+        return false;*/
     }
     public function __toString()
     {
