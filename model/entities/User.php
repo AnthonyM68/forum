@@ -116,7 +116,7 @@ final class User extends Entity
      */
     public function getRoles()
     {
-        return $this->roles;
+        return json_decode($this->roles);
     }
     /**
      * Set the value of role
@@ -125,7 +125,7 @@ final class User extends Entity
      */
     public function setRole($role)
     {
-        $this->roles[] = $role;
+        $this->roles = $role;
         return $this;
     }
     /**
@@ -145,15 +145,25 @@ final class User extends Entity
         $this->token = $token;
         return $this;
     }
-
-    // on vérifie si l'utilisateur possède un rôle
+    /**
+     * on vérifie si l'utilisateur possède un rôle
+     * 
+     *
+     * @param [type] $role
+     * @return boolean
+     */
     public function hasRole($role)
     {
-         /*foreach ($this->roles as $r) {
-            $array = json_decode($r); 
-            var_dump(is_array($role, $array));
+        if (!empty($this->roles)) {
+            $roles = $this->roles;
+            if (!is_iterable($roles)) {
+                $roles = json_decode($this->roles);
+            }
+            foreach ($roles as $r) {
+                if (strcmp($role, $r)) return true;
+            }
         }
-        return false;*/
+        return false;
     }
     public function __toString()
     {

@@ -1,4 +1,5 @@
 <?php
+
 namespace Model\Managers;
 
 use App\Manager;
@@ -43,6 +44,18 @@ class TopicManager extends Manager
             DAO::select($sql),
             $this->className
         );
-
     }
+    public function findAllId($foreign)
+    {
+
+        $sql = "SELECT " . $foreign . "
+                FROM " . $this->tableName . "";
+
+        return $this->getMultipleResults(
+            DAO::select($sql),
+            $this->className
+        );
+    }
+
+
 }

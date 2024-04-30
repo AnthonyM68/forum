@@ -7,12 +7,10 @@ require_once 'vendor/autoload.php';
 use Faker\Factory;
 // Créer une instance de Faker
 $fakerFr = Factory::create('fr_FR');
-// on iclude la dépendance qui nous permet l'envois d'email de test en local
+// on iclude la dépendance qui nous permet l'envois d'email d en local
 // si le site est réellement héberger cette méthode sera ignoré et la fonction
 // native mail() de php sera utiliser
 require_once 'vendor/phpmailer/phpmailer/src/PHPMailer.php';
-
-
 define('DS', DIRECTORY_SEPARATOR); // le caractère séparateur de dossier (/ ou \)
 // meilleure portabilité sur les différents systêmes.
 define('BASE_DIR', dirname(__FILE__) . DS); // pour se simplifier la vie

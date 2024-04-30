@@ -8,6 +8,5 @@
         </div>
     </div>
     <input type="submit" class="uk-button uk-button-primary uk-button-large uk-width-1-1">
-
 </form>
 </div>

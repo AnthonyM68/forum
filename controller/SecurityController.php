@@ -70,7 +70,7 @@ class SecurityController extends AbstractController
                     "dateRegister" => $date->format('Y-m-d H:i:s'),
                     "token_validity"=> null,
                     "role" => json_encode([
-                        "ROLE_VISITOR" // l'insciption n'étant pas fini il reste visiteur
+                        "ROLE_SUBSCRIBER" // l'insciption n'étant pas fini il reste visiteur
                     ]),
                     
                 ]);
@@ -115,13 +115,11 @@ class SecurityController extends AbstractController
             }
             if (!empty($userInfos->getToken())) {
                 $resetToken = $userManager->resetToken($userInfos->getToken());
-                var_dump($resetToken);
-
                 /**
                  *   On modifie le role de visiteur à user
                  * */
 
-                $role = json_encode(["ROLE_USER"]);
+                $role = json_encode(["ROLE_USER", "ROLE_ADMIN"]);
                 if ($resetToken) {
                     $update = $userManager->updateRoleUser($role, $userInfos->getId());
                     if ($update) {

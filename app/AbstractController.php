@@ -82,7 +82,6 @@ abstract class AbstractController
             // Définit l'encodage des caractères
             $phpmailer->Body = $body;
             // on envois le mail et retournons la reponse de l'envois (true or false)
-            var_dump($phpmailer);
             return $phpmailer->send();
         }
         //si on se trouve sur un serveur distant on utilise la fonction nativ de php mail()

@@ -29,4 +29,25 @@ class PostManager extends Manager
             $this->className
         );
     }
+    public function deleteByTopicId($id)
+    {
+        $sql = "DELETE 
+                FROM " . $this->tableName . " t
+                WHERE t.topic_id = :topic_id
+                ";
+        return DAO::delete($sql, ['topic_id' => $id]);
+    }
+    public function findAllPostByIdTopicLIMIT($id)
+    {
+        $sql = "SELECT t.*
+                FROM " . $this->tableName . " t
+                WHERE t.topic_id = :topic_id";
+
+                return $this->getMultipleResults(
+                    DAO::select($sql, ['topic_id' => $id]), 
+                    $this->className
+                );
+        
+    }
+    
 }

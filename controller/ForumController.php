@@ -8,8 +8,12 @@ use App\ControllerInterface;
 use Model\Managers\CategoryManager;
 use Model\Managers\TopicManager;
 use Model\Managers\PostManager;
-use Model\Managers\EmailManager;
+use Model\Managers\UserManager;
+//use Model\Managers\EmailManager;
 use DateTime;
+// on indique a l'application ou trouver le générateur de données fictifs
+use Faker\Factory;
+
 class ForumController extends AbstractController implements ControllerInterface
 {
 
@@ -60,7 +64,7 @@ class ForumController extends AbstractController implements ControllerInterface
             "view" => VIEW_DIR . "forum/home.php",
             "meta_description" => "Liste des topics : ",
             "data" => [
-                //"category" => $category,
+
                 "topics" => $topics
             ]
         ];
@@ -76,7 +80,6 @@ class ForumController extends AbstractController implements ControllerInterface
             "view" => VIEW_DIR . "forum/home.php",
             "meta_description" => "Liste des articles : ",
             "data" => [
-                //"category" => $category,
                 "posts" => $posts
             ]
         ];
@@ -87,7 +90,11 @@ class ForumController extends AbstractController implements ControllerInterface
             $nameCategory = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_SPECIAL_CHARS);
             $categoryManager = new CategoryManager();
             $result = $categoryManager->add(["name" => $nameCategory]);
-
+            if ($result) {
+                $_SESSION['success'] = "Catégorie ajouté avec succès";
+            } else {
+                $_SESSION['error'] = "Erreur lors de la soumission de la catégorie";
+            }
         }
         return [
             "view" => VIEW_DIR . "forum/addCategory.php",
@@ -95,34 +102,38 @@ class ForumController extends AbstractController implements ControllerInterface
             "data" => []
         ];
     }
+
     public function addTopic()
     {
         if (isset($_POST['title']) && !empty($_POST['title']
-        && isset($_POST['content']) && !empty($_POST['content'])
-        && isset($_POST['category']) && !empty($_POST['category']))) {
+            && isset($_POST['content']) && !empty($_POST['content'])
+            && isset($_POST['category']) && !empty($_POST['category']))) {
 
             $title = filter_input(INPUT_POST, 'title', FILTER_SANITIZE_SPECIAL_CHARS);
+
             $content = filter_input(INPUT_POST, 'content', FILTER_SANITIZE_SPECIAL_CHARS);
+
             $category_id = filter_input(INPUT_POST, 'category', FILTER_VALIDATE_INT);
 
             $topicManager = new TopicManager();
             $date = new DateTime();
 
             $id_topic = $topicManager->add([
-                "title" => $title, 
+                "title" => $title,
                 "dateCreation" => $date->format('Y-m-d H:i:s'),
                 "category_id" => $category_id,
-                "user_id" => Session::getUser()->getId()
+                "user_id" => 1
             ]);
-            
+
+
             $postManager = new PostManager();
             $result = $postManager->add([
-                "content" => $content, 
+                "content" => $content,
                 "dateCreation" => $date->format('Y-m-d H:i:s'),
                 "topic_id" => $id_topic
             ]);
 
-            if($result) {
+            if ($result) {
                 $_SESSION["success"] = "Votre Topic a bien été sauvegarder";
             } else {
                 $_SESSION["error"] = "Une erreur est survenue veuillez recommencer";
@@ -135,20 +146,23 @@ class ForumController extends AbstractController implements ControllerInterface
         ];
     }
 
+
     public function addPost()
     {
         if (isset($_POST['content']) && !empty($_POST['content'])) {
+
             $contentPost = filter_input(INPUT_POST, 'content', FILTER_SANITIZE_SPECIAL_CHARS);
             $topic_id = filter_input(INPUT_POST, 'topic_id', FILTER_VALIDATE_INT);
+
             $categoryManager = new CategoryManager();
             $date = new DateTime();
             $result = $categoryManager->add([
-                "content" => $contentPost, 
+                "content" => $contentPost,
                 "dateCreation" => $date->format('Y-m-d H:i:s'),
                 "topic_id" => $topic_id
             ]);
-            
-            if($result) {
+
+            if ($result) {
                 $_SESSION["success"] = "Votre Article a bien été sauvegarder";
             } else {
                 $_SESSION["error"] = "Une erreur est survenue veuillez recommencer";
@@ -158,7 +172,8 @@ class ForumController extends AbstractController implements ControllerInterface
                 "view" => VIEW_DIR . "forum/addPost.php",
                 "meta_description" => "Ajouter un Article : ",
                 "id" => [
-                    "id_topic" => $_GET['id']]
+                    "id_topic" => $_GET['id']
+                ]
             ];
         }
         return [
@@ -175,5 +190,70 @@ class ForumController extends AbstractController implements ControllerInterface
         // créer une nouvelle instance de CategoryManager
         $categoryManager = new CategoryManager();
         return $categoryManager->findAll();
+    }
+    public function dropTable()
+    {
+        $topicManager = new TopicManager();
+        $allIdFromTable = $topicManager->findAllId("id_topic");
+        $postManager = new PostManager();
+        if ($allIdFromTable) {
+            foreach ($allIdFromTable as $topicId) {
+                $postManager->deleteByTopicId($topicId->getId());
+                $topicManager->delete($topicId->getId());
+            }
+        }
+
+        return [
+            "view" => VIEW_DIR . "forum/addPost.php",
+            "meta_description" => "Ajouter un Article : ",
+            "data" => []
+        ];
+    }
+    /**
+     * Ceci est une méthode de création de topic a la vollée
+     * en utilisant la dépendance Faker, pour le dévellopement de cette
+     * application et les suivantes ;)
+     * 
+     * ONLY FOR DEVELOPMENT
+     * @return void
+     */
+    public function fakerTopicWithFirstPost()
+    {
+        // on crée une région de format de données
+        $fakerFr = Factory::create('fr_FR');
+        $min = 1;
+        $max = 10;
+
+        $topicManager = new TopicManager();
+        $postManager = new PostManager();
+        $date = new DateTime();
+
+        for ($i = 0; $i < 10; $i++) {
+
+            $category_id = rand($min, $max);
+
+            $id_topic = $topicManager->add([
+                "title" => $fakerFr->sentence,
+                "dateCreation" => $fakerFr->date('Y-m-d') . ' ' . $fakerFr->time('H:i:s'),
+                "category_id" => $category_id,
+                "user_id" => rand(1, 2) // prevoir rand() quand il y aura une liste utilisateurs
+            ]);
+            $id_topic = rand(1, $id_topic);
+            $result = $postManager->add([
+                "content" => $fakerFr->sentence,
+                "dateCreation" => $fakerFr->date('Y-m-d') . ' ' . $fakerFr->time('H:i:s'),
+                "topic_id" => $id_topic
+            ]);
+        }
+        return [
+            "view" => VIEW_DIR . "forum/addTopic.php",
+            "meta_description" => "Ajouter un Article : ",
+            "data" => []
+        ];
+    }
+    public function findAllPostByIdTopicLIMIT($id)
+    {
+        $postManager = new PostManager();
+        return $postManager->findAllPostByIdTopicLIMIT($id);
     }
 }
