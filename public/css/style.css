@@ -26,7 +26,12 @@ html,
 body {
   /*background-color: var(--background-color);*/
 }
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: var(--link-color) !important;
 }
 /* la couleur des liens */
@@ -80,9 +85,15 @@ tr {
   padding: 2rem;
 }
 .uk-subnav {
-  width:100%;
-  border:1px solid #ccc !important;
+  width: 100%;
+  border: 1px solid #ccc !important;
 }
 .border {
-  border:1px solid #ccc !important;
+  border: 1px solid #ccc !important;
+}
+.fa, .fas {
+  padding-right: 5px !important;
+}
+li span{
+  display:block;
 }

@@ -1,32 +1,36 @@
-$(document).ready(function () {
+function limitCharFromString(parent, longueurMax) {
+    $(`.${parent}`).each(function () {
+        let texteComplet = $(this).text(); // Récupère le texte 
+        let texteLimite = texteComplet.substring(0, longueurMax);
+        $(this).text(`${texteLimite}...`); // Réaffiche le texte 
+    });
+}
 
+$(document).ready(function () {
     // on affiche le modal si dans la vue rendu il existe
     let modal = UIkit.modal("#loginSignin");
     if (modal) { modal.show(); }
-
-    // on modifie la taille des titre des accordéons
-    $('.uk-accordion-title').each(function () {
-        var texteComplet = $(this).text(); // Récupère le texte 
-        var longueurMax = 30; // Limite de la longueur
-        var texteLimite = texteComplet.substring(0, longueurMax);
-        $(this).text(`${texteLimite}...`); // Réaffiche le texte 
-    });
-
-    /* Elan */
+    // on modifie la taille des titre des accordéons pour plus de style
+    limitCharFromString("uk-accordion-title", 40);
+    // on modifie la taille des contenus des accordéons pour plus de style
+    limitCharFromString("get-content-post", 40)
+    /* Elan masquage des alert() après 3sec */
     $(".message").each(function () {
         if ($(this).text().length > 0) {
             $(this).addClass("message-padding");
             $(this).slideDown(500, function () {
-                $(this).delay(3000).slideUp(500, function() {
+                $(this).delay(3000).slideUp(500, function () {
+                    // un petit style a ajouter
                     $(this).removeClass("message-padding");
                 });
             });
         }
     });
-    
+
     $(".delete-btn").on("click", function () {
         return confirm("Etes-vous sûr de vouloir supprimer?")
     })
+    // éditeur de text pour les utilisateurs
     tinymce.init({
         selector: '.post',
         menubar: false,

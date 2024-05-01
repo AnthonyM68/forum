@@ -36,13 +36,14 @@ $posts = $posts["data"]['posts']; ?>
                                         $postsLenght = $ctrl->findAllPostByIdTopicLIMIT($topic->getId());
                                         if ($postsLenght) {
                                             foreach ($postsLenght as $post) { ?>
-                                            <li>Extrait: <?= $post->getContent()  . " Crée le:" . $post->getDateCreation() ?></li>
+                                            <li><span class="get-content-post"><?= $post->getContent() ?></span><span class="get-date-creation"> Crée le: <?= $post->getDateCreation() ?></span></li>
                                         <?php }
                                         }
                                         ?>
                                     </ul>
+                                    <span class="fas fa-user"></span>
+                                    <?= $topic->getUser()->getUsername() . " " ?>
                                     <?php
-                                        echo $topic->getUser()->getUsername() . " ";
                                         $roles = $topic->getUser()->getRoles();
                                         // Vérifier si $roles est un tableau ou une chaîne de caractères
                                         if (is_array($roles)) {
