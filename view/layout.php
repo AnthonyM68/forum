@@ -18,22 +18,39 @@
     <link rel="stylesheet" href="<?= PUBLIC_DIR ?>/css/style.css">
     <title>FORUM</title>
 </head>
+
 <body>
     <!-- HEADER -->
     <header id="header">
-        <div class="uk-animation-fade uk-container">
+
+        <div class="uk-container">
             <!-- NAVIGATION -->
             <?= $header ?>
             <!-- ALERT -->
-            <h3 class="message uk-alert-danger"><?= App\Session::getFlash("error") ?></h3>
-            <h3 class="message uk-alert-success"><?= App\Session::getFlash("success") ?></h3>
+            <?php if (App\Session::ifExistFlash("success")) { ?>
+                <div class="message uk-alert-success" uk-alert>
+                    <h3><?= App\Session::getFlash("success") ?></h3>
+                </div>
+            <?php }
+            if (App\Session::ifExistFlash("success")) { ?>
+                <div class="message uk-alert-warning" uk-alert>
+                    <h3><?= App\Session::getFlash("warning") ?></h3>
+                </div>
+            <?php }
+            if (App\Session::ifExistFlash("success")) { ?>
+                <div class="message uk-alert-danger" uk-alert>
+                    <h3><?= App\Session::getFlash("error") ?></h3>
+                </div>
+            <?php }
+            ?>
             <!-- NEWS TOPIC NEW POST -->
             <?= $news ?>
         </div>
     </header>
     <!-- MAIN -->
     <main id="forum">
-    <div class="uk-container"><?= $page ?></div></main>
+        <div class="uk-container"><?= $page ?></div>
+    </main>
     <footer id="footer"><?= $footer ?></footer>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous">
     </script>
@@ -44,4 +61,5 @@
     <!-- SCRIPT JS -->
     <script src="<?= PUBLIC_DIR ?>/js/script.js"></script>
 </body>
+
 </html>

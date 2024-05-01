@@ -7,7 +7,7 @@
 }
 
 :root {
-  /*--primary-color:;*/
+  --primary-color: #a8a7a7;
   --secondary-color: #ccc;
   --border-color: #ccc;
   --background-color: rgba(29, 32, 47, 1);
@@ -34,42 +34,58 @@ h5,
 h6 {
   color: var(--link-color) !important;
 }
-/* la couleur des liens */
+/* LINK GENERAL */
 a {
   color: var(--link-color) !important;
 }
-/* couleur de fond au survol */
 a:hover {
-  color: var(--secondary-color) !important;
+  color: var(--primary-color) !important;
 }
+/* PARAGRAPH */
 p {
   color: var(--secondary-color) !important;
 }
+/* HEADER */
+#header {
+  background-color: var(--background-color) !important;
+}
+#header nav {
+  background-color: var(--background-color) !important;
+}
+/* NEWS */
+#news {
+  background-color: var(--background-color) !important;
+}
+/* ACCORDION */
+.get-content-post {
+  color: var(--primary-color) !important;
+}
+.get-roles-user {
+  color: var(--primary-color) !important;
+}
+.get-date-creation {
+  color: var(--secondary-color) !important;
+}
+.uk-accordion-footer {
+  color: var(--link-color) !important;
+}
+/* UIKIT SECTION */
+.uk-section {
+  background-color: var(--background-color) !important;
+}
+/* UIKIT LABEL */
 .uk-form-label {
   color: var(--secondary-color) !important;
 }
+/* FORM SIGNIN LOGIN */
 #loginSignin .uk-modal-dialog {
   background-color: var(--accent-color) !important;
 }
 #loginSignin .uk-section {
   background-color: var(--accent-color) !important;
 }
-#header {
-  background-color: var(--background-color) !important;
-}
-header nav {
-  background-color: var(--background-color) !important;
-}
-#news {
-  background-color: var(--background-color) !important;
-}
+/* MAIN FORUM GENERAL*/
 #forum {
-  background-color: var(--background-color) !important;
-}
-#footer {
-  background-color: var(--background-color) !important;
-}
-.uk-section {
   background-color: var(--background-color) !important;
 }
 tbody,
@@ -80,10 +96,7 @@ thead,
 tr {
   color: var(--secondary-color) !important;
 }
-
-.message-padding {
-  padding: 2rem;
-}
+/* ALLERT JS addClass*/
 .uk-subnav {
   width: 100%;
   border: 1px solid #ccc !important;
@@ -91,12 +104,17 @@ tr {
 .border {
   border: 1px solid #ccc !important;
 }
-.fa, .fas {
+.fa,
+.fas {
   padding-right: 5px !important;
 }
-ul li, ul li span {
+ul li,
+ul li span {
   color: var(--secondary-color) !important;
 }
-li span{
-  display:block;
+li span {
+  display: block;
+}
+#footer {
+  background-color: var(--background-color) !important;
 }

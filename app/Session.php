@@ -1,48 +1,58 @@
 <?php
+
 namespace App;
 
-class Session{
+class Session
+{
 
-    private static $categories = ['error', 'success'];
+    private static $categories = ['error', 'warning', 'success'];
 
     /**
-    *   ajoute un message en session, dans la catégorie $categ
-    */
-    public static function addFlash($categ, $msg){
+     *   ajoute un message en session, dans la catégorie $categ
+     */
+    public static function addFlash($categ, $msg)
+    {
         $_SESSION[$categ] = $msg;
     }
-
+    public static function ifExistFlash($category)
+    {
+        return isset($_SESSION[$category]) ? true : false;
+    }
     /**
-    *   renvoie un message de la catégorie $categ, s'il y en a !
-    */
-    public static function getFlash($categ){
-        
-        if(isset($_SESSION[$categ])){
-            $msg = $_SESSION[$categ];  
+     *   renvoie un message de la catégorie $categ, s'il y en a !
+     */
+    public static function getFlash($categ)
+    {
+
+        if (isset($_SESSION[$categ])) {
+            $msg = $_SESSION[$categ];
             unset($_SESSION[$categ]);
-        }
-        else $msg = "";
-        
+        } else $msg = "";
+
         return $msg;
     }
 
+
     /**
-    *   met un user dans la session (pour le maintenir connecté)
-    */
-    public static function setUser($user){
+     *   met un user dans la session (pour le maintenir connecté)
+     */
+    public static function setUser($user)
+    {
         $_SESSION["user"] = $user;
     }
 
-    public static function getUser(){
+    public static function getUser()
+    {
         return (isset($_SESSION['user'])) ? $_SESSION['user'] : false;
     }
 
-    public static function isAdmin(){
+    public static function isAdmin()
+    {
         // var_dump(self::getUser());
-        
+
         // attention de bien définir la méthode "hasRole" dans l'entité User 
         // en fonction de la façon dont sont gérés les rôles en base de données
-        if(self::getUser() && self::getUser()->hasRole("ROLE_ADMIN")){
+        if (self::getUser() && self::getUser()->hasRole("ROLE_ADMIN")) {
             return true;
         }
         return false;

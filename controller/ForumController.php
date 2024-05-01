@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * FORUM CONTROLLER
+ */
+
 namespace Controller;
 
 use App\Session;
@@ -16,7 +20,11 @@ use Faker\Factory;
 
 class ForumController extends AbstractController implements ControllerInterface
 {
-
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
     public function index()
     {
 
@@ -24,7 +32,8 @@ class ForumController extends AbstractController implements ControllerInterface
         $categoryManager = new CategoryManager();
         // récupérer la liste de toutes les catégories grâce à la méthode 
         // findAll de Manager.php (triés par nom)
-        $categories = $categoryManager->findAll(["name", "DESC"]);
+        $categories = $categoryManager->findAll(["name", "ASC"]);
+        Session::addFlash("success", "Catégorie ajouté avec succès");
 
         // le controller communique avec la vue "listCategories" (view) pour lui envoyer la liste des catégories (data)
         return [
@@ -35,7 +44,12 @@ class ForumController extends AbstractController implements ControllerInterface
             ]
         ];
     }
-
+    /**
+     * Undocumented function
+     *
+     * @param [type] $id
+     * @return void
+     */
     public function listTopicsByCategory($id)
     {
 
@@ -53,6 +67,11 @@ class ForumController extends AbstractController implements ControllerInterface
             ]
         ];
     }
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
     public function listLast5Topics()
     {
 
@@ -69,6 +88,11 @@ class ForumController extends AbstractController implements ControllerInterface
             ]
         ];
     }
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
     public function listLast5Posts()
     {
 
@@ -84,31 +108,36 @@ class ForumController extends AbstractController implements ControllerInterface
             ]
         ];
     }
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
     public function addCategory()
     {
-        $categoryManager = new CategoryManager();
-
         if (isset($_POST['name']) && !empty($_POST['name'])) {
             $nameCategory = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_SPECIAL_CHARS);
-            
+            $categoryManager = new CategoryManager();
             $result = $categoryManager->add(["name" => $nameCategory]);
             if ($result) {
                 $_SESSION['success'] = "Catégorie ajouté avec succès";
             } else {
                 $_SESSION['error'] = "Erreur lors de la soumission de la catégorie";
             }
+            $this->redirectTo("forum", "index");
         }
-        $categories = $categoryManager->findAll()();
         return [
             "view" => VIEW_DIR . "forum/published.php",
             "section" => "category",
             "meta_description" => "Ajouter une catégorie : ",
-            "data" => [
-                "categories" => $categories
-            ]
+            "data" => []
         ];
     }
-
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
     public function addTopic()
     {
         if (isset($_POST['title']) && !empty($_POST['title']
@@ -153,7 +182,11 @@ class ForumController extends AbstractController implements ControllerInterface
         ];
     }
 
-
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
     public function addPost()
     {
         if (isset($_POST['content']) && !empty($_POST['content'])) {
@@ -188,9 +221,7 @@ class ForumController extends AbstractController implements ControllerInterface
             "view" => VIEW_DIR . "forum/published.php",
             "section" => "post",
             "meta_description" => "Ajouter un Article : ",
-            "data" => [
-
-            ]
+            "data" => []
         ];
     }
     /**
@@ -198,28 +229,21 @@ class ForumController extends AbstractController implements ControllerInterface
      */
     public function findAllCategories()
     {
-        // créer une nouvelle instance de CategoryManager
         $categoryManager = new CategoryManager();
         return $categoryManager->findAll();
     }
-    public function dropTable()
+    /**
+     * Undocumented function
+     *
+     * @param [type] $id
+     * @return void
+     */
+    public function findAllPostByIdTopicLIMIT($id)
     {
-        $topicManager = new TopicManager();
-        $allIdFromTable = $topicManager->findAllId("id_topic");
         $postManager = new PostManager();
-        if ($allIdFromTable) {
-            foreach ($allIdFromTable as $topicId) {
-                $postManager->deleteByTopicId($topicId->getId());
-                $topicManager->delete($topicId->getId());
-            }
-        }
-
-        return [
-            "view" => VIEW_DIR . "forum/addPost.php",
-            "meta_description" => "Ajouter un Article : ",
-            "data" => []
-        ];
+        return $postManager->findAllPostByIdTopicLIMIT($id);
     }
+    /******************************************************** */
     /**
      * Ceci est une méthode de création de topic a la vollée
      * en utilisant la dépendance Faker, pour le dévellopement de cette
@@ -230,8 +254,9 @@ class ForumController extends AbstractController implements ControllerInterface
      */
     public function fakerTopicWithFirstPost()
     {
+        echo "fakerTopicWithFirstPost";
         // on crée une région de format de données
-        $fakerFr = Factory::create('fr_FR');
+        /* $fakerFr = Factory::create('fr_FR');
         $min = 1;
         $max = 10;
 
@@ -260,11 +285,24 @@ class ForumController extends AbstractController implements ControllerInterface
             "view" => VIEW_DIR . "forum/addTopic.php",
             "meta_description" => "Ajouter un Article : ",
             "data" => []
-        ];
+        ];*/
     }
-    public function findAllPostByIdTopicLIMIT($id)
+    public function dropTable()
     {
+        echo "dropTable";
+        /*$topicManager = new TopicManager();
+        $allIdFromTable = $topicManager->findAllId("id_topic");
         $postManager = new PostManager();
-        return $postManager->findAllPostByIdTopicLIMIT($id);
+        if ($allIdFromTable) {
+            foreach ($allIdFromTable as $topicId) {
+                $postManager->deleteByTopicId($topicId->getId());
+                $topicManager->delete($topicId->getId());
+            }
+        }
+        return [
+            "view" => VIEW_DIR . "forum/addPost.php",
+            "meta_description" => "Ajouter un Article : ",
+            "data" => []
+        ];*/
     }
 }

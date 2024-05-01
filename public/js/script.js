@@ -17,11 +17,11 @@ $(document).ready(function () {
     /* Elan masquage des alert() après 3sec */
     $(".message").each(function () {
         if ($(this).text().length > 0) {
-            $(this).addClass("message-padding");
+            //$(this).addClass("alert-padding");
             $(this).slideDown(500, function () {
                 $(this).delay(3000).slideUp(500, function () {
                     // un petit style a ajouter
-                    $(this).removeClass("message-padding");
+                    //$(this).removeClass("alert-padding");
                 });
             });
         }
