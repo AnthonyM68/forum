@@ -11,21 +11,16 @@
                 <li>
                     <a href="index.php?ctrl=forum&action=index">
                         <span class="fas fa-list-ol"></span>
-                        Liste des catégories</a>
+                        Liste des catégories+
+                    </a>
                 </li>
                 <?php
-                // Si ADMINISTRATOR
+                // ADMINISTRATOR
                 if (App\Session::isAdmin()) { ?>
                     <li>
                         <a href="index.php?ctrl=home&action=users">
                             <span class="fas fa-list-ol"></span>
                             Voir la liste des gens
-                        </a>
-                    </li>
-                    <li>
-                        <a href="index.php?ctrl=forum&action=addCategory">
-                            <span class="fa fa-plus"></span>
-                            Ajouter une catégorie
                         </a>
                     </li>
                 <?php } ?>
@@ -55,17 +50,27 @@
                             </a>
                         </li>
                         <li>
-                            <a href="index.php?ctrl=forum&action=addTopic">
-                                <span class="fa fa-plus"> </span>
-                                Nouveaux Topics
-                            </a>
-                        </li>
-                        <li>
                             <a href="index.php?ctrl=forum&action=addPost">
                                 <span class="fa fa-plus"></span>
                                 Nouveaux Messages
                             </a>
                         </li>
+                        <?php
+                        // ADMINISTRATOR
+                        if (App\Session::isAdmin()) { ?>
+                            <li>
+                                <a href="index.php?ctrl=forum&action=addTopic">
+                                    <span class="fa fa-plus"> </span>
+                                    Nouveaux Topics
+                                </a>
+                            </li>
+                            <li>
+                                <a href="index.php?ctrl=forum&action=addCategory">
+                                    <span class="fa fa-plus"></span>
+                                    Ajouter une catégorie
+                                </a>
+                            </li>
+                        <?php } ?>
                     <?php
                     } else {
                     ?>

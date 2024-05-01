@@ -15,7 +15,7 @@ final class User extends Entity
     private $username;
     private $password;
     private $email;
-    private $dataRegister;
+    private $dateRegister;
     private $roles;
     private $token;
 
@@ -97,18 +97,18 @@ final class User extends Entity
     /**
      * Get the value of dataRegister
      */
-    public function getDataRegister()
+    public function getDateRegister()
     {
-        return $this->dataRegister;
+        return $this->dateRegister;
     }
     /**
      * Set the value of dataRegister
      *
      * @return  self
      */
-    public function setDataRegister($dataRegister)
+    public function setDateRegister($dateRegister)
     {
-        $this->dataRegister = $dataRegister;
+        $this->dateRegister = $dateRegister;
         return $this;
     }
     /**

@@ -45,6 +45,12 @@ abstract class Entity
                     $formattedDate = $dateTime->format("d/m/Y H:i:s");
                     $this->$method($formattedDate);
                 } 
+                if ($fieldArray[0] === 'dateRegister') {
+                    $dateTime = DateTime::createFromFormat("Y-m-d H:i:s", $value);
+                    // on convertis les données Sql en un objet DateTime valide
+                    $formattedDate = $dateTime->format("d/m/Y H:i:s");
+                    $this->$method($formattedDate);
+                } 
                 else {
                     // $this->setName("valeur")
                     // Appel du setter avec la valeur appropriée

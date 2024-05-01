@@ -86,9 +86,11 @@ class ForumController extends AbstractController implements ControllerInterface
     }
     public function addCategory()
     {
+        $categoryManager = new CategoryManager();
+
         if (isset($_POST['name']) && !empty($_POST['name'])) {
             $nameCategory = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_SPECIAL_CHARS);
-            $categoryManager = new CategoryManager();
+            
             $result = $categoryManager->add(["name" => $nameCategory]);
             if ($result) {
                 $_SESSION['success'] = "Catégorie ajouté avec succès";
@@ -96,10 +98,14 @@ class ForumController extends AbstractController implements ControllerInterface
                 $_SESSION['error'] = "Erreur lors de la soumission de la catégorie";
             }
         }
+        $categories = $categoryManager->findAll()();
         return [
-            "view" => VIEW_DIR . "forum/addCategory.php",
+            "view" => VIEW_DIR . "forum/published.php",
+            "section" => "category",
             "meta_description" => "Ajouter une catégorie : ",
-            "data" => []
+            "data" => [
+                "categories" => $categories
+            ]
         ];
     }
 
@@ -140,7 +146,8 @@ class ForumController extends AbstractController implements ControllerInterface
             }
         }
         return [
-            "view" => VIEW_DIR . "forum/addTopic.php",
+            "view" => VIEW_DIR . "forum/published.php",
+            "section" => "topic",
             "meta_description" => "Ajouter un Article : ",
             "data" => []
         ];
@@ -170,6 +177,7 @@ class ForumController extends AbstractController implements ControllerInterface
         } else if (isset($_GET['id']) && !empty($_GET['id'])) {
             return [
                 "view" => VIEW_DIR . "forum/addPost.php",
+                "section" => "post",
                 "meta_description" => "Ajouter un Article : ",
                 "id" => [
                     "id_topic" => $_GET['id']
@@ -177,9 +185,12 @@ class ForumController extends AbstractController implements ControllerInterface
             ];
         }
         return [
-            "view" => VIEW_DIR . "forum/addPost.php",
+            "view" => VIEW_DIR . "forum/published.php",
+            "section" => "post",
             "meta_description" => "Ajouter un Article : ",
-            "data" => []
+            "data" => [
+
+            ]
         ];
     }
     /**

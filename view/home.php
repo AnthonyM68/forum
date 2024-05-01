@@ -1,21 +1,11 @@
-<!--<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sit ut nemo quia voluptas numquam, itaque ipsa soluta ratione eum temporibus aliquid, facere rerum in laborum debitis labore aliquam ullam cumque.</p>
-
-<p>
-    <a href="index.php?ctrl=security&action=login">Se connecter</a>
-    <a href="index.php?ctrl=security&action=register">S'inscrire</a>
-</p>-->
 <h1 class="uk-padding-small uk-padding-remove-horizontal pridi-regular">BIENVENUE SUR LE FORUM</h1>
-
-
 <div class="uk-section uk-padding-remove">
-
-
     <div class=" uk-container">
         <div class="" uk-grid>
             <div class="uk-width-expand">
                 <div class="uk-card uk-card-default uk-card-body">
                     <ul uk-accordion>
-                        <?php for ($i = 0; $i < 20; $i++) { ?>
+                        <?php for ($i = 0; $i < 10; $i++) { ?>
                             <li class="">
                                 <a class="uk-accordion-title pridi-medium" href><?= $fakerFr->sentence ?></a>
                                 <div class="uk-accordion-content">
@@ -28,7 +18,6 @@
                 </div>
             </div>
             <div class="uk-width-1-4@m uk-padding-small">
-                
                 <div class="uk-card uk-card-default uk-width-1-1@m  uk-box-shadow-large">
                     <div class="uk-card-header">
                         <h3 class="uk-card-title pridi-medium">Dernier inscrit</h3>
@@ -72,5 +61,4 @@
             </div>
         </div>
     </div>
-
 </div>

@@ -94,6 +94,9 @@ tr {
 .fa, .fas {
   padding-right: 5px !important;
 }
+ul li, ul li span {
+  color: var(--secondary-color) !important;
+}
 li span{
   display:block;
 }

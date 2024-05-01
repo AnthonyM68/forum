@@ -80,7 +80,6 @@ if ($action == "ajax") { //si l'action était ajax
     $meta_description = $result['meta_description'];
     /* la vue s'insère dans le buffer qui devra être vidé au milieu du layout */
     include($result['view']);
-    $page = "";//ob_get_contents();
     /* je place cet affichage dans une variable */
     $page = ob_get_contents();
     /* j'efface le tampon */
