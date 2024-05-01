@@ -33,8 +33,6 @@ class ForumController extends AbstractController implements ControllerInterface
         // récupérer la liste de toutes les catégories grâce à la méthode 
         // findAll de Manager.php (triés par nom)
         $categories = $categoryManager->findAll(["name", "ASC"]);
-        Session::addFlash("success", "Catégorie ajouté avec succès");
-
         // le controller communique avec la vue "listCategories" (view) pour lui envoyer la liste des catégories (data)
         return [
             "view" => VIEW_DIR . "forum/listCategories.php",
@@ -120,9 +118,9 @@ class ForumController extends AbstractController implements ControllerInterface
             $categoryManager = new CategoryManager();
             $result = $categoryManager->add(["name" => $nameCategory]);
             if ($result) {
-                $_SESSION['success'] = "Catégorie ajouté avec succès";
+                Session::addFlash("success", "Catégorie ajouté avec succès");
             } else {
-                $_SESSION['error'] = "Erreur lors de la soumission de la catégorie";
+                Session::addFlash("error", "Erreur lors de la soumission de la catégorie");
             }
             $this->redirectTo("forum", "index");
         }

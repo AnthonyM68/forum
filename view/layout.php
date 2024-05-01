@@ -32,12 +32,12 @@
                     <h3><?= App\Session::getFlash("success") ?></h3>
                 </div>
             <?php }
-            if (App\Session::ifExistFlash("success")) { ?>
+            if (App\Session::ifExistFlash("warning")) { ?>
                 <div class="message uk-alert-warning" uk-alert>
                     <h3><?= App\Session::getFlash("warning") ?></h3>
                 </div>
             <?php }
-            if (App\Session::ifExistFlash("success")) { ?>
+            if (App\Session::ifExistFlash("error")) { ?>
                 <div class="message uk-alert-danger" uk-alert>
                     <h3><?= App\Session::getFlash("error") ?></h3>
                 </div>

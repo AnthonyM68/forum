@@ -32,7 +32,7 @@ class SecurityController extends AbstractController
 
             if ($emailExist) {
                 // l'email existe donc l'user est déjà inscrit
-                $_SESSION["success"] = "Déjà inscrit";
+                Session::addFlash("success", "Déjà inscrit");
                 $this->redirectTo("home", "index");
             }
             // à prévoir un regex de qualité
@@ -44,12 +44,12 @@ class SecurityController extends AbstractController
 
             if (!$password || !$repeat_password) {
                 // on affiche une alert a l'utilisateur
-                $_SESSION["error"] = "Les mots de passe ne respectent pas les critères de soumission";
+                Session::addFlash("error", "Les mots de passe ne respectent pas les critères de soumission");
                 $this->redirectTo("home", "index");
             }
             if ($password !== $repeat_password) {
                 // on affiche une alert a l'utilisateur
-                $_SESSION["error"] = "Les mots de passe ne sont pas identique";
+                Session::addFlash("error", "Les mots de passe ne sont pas identique");
                 $this->redirectTo("home", "index");
             }
             $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_SPECIAL_CHARS);
@@ -60,7 +60,7 @@ class SecurityController extends AbstractController
             $token = $this->generateTokenUnique();
 
             if (!$usernameExist) {
-
+                
                 $date = new DateTime("now");
                 $userManager->add([
                     "username" => $username,
@@ -74,15 +74,16 @@ class SecurityController extends AbstractController
                     ]),
                     
                 ]);
+                // SENT EMAIL
                 $subject = "Merci pour votre inscription au Forum@";
                 $content = "<p>Veuillez confirmer votre inscription en cliquant sur le lien suivant:</p>
                 <a href='http://localhost/forum/index.php?ctrl=security&action=login&token=" . $token . "'>Cliquez ici</a>";
                 // <a href='".BASE_DIR."?ctrl=user?action=login?token=" .$token. "'>Cliquez ici</a>";
                 $result = $this->sentEmailTo($email, $subject, $content);
 
-                $result ? $_SESSION["success"] = "Votre inscription est terminée, veuillez vérifier vos email"
-                    : $_SESSION["error"] = "Une erreur est survenue lors de l'envois de la confirmation par Email";
-            } else $_SESSION["error"] = "Nom d'utilisateur déjà utilisé";
+                $result ? Session::addFlash("success", "Votre inscription est terminée, veuillez vérifier vos email")
+                    : Session::addFlash("error", "Une erreur est survenue lors de l'envois de la confirmation par Email");;
+            } else Session::addFlash("error", "Nom d'utilisateur déjà utilisé");
 
             $this->redirectTo("home", "index");
         } else {
