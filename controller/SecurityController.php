@@ -60,7 +60,7 @@ class SecurityController extends AbstractController
             $token = $this->generateTokenUnique();
 
             if (!$usernameExist) {
-                
+
                 $date = new DateTime("now");
                 $userManager->add([
                     "username" => $username,
@@ -184,5 +184,15 @@ class SecurityController extends AbstractController
         }
         
         $this->redirectTo("home", "index");
+    }
+    public function profile(){
+        //$this->restrictTo("ROLE_USER");
+        //$manager = new UserManager();
+        return [
+            "view" => VIEW_DIR."security/users.php",
+            "section" => "profile",
+            "meta_description" => "Liste des utilisateurs du forum",
+            "data" => []
+        ];
     }
 }

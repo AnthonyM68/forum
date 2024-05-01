@@ -2,7 +2,7 @@
 $categories = $result["data"]['categories'];
 ?>
 
-<h1 class="uk-animation-fade pridi-regular">CATÉGORIES</h1>
+<h1 class="uk-animation-fade pridi-regular">Catégories</h1>
 
 <?php
 if ($categories) {

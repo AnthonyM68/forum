@@ -11,7 +11,7 @@
                 <li>
                     <a href="index.php?ctrl=forum&action=index">
                         <span class="fas fa-list-ol"></span>
-                        Liste des catégories+
+                        Liste des catégories
                     </a>
                 </li>
                 <?php
@@ -20,7 +20,7 @@
                     <li>
                         <a href="index.php?ctrl=home&action=users">
                             <span class="fas fa-list-ol"></span>
-                            Voir la liste des gens
+                            Liste des membres
                         </a>
                     </li>
                 <?php } ?>
@@ -36,11 +36,9 @@
                 <ul class="uk-navbar-nav">
                     <?php
                     // si l'utilisateur est connecté 
-                    if (App\Session::getUser()) {
-                    ?>
-                        <!--<a href="index.php?ctrl=security&action=profile"><span class="fas fa-user"><?= App\Session::getUser() ?></span></a>-->
+                    if (App\Session::getUser()) { ?>
                         <li>
-                            <a href="./"><span class="fas fa-user"></span><?= App\Session::getUser() ?>
+                            <a href="index.php?ctrl=security&action=profile"><span class="fas fa-user"></span><?= App\Session::getUser() ?>
                             </a>
                         </li>
                         <li>

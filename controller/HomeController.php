@@ -21,9 +21,10 @@ class HomeController extends AbstractController implements ControllerInterface {
         $users = $manager->findAll(['dateRegister', 'DESC']);
         return [
             "view" => VIEW_DIR."security/users.php",
+            "section" => "usersList",
             "meta_description" => "Liste des utilisateurs du forum",
             "data" => [ 
-                "users" => $users 
+                "users" => $users
             ]
         ];
     }

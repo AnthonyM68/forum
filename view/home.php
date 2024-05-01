@@ -1,4 +1,4 @@
-<h1 class="uk-padding-small uk-padding-remove-horizontal pridi-regular">BIENVENUE SUR LE FORUM</h1>
+<h1 class="uk-padding-small uk-padding-remove-horizontal pridi-regular">Bienvenue sur le Forum</h1>
 <div class="uk-section uk-padding-remove">
     <div class=" uk-container">
         <div class="" uk-grid>
