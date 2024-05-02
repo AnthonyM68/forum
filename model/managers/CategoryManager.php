@@ -15,9 +15,22 @@ class CategoryManager extends Manager
     {
         parent::connect();
     }
-    public function findAllByIdCategory($id)
+    /**
+     * Counter category
+     *
+     * @return int
+     */
+    public function countCategories() 
     {
+        $sql = "SELECT t.*
+        FROM " . $this->tableName . " t";
+        // pour convertir le générateur en tableau
+        $results = iterator_to_array($this->getMultipleResults(
+            DAO::select($sql),
+            $this->className
+        ));
         
+        return count($results);
     }
 
 }

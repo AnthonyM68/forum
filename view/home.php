@@ -12,16 +12,15 @@ $categoryDatas = $result['data']['categoryData'];
                         <?php
                         if ($categoryDatas) {
                             foreach ($categoryDatas as $categoryName => $categoryData) { ?>
-                                <li class='uk-closed'>
-                                    <a class='uk-accordion-title color-primary' href>
-                                        <h3>$categoryName</h3>
-                                    </a>
-                                    <div class='uk-accordion-content'>
+                                <li class="uk-closed">
+                                    <a class="uk-accordion-title color-primary" href><?= $categoryName ?></a>
+                                    <div class="uk-accordion-content">
                                         <ul>
                                             <?php
                                             foreach ($categoryData as $topicData) {
                                                 $topic = $topicData['topic'];
                                                 $posts = $topicData['posts']; ?>
+
                                                 <li><?= $topic->getTitle() ?></li>
                                                 <?php foreach ($posts as $post) { ?>
                                                     <li><?= $post->getContent() ?></li>
@@ -41,9 +40,9 @@ $categoryDatas = $result['data']['categoryData'];
                 <div class="uk-card uk-card-default uk-width-1-1@m  uk-box-shadow-large">
                     <div class="uk-card-header">
                         <h3 class="uk-card-title pridi-medium">Dernier inscrit</h3>
-                        <!-- profil -->
+                        <!-- PROFIL -->
                         <div class="uk-grid-small uk-flex-middle" uk-grid>
-                            <!-- image -->
+                            <!-- IMAGE -->
                             <div class="uk-width-auto">
                                 <img class="uk-border-circle" width="40" height="40" src="./public/img/profils/moi.jpg" alt="Avatar">
                             </div>
@@ -55,7 +54,7 @@ $categoryDatas = $result['data']['categoryData'];
                         </div>
                     </div>
                 </div>
-                <!-- states -->
+                <!-- STATES -->
                 <table class="uk-table uk-table-middle uk-table-divider">
                     <thead>
                         <tr class="pridi-medium">
@@ -65,17 +64,20 @@ $categoryDatas = $result['data']['categoryData'];
                     </thead>
                     <tbody>
                         <tr class="pridi-regular">
-                            <td>Inscrits</td>
-                            <td>1 </td>
-
+                            <td>Membres</td>
+                            <td><?= $result['countUsers'] ?></td>
                         </tr>
                         <tr class="pridi-regular">
-                            <td>Topics</td>
-                            <td>10 </td>
+                            <td>Catégories</td>
+                            <td><?= $result['countCategories'] ?></td>
+                        </tr>
+                        <tr class="pridi-regular">
+                            <td>Sujets</td>
+                            <td><?= $result['countTopics'] ?></td>
                         </tr>
                         <tr class="pridi-regular">
                             <td>Articles</td>
-                            <td>10 </td>
+                            <td><?= $result['countPosts'] ?></td>
                         </tr>
                     </tbody>
                 </table>

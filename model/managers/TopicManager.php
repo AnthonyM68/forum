@@ -16,7 +16,23 @@ class TopicManager extends Manager
     {
         parent::connect();
     }
-
+    /**
+     * Counter topics
+     *
+     * @return int
+     */
+    public function countTopics() 
+    {
+        $sql = "SELECT t.*
+        FROM " . $this->tableName . " t";
+        // pour convertir le générateur en tableau
+        $results = iterator_to_array($this->getMultipleResults(
+            DAO::select($sql),
+            $this->className
+        ));
+        
+        return count($results);
+    }
     // récupérer tous les topics d'une catégorie spécifique (par son id)
     public function findTopicsByCategory($id)
     {
@@ -60,7 +76,7 @@ class TopicManager extends Manager
      * Undocumented function
      *
      * @param [type] $id
-     * @return void
+     * 
      */
     /*public function findAllPostByIdTopic()
     {

@@ -15,6 +15,23 @@ class PostManager extends Manager
     {
         parent::connect();
     }
+        /**
+     * Counter posts
+     *
+     * @return int
+     */
+    public function countPosts() 
+    {
+        $sql = "SELECT t.*
+        FROM " . $this->tableName . " t";
+        // pour convertir le générateur en tableau
+        $results = iterator_to_array($this->getMultipleResults(
+            DAO::select($sql),
+            $this->className
+        ));
+        
+        return count($results);
+    }
     /**
      * Undocumented function
      *

@@ -18,6 +18,25 @@ class UserManager extends Manager
         parent::connect();
     }
     /**
+     * Counter users
+     *
+     * @return void
+     */
+    public function countUser() 
+    {
+        $sql = "SELECT t.*
+        FROM " . $this->tableName . " t";
+        // pour convertir le générateur en tableau
+        $results = iterator_to_array($this->getMultipleResults(
+            DAO::select($sql),
+            $this->className
+        ));
+        
+        return count($results);
+    }
+    
+    
+    /**
      * Return email if exist
      *
      * @param [type] $email
