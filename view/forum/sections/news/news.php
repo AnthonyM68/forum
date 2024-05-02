@@ -19,34 +19,36 @@ $posts = $posts["data"]['posts'];
 
 if (isset($result['section']) && $result['section'] === "home") {
 ?>
+    <!-- CONTAINER ACCORDION -->
     <div id="news" class="uk-container">
         <div class="uk-grid-match uk-child-width-expand@m" uk-grid>
             <div class="uk-animation-fade">
-
-                <div class="uk-card uk-card-default uk-card-body">
+                <div class="uk-card uk-card-default uk-card-body accordion-card">
                     <ul uk-accordion>
-                        <!-- Liste des 5 derniers topic -->
+                        <!-- 5 LAST TOPIC -->
                         <?php
                         if ($topicsLenght5) {
                             foreach ($topicsLenght5 as $topic) { ?>
                                 <li class="uk-closed">
-                                    <a class="uk-accordion-title" href><?= $topic->getTitle() ?></a>
+                                    <a class="uk-accordion-title color-primary" href><?= $topic->getTitle() ?></a>
                                     <div class="uk-accordion-content">
-                                        
+                                        <!-- LIST TOPIC -->
                                         <ul>
                                             <?php // on recherche avec une LIMIT 5 post parmis ce topic
                                             $postsLenght = $ctrl->findAllPostByIdTopicLIMIT($topic->getId());
                                             if ($postsLenght) {
                                                 foreach ($postsLenght as $post) { ?>
-                                                    <li><span class="get-content-post"><?= $post->getContent() ?></span><span class="get-date-creation"> Crée le: <?= $post->getDateCreation() ?></span></li>
+                                                    <li><span class="color-primary"><?= $post->getContent() ?></span><span class="color-primary"> Crée le: <?= $post->getDateCreation() ?></span></li>
                                             <?php }
                                             }
                                             ?>
                                         </ul>
+                                        <!-- ACCORDION FOOTER -->
                                         <p class="uk-accordion-footer">
                                             <span class="fas fa-user"></span>
-                                            <?= $topic->getUser()->getUsername() . " " ?>
+                                            <!-- TOPIC AUTHOR -->
                                             <?php
+                                            echo $topic->getUser()->getUsername() . " ";
                                             $roles = $topic->getUser()->getRoles();
                                             // Vérifier si $roles est un tableau ou une chaîne de caractères
                                             if (is_array($roles)) {
@@ -73,14 +75,14 @@ if (isset($result['section']) && $result['section'] === "home") {
                                                 // on analyse le dernier élément du tableau de rôles initial
                                                 $formattedRoles .= $lastElement === "ROLE_USER" ? "Membre du Forum" : ($lastElement === "ROLE_ADMIN" ? "Administrateur" : "");
                                             ?>
-                                                <small class="get-roles-user">
-                                                    <?= $formattedRoles ?>
-                                                </small>
-                                            <?php }
-                                            echo $topic->getDateCreation(); ?>
+                                                <small class="color-primary"><?= $formattedRoles . " " . $topic->getDateCreation() ?></span></small>
+                                            <?php } ?>
                                         </p>
-                                        <span class="fa fa-reply" aria-hidden="true"></span>
+                                        <!-- LINKS -->
+                                        <span class="fa fa-edit" aria-hidden="true"></span>
                                         <a href="./index.php?ctrl=forum&action=addPost&id=<?= $topic->getId() ?>">Répondre à la suite du topic</a>
+                                        <span class="fa fa-reply" aria-hidden="true"></span>
+                                        <a href="./index.php?ctrl=forum&action=listPostByIdTopic&id=<?= $topic->getId() ?>">Rejoindre le topic</a>
                                     </div>
 
                                 </li>
@@ -90,7 +92,7 @@ if (isset($result['section']) && $result['section'] === "home") {
                 </div>
             </div>
             <div class="uk-animation-fade">
-                <div class="uk-card uk-card-default uk-card-body">
+                <div class="uk-card uk-card-default uk-card-body accordion-card">
                     <ul uk-accordion>
                         <!--<?php for ($i = 0; $i < 5; $i++) { ?>
                         <li class="">

@@ -14,13 +14,12 @@ final class Post extends Entity
     private $id;
     private $content;
     private $dateCreation;
-    private $topic_id;
+    private $topic;
 
     public function __construct($data)
     {
         $this->hydrate($data);
     }
-
     /**
      * Get the value of id
      */
@@ -28,9 +27,6 @@ final class Post extends Entity
     {
         return $this->id;
     }
-
-
-
     /**
      * Set the value of id
      *
@@ -44,18 +40,18 @@ final class Post extends Entity
     /**
      * Get the value of id_topic
      */
-    public function getTopic_id()
+    public function getTopic()
     {
-        return $this->topic_id;
+        return $this->topic;
     }
     /**
      * Set the value of id_topic
      *
      * @return  self
      */
-    public function setTopic_id($id)
+    public function setTopic($id)
     {
-        $this->topic_id = $id;
+        $this->topic = $id;
         return $this;
     }
     /**

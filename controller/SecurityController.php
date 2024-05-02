@@ -104,12 +104,9 @@ class SecurityController extends AbstractController
             ));
             // on instancie UserManager
             $userManager = new UserManager();
-
             // si l'on trouve le token en bdd on le vide 
             // et retournons l'id_user, email
             $userInfos = $userManager->searchIfTokenlExist($token);
-
-
             if (!$userInfos) {
                 $_SESSION["error"] = "L'inscription à déjà été confirmer";
                 // $this->redirectTo("home", "index");
@@ -186,13 +183,13 @@ class SecurityController extends AbstractController
         $this->redirectTo("home", "index");
     }
     public function profile(){
-        //$this->restrictTo("ROLE_USER");
-        //$manager = new UserManager();
         return [
             "view" => VIEW_DIR."security/users.php",
             "section" => "profile",
             "meta_description" => "Liste des utilisateurs du forum",
-            "data" => []
+            "data" => [
+                "user" => $_SESSION['user'] 
+            ]
         ];
     }
 }

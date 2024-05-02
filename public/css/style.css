@@ -7,24 +7,24 @@
 }
 
 :root {
-  --primary-color: #a8a7a7;
-  --secondary-color: #ccc;
+  --color: #fff;
+  --primary-color: #ccc;
+  --secondary-color:#888888  ;
+  --link-color: rgb(0, 122, 156);
+  --hover-color: rgb(33, 53, 52);
   --border-color: #ccc;
   --background-color: rgba(29, 32, 47, 1);
-  /*--highlight-color: rgba(248, 248, 121, 0.6);*/
-  --color: #000;
-  /* --text-color:;*/
   --accent-color: transparent;
-  --link-color: rgb(0, 122, 156);
-  /*--error-color:;
+  /*--highlight-color: rgba(248, 248, 121, 0.6);
+  --text-color:;
+  --error-color:;
   --warning-color:;
   --success-color:;*/
-  --hover-color: rgb(33, 53, 52);
   /*--background-color-light:;*/
 }
 html,
 body {
-  /*background-color: var(--background-color);*/
+  background-color: var(--background-color) !important;
 }
 h1,
 h2,
@@ -34,13 +34,22 @@ h5,
 h6 {
   color: var(--link-color) !important;
 }
+/** GENERAL **/
+.color-primary {
+  color: var(--primary-color) !important;
+}
+.color-secondary {
+  color: var(--secondary-color) !important;
+}
 /* LINK GENERAL */
 a {
   color: var(--link-color) !important;
 }
 a:hover {
-  color: var(--primary-color) !important;
+  color: var(--secondary-color) !important;
 }
+
+
 /* PARAGRAPH */
 p {
   color: var(--secondary-color) !important;
@@ -55,6 +64,11 @@ p {
 /* NEWS */
 #news {
   background-color: var(--background-color) !important;
+}
+.accordion-card {
+  background-color:transparent !important;
+  padding:0;
+  margin:0;
 }
 /* ACCORDION */
 .get-content-post {
@@ -117,4 +131,7 @@ li span {
 }
 #footer {
   background-color: var(--background-color) !important;
+}
+.card-footer {
+  background-color:transparent !important;
 }

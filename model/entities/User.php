@@ -159,8 +159,8 @@ final class User extends Entity
             if (!is_iterable($roles)) {
                 $roles = json_decode($this->roles);
             }
-            foreach ($roles as $r) {
-                if (strcmp($role, $r)) return true;
+            foreach ($roles as $role) {
+                if (strcmp($role, $roles[0])) return true;
             }
         }
         return false;

@@ -7,6 +7,10 @@ class Session
 
     private static $categories = ['error', 'warning', 'success'];
 
+    /* ROLE_USER ROLE_CONTRIBUTOR 
+    
+       ROLE_AUTHOR ROLE_EDITOR ROLE_ADMIN
+
     /**
      *   ajoute un message en session, dans la catégorie $categ
      */

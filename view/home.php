@@ -1,9 +1,9 @@
-<h1 class="uk-padding-small uk-padding-remove-horizontal pridi-regular">Bienvenue sur le Forum</h1>
+<h1 class="uk-padding-small uk-padding-remove-horizontal pridi-regular uk-animation-slide-bottom">Bienvenue sur le Forum</h1>
 <div class="uk-section uk-padding-remove">
     <div class=" uk-container">
         <div class="" uk-grid>
             <div class="uk-width-expand">
-                <div class="uk-card uk-card-default uk-card-body">
+                <div class="uk-card uk-card-default uk-card-body accordion-card ">
                     <ul uk-accordion>
                         <?php for ($i = 0; $i < 10; $i++) { ?>
                             <li class="">

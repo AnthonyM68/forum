@@ -3,10 +3,12 @@
 $topics = $result["data"]['topics'];
 ?>
 
-<h1 class="pridi-regular" >Liste des topics</h1>
+<h1 class="pridi-regular">Liste des topics</h1>
 
 <?php
-foreach ($topics as $topic) { ?>
-    <p><a href="#"><?= $topic ?></a> par <?= $topic->getUser()->getEmail() ?></p>
+if ($topics) {
+    foreach ($topics as $topic) { ?>
+        <p><a href="#"><?= $topic ?></a> par <?= $topic->getUser()->getEmail() ?></p>
 
 <?php }
+}

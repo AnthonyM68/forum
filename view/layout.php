@@ -49,15 +49,17 @@
     </header>
     <!-- MAIN -->
     <main id="forum">
-        <div class="uk-container"><?= $page ?></div>
+        <div class="uk-container uk-animation-fade"><?= $page ?></div>
     </main>
     <footer id="footer"><?= $footer ?></footer>
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous">
-    </script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+        <!-- UIKIT -->
+        <script src="<?= PUBLIC_DIR ?>/js/uikit.js"></script>
     <!-- ICONS UIKIT -->
+    <script src="<?= PUBLIC_DIR ?>/js/uikit-icons.js"></script>
+    <!-- ICONS UIKIT MINIFY -->
     <script src="<?= PUBLIC_DIR ?>/js/uikit-icons.min.js"></script>
-    <!-- UIKIT -->
-    <script src="<?= PUBLIC_DIR ?>/js/uikit.js"></script>
+
     <!-- SCRIPT JS -->
     <script src="<?= PUBLIC_DIR ?>/js/script.js"></script>
 </body>

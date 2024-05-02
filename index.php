@@ -56,6 +56,7 @@ if (isset($_GET['id'])) {
 //ex : HomeController->users(null)
 $result = $ctrl->$action($id);
 
+
 /*--------CHARGEMENT PAGE--------*/
 if ($action == "ajax") { //si l'action était ajax
     //on affiche directement le return du contrôleur (càd la réponse HTTP sera uniquement celle-ci)

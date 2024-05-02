@@ -15,6 +15,11 @@ class PostManager extends Manager
     {
         parent::connect();
     }
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
     public function findLast5Posts()
     {
 
@@ -29,6 +34,12 @@ class PostManager extends Manager
             $this->className
         );
     }
+    /**
+     * Undocumented function
+     *
+     * @param [type] $id
+     * @return void
+     */
     public function deleteByTopicId($id)
     {
         $sql = "DELETE 
@@ -37,17 +48,39 @@ class PostManager extends Manager
                 ";
         return DAO::delete($sql, ['topic_id' => $id]);
     }
+    /**
+     * Undocumented function
+     *
+     * @param [type] $id
+     * @return void
+     */
+    public function findAllByIdTopic($id)
+    {
+        $sql = "SELECT t.* 
+                FROM " . $this->tableName . " t
+                WHERE t.topic_id = :topic_id
+                ";
+        //return DAO::select($sql, ['topic_id' => $id]);
+        return $this->getMultipleResults(
+            DAO::select($sql, ['topic_id' => $id]),
+            $this->className
+        );
+    }
+    /**
+     * Undocumented function
+     *
+     * @param [type] $id
+     * @return void
+     */
     public function findAllPostByIdTopicLIMIT($id)
     {
         $sql = "SELECT t.*
                 FROM " . $this->tableName . " t
                 WHERE t.topic_id = :topic_id";
 
-                return $this->getMultipleResults(
-                    DAO::select($sql, ['topic_id' => $id]), 
-                    $this->className
-                );
-        
+        return $this->getMultipleResults(
+            DAO::select($sql, ['topic_id' => $id]),
+            $this->className
+        );
     }
-    
 }

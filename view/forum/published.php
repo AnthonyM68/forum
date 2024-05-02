@@ -1,12 +1,12 @@
 <?php
 
-/*$ctrlname = "forum";
+$ctrlname = "forum";
 //on construit le namespace de la classe Controller à appeller
 $ctrlNS = "controller\\" . ucfirst($ctrlname) . "Controller";
 $ctrl = new $ctrlNS();
 
 $action = "findAllCategories";
-$categories = $ctrl->$action();*/
+$categories = $ctrl->$action();
 ?>
 <!-- add topic -->
 <?php
@@ -28,26 +28,6 @@ if ($result['section'] === "topic") { ?>
             </div>
             <div class="uk-margin">
                 <textarea name="content" class="post">Premier Article obligatoire</textarea>
-            </div>
-            <input type="submit" class="uk-button uk-button-primary uk-button-large uk-width-1-1">
-        </form>
-        <?php if (App\Session::isAdmin()) { ?>
-            <h3>Administration</h3>
-            <ul>
-                <li><a href="./index.php?ctrl=forum&action=fakerTopicWithFirstPost">Générer FakerTopic (x10)</a></li>
-                <li><a href="./index.php?ctrl=forum&action=dropTable">Vider table Topic</a></li>
-            </ul>
-        <?php } ?>
-    </div>
-<?php }
-?>
-<!-- add post -->
-<?php
-if ($result['section'] === "post") { ?>
-    <div class="uk-padding uk-column-1-1">
-        <form id="newCAt" name="newCat" action="./index.php?ctrl=forum&action=addPost" method="post" class="uk-form-horizontal uk-margin-large">
-            <div class="uk-margin">
-                <textarea name="content" class="post">Votre article</textarea>
             </div>
             <input type="submit" class="uk-button uk-button-primary uk-button-large uk-width-1-1">
         </form>
