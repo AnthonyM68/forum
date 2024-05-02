@@ -1,4 +1,5 @@
 <?php
+
 namespace Controller;
 
 use App\AbstractController;
@@ -20,28 +21,28 @@ class HomeController extends AbstractController implements ControllerInterface
         $categories = $categoryManager->findAll();
 
         foreach ($categories as $category) {
+            $categoryName = $category->getName();
             $topics = $topicManager->findTopicsByCategory($category->getId());
-            $nameCategory = $category->getName();
-
-            $result[$nameCategory][] = (object)["topics" => $topics];
-
-
-
-            if($topics) {
-                foreach($topics as $topic) {
+            $categoryData = [];
+            if ($topics) {
+                foreach ($topics as $topic) {
                     $posts = $postManager->findAllByIdTopic($topic->getId());
-                    $result[$nameCategory][] = (object)["posts" => $posts];
+                    $topicData = [
+                        'topic' => $topic,
+                        'posts' => $posts
+                    ];
+                    $categoryData[] = $topicData;
                 }
-            } 
+                $result[$categoryName] = $categoryData;
+            }   
         }
         return [
             "view" => VIEW_DIR . "home.php",
             "section" => "home",
             "meta_description" => "Page d'accueil du forum",
             "data" => [
-                "results" => $result
+                "categoryData" => $result
             ]
         ];
     }
-
 }
