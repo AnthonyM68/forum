@@ -18,7 +18,7 @@ $posts = $ctrl->$action();
 $posts = $posts["data"]['posts'];
 
 if (isset($result['section']) && $result['section'] === "home") {
-?>
+    ?>
     <!-- CONTAINER ACCORDION -->
     <div id="news" class="uk-container">
         <div class="uk-grid-match uk-child-width-expand@m" uk-grid>
@@ -37,11 +37,13 @@ if (isset($result['section']) && $result['section'] === "home") {
                                             <?php // on recherche avec une LIMIT 5 post parmis ce topic
                                             $postsLenght = $ctrl->findAllPostByIdTopicLIMIT($topic->getId());
                                             if ($postsLenght) {
-                                                foreach ($postsLenght as $post) { ?>
-                                                    <li><span class="color-primary"><?= $post->getContent() ?></span><span class="color-primary"> Crée le: <?= $post->getDateCreation() ?></span></li>
+                                            foreach ($postsLenght as $post) { ?>
+                                                <li>
+                                                    <span class="color-primary"><?= $post->getContent() ?></span>
+                                                    <span class="color-primary"> Crée le: <?= $post->getDateCreation() ?></span>
+                                                </li>
                                             <?php }
-                                            }
-                                            ?>
+                                            } ?>
                                         </ul>
                                         <!-- ACCORDION FOOTER -->
                                         <p class="uk-accordion-footer">
@@ -49,44 +51,20 @@ if (isset($result['section']) && $result['section'] === "home") {
                                             <!-- TOPIC AUTHOR -->
                                             <?php
                                             echo $topic->getUser()->getUsername() . " ";
-                                            $roles = $topic->getUser()->getRoles();
-                                            // Vérifier si $roles est un tableau ou une chaîne de caractères
-                                            if (is_array($roles)) {
-                                                // on retir le dernier élément du tableau
-                                                $lastElement = array_pop($roles);
-                                                // on initialise une string vide
-                                                $formattedRoles = "";
-                                                // s'il reste des rôles dans le tableau
-                                                foreach ($roles as $userRoles) {
-                                                    // on annalyse le contenu des rôles
-                                                    $formattedRoles .= ($userRoles === "ROLE_USER" ? "Membre du Forum" : ($userRoles === "ROLE_ADMIN" ? "Administrateur" : ""));
-                                                    // on ajoute la virgule
-                                                    $formattedRoles .= ", ";
-                                                }
-                                                // si la chaine existe et non vide
-                                                if ($formattedRoles !== "") {
-                                                    // on retir la dernière virgule
-                                                    $formattedRoles = rtrim($formattedRoles, ", ");
-                                                    // on la remplace par un "et"
-                                                    $formattedRoles .= " et";
-                                                }
-                                                // on ajoute un petit espace
-                                                $formattedRoles .= " ";
-                                                // on analyse le dernier élément du tableau de rôles initial
-                                                $formattedRoles .= $lastElement === "ROLE_USER" ? "Membre du Forum" : ($lastElement === "ROLE_ADMIN" ? "Administrateur" : "");
-                                            ?>
-                                                <small class="color-primary"><?= $formattedRoles . " " . $topic->getDateCreation() ?></span></small>
-                                            <?php } ?>
+                                            $roles = $topic->getUser()->getRoles(); ?>
+                                            <small
+                                                class="color-primary"><?= $ctrl->convertToString($post->getTopic()->getUser()->getRoles()) . " Depuis le: " . $topic->getDateCreation() ?></span></small>
                                         </p>
                                         <!-- LINKS -->
-                                        <span class="fa fa-edit" aria-hidden="true"></span>
-                                        <a href="./index.php?ctrl=forum&action=addPost&id=<?= $topic->getId() ?>">Répondre à la suite du topic</a>
                                         <span class="fa fa-reply" aria-hidden="true"></span>
-                                        <a href="./index.php?ctrl=forum&action=listPostByIdTopic&id=<?= $topic->getId() ?>">Rejoindre le topic</a>
+                                        <a href="./index.php?ctrl=forum&action=addPost&id=<?= $topic->getId() ?>">Répondre à la
+                                            suite du topic</a>
+                                        <!--<span class="fa fa-edit" aria-hidden="true"></span>
+                                        <a href="./index.php?ctrl=forum&action=listPostByIdTopic&id=<?= $topic->getId() ?>">Rejoindre le topic</a>-->
                                     </div>
 
                                 </li>
-                        <?php }
+                            <?php }
                         } ?>
                     </ul>
                 </div>
@@ -105,7 +83,7 @@ if (isset($result['section']) && $result['section'] === "home") {
                                 <li class="uk-open">
                                     <a class="uk-accordion-title" href><?= $post->getContent() ?></a>
                                 </li>
-                        <?php }
+                            <?php }
                         } ?>
                     </ul>
                 </div>

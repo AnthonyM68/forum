@@ -29,7 +29,7 @@ abstract class AbstractController
         die();
     }
 
-    public function restrictTo($role)
+    public function restrictTo($role) : void
     {
         // s'il n'y a pas de session de démarrer
         if (!Session::getUser() || !Session::getUser()->hasRole($role)) {
@@ -37,25 +37,25 @@ abstract class AbstractController
         }
         return;
     }
-    public function generateTokenUnique()
+    public function generateTokenUnique() :string
     {
         $length = 32;
         // méthode pour générer un jeton unique
         return  bin2hex(random_bytes($length));
     }
     // méthode pour hasher un mot de passe
-    public function generatePasswordHash($password)
+    public function generatePasswordHash($password) : string
     {
         return password_hash($password, PASSWORD_DEFAULT);
     }
     // méthode pour vérifer si un hash récupéré dans la base de données correspond
     // au mot de pass clair saisie par l'utilisateur lors de sa connexion
-    public function deHashPassword($password, $password_hash)
+    public function deHashPassword($password, $password_hash) : bool
     {
         return ((password_verify($password, $password_hash))) ?? false;
     }
     // nous renseignons les informations avec les arguments demandé
-    public function sentEmailTo(string $to, string $subject, string $body)
+    public function sentEmailTo(string $to, string $subject, string $body) 
     {
 
         // si on se trouve sur un serveur local on utilise phpmailer
@@ -95,10 +95,34 @@ abstract class AbstractController
             // on envois le mail et retournons la reponse de l'envois (true or false)
             return mail($to, $subject, $body, $headers);
         }
-        return [
-            "view" => VIEW_DIR . "home.php",
-            "meta_description" => "Créer un compte pour participer au Forum",
-            "data" => []
-        ];
+    }
+    public static function convertToString($roles) : string
+    {
+        if (is_array($roles)) {
+            // on retir le dernier élément du tableau
+            $lastElement = array_pop($roles);
+            // on initialise une string vide
+            $formattedRoles = "";
+            // s'il reste des rôles dans le tableau
+            foreach ($roles as $userRoles) {
+                // on annalyse le contenu des rôles
+                $formattedRoles .= ($userRoles === "ROLE_USER" ? "Membre du Forum" : ($userRoles === "ROLE_ADMIN" ? "Administrateur" : ""));
+                // on ajoute la virgule
+                $formattedRoles .= ", ";
+            }
+            // si la chaine existe et non vide
+            if ($formattedRoles !== "") {
+                // on retir la dernière virgule
+                $formattedRoles = rtrim($formattedRoles, ", ");
+                // on la remplace par un "et"
+                $formattedRoles .= " et";
+            }
+            // on ajoute un petit espace
+            $formattedRoles .= " ";
+            // on analyse le dernier élément du tableau de rôles initial
+            $formattedRoles .= $lastElement === "ROLE_USER" ? "Membre du Forum" : ($lastElement === "ROLE_ADMIN" ? "Administrateur" : "");
+        }
+        return $formattedRoles;
+
     }
 }

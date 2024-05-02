@@ -26,9 +26,8 @@ class ForumController extends AbstractController implements ControllerInterface
      *
      * @return void
      */
-    public function index()
+    public function index(): array
     {
-
         // créer une nouvelle instance de CategoryManager
         $categoryManager = new CategoryManager();
         // récupérer la liste de toutes les catégories grâce à la méthode 
@@ -68,7 +67,7 @@ class ForumController extends AbstractController implements ControllerInterface
      * @param [type] $id
      * @return void
      */
-    public function listTopicsByCategory($id)
+    public function listTopicsByCategory($id): array
     {
 
         $topicManager = new TopicManager();
@@ -91,7 +90,7 @@ class ForumController extends AbstractController implements ControllerInterface
      * @param [type] $id
      * @return void
      */
-    public function listPostByIdTopic($id)
+    public function listPostByIdTopic($id): array
     {
         $postManager = new PostManager();
         $posts = $postManager->findAllByIdTopic($id);
@@ -109,12 +108,9 @@ class ForumController extends AbstractController implements ControllerInterface
      *
      * @return void
      */
-    public function listLast5Topics()
+    public function listLast5Topics(): array
     {
-
         $topicManager = new TopicManager();
-        //$categoryManager = new CategoryManager();
-        //$category = $categoryManager->findOneById($id);
         $topics = $topicManager->findLast5Topics();
         return [
             "view" => VIEW_DIR . "forum/home.php",
@@ -130,12 +126,9 @@ class ForumController extends AbstractController implements ControllerInterface
      *
      * @return void
      */
-    public function listLast5Posts()
+    public function listLast5Posts(): array
     {
-
         $topicManager = new PostManager();
-        //$categoryManager = new CategoryManager();
-        //$category = $categoryManager->findOneById($id);
         $posts = $topicManager->findLast5Posts();
         return [
             "view" => VIEW_DIR . "forum/home.php",
@@ -150,7 +143,7 @@ class ForumController extends AbstractController implements ControllerInterface
      *
      * @return void
      */
-    public function addCategory()
+    public function addCategory(): array
     {
         $this->restrictTo("ROLE_USER");
 
@@ -177,31 +170,24 @@ class ForumController extends AbstractController implements ControllerInterface
      *
      * @return void
      */
-    public function addTopic()
+    public function addTopic(): array
     {
         $this->restrictTo("ROLE_USER");
 
-        if (isset($_POST['title']) && !empty($_POST['title']
-            && isset($_POST['content']) && !empty($_POST['content'])
-            && isset($_POST['category']) && !empty($_POST['category']))) {
-
-            $title = filter_input(INPUT_POST, 'title', FILTER_SANITIZE_SPECIAL_CHARS);
-
-            $content = filter_input(INPUT_POST, 'content', FILTER_SANITIZE_SPECIAL_CHARS);
-
-            $category_id = filter_input(INPUT_POST, 'category', FILTER_VALIDATE_INT);
-
+        // on filtre les entrées
+        $title = filter_input(INPUT_POST, 'title', FILTER_SANITIZE_SPECIAL_CHARS);
+        $content = filter_input(INPUT_POST, 'content', FILTER_SANITIZE_SPECIAL_CHARS);
+        $category_id = filter_input(INPUT_POST, 'category', FILTER_VALIDATE_INT);
+        // si elles sont toutes vérifiées
+        if ($title && $content && $category_id) {
             $topicManager = new TopicManager();
             $date = new DateTime();
-
             $id_topic = $topicManager->add([
                 "title" => $title,
                 "dateCreation" => $date->format('Y-m-d H:i:s'),
                 "category_id" => $category_id,
                 "user_id" => 1
             ]);
-
-
             $postManager = new PostManager();
             $result = $postManager->add([
                 "content" => $content,
@@ -228,18 +214,19 @@ class ForumController extends AbstractController implements ControllerInterface
      *
      * @return void
      */
-    public function addPost()
+    public function addPost(): array
     {
-        if (
-            isset($_POST['content']) && !empty($_POST['content'])
-            && isset($_POST['id']) && !empty($_POST['id'])
-        ) {
-            $contentPost = filter_input(INPUT_POST, 'content', FILTER_SANITIZE_SPECIAL_CHARS);
-            $topic_id = filter_input(INPUT_POST, 'topic_id', FILTER_VALIDATE_INT);
+        // on filtre les entrées
+        $content = filter_input(INPUT_POST, 'content', FILTER_SANITIZE_SPECIAL_CHARS);
+        $topic_id = filter_input(INPUT_POST, 'topic_id', FILTER_VALIDATE_INT);
+        $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+        // si elles sont toutes vérifiées
+        if ($content && $topic_id) {
+
             $postManager = new PostManager();
             $date = new DateTime();
             $result = $postManager->add([
-                "content" => $contentPost,
+                "content" => $content,
                 "dateCreation" => $date->format('Y-m-d H:i:s'),
                 "topic_id" => $topic_id
             ]);
@@ -249,15 +236,18 @@ class ForumController extends AbstractController implements ControllerInterface
             } else {
                 Session::addFlash("error", "Une erreur est survenue veuillez recommencer");
             }
-        } else if (isset($_GET['id']) && !empty($_GET['id'])) {
+        } else if ($id) {
             $id = $_GET['id'];
             $postManager = new PostManager();
             $posts = $postManager->findAllByIdTopic($id);
+            $topicManager = new TopicManager();
+            $topic = $topicManager->findOneById($id);
             return [
                 "view" => VIEW_DIR . "forum/topic.php",
                 "section" => "edit-topic",
                 "meta_description" => "Ajouter un Article : ",
                 "data" => [
+                    "topic" => $topic,
                     "posts" => $posts
                 ]
             ];
@@ -279,7 +269,7 @@ class ForumController extends AbstractController implements ControllerInterface
      * ONLY FOR DEVELOPMENT
      * @return void
      */
-    public function fakerTopicWithFirstPost()
+    public function fakerTopicWithFirstPost(): array
     {
         // on crée une région de format de données
         $fakerFr = Factory::create('fr_FR');

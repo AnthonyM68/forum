@@ -192,4 +192,18 @@ class SecurityController extends AbstractController
             ]
         ];
     }
+            
+    public function allUsers(){
+        $this->restrictTo("ROLE_USER");
+        $manager = new UserManager();
+        $users = $manager->findAll(['dateRegister', 'DESC']);
+        return [
+            "view" => VIEW_DIR."security/users.php",
+            "section" => "usersList",
+            "meta_description" => "Liste des utilisateurs du forum",
+            "data" => [ 
+                "users" => $users
+            ]
+        ];
+    }
 }

@@ -18,7 +18,7 @@
                 // ADMINISTRATOR
                 if (App\Session::isAdmin()) { ?>
                     <li>
-                        <a href="index.php?ctrl=home&action=users">
+                        <a href="index.php?ctrl=security&action=allUsers">
                             <span class="fas fa-list-ol"></span>
                             Liste des membres
                         </a>

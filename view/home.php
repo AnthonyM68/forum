@@ -1,18 +1,34 @@
-<h1 class="uk-padding-small uk-padding-remove-horizontal pridi-regular uk-animation-slide-bottom">Bienvenue sur le Forum</h1>
+<?php
+
+$categories = $result['data']['categories'];
+foreach ($categories as $category) {
+    var_dump($category);
+}
+?>
+
+<h1 class="uk-padding-small uk-padding-remove-horizontal pridi-regular uk-animation-slide-bottom">Bienvenue sur le Forum
+</h1>
 <div class="uk-section uk-padding-remove">
     <div class=" uk-container">
         <div class="" uk-grid>
             <div class="uk-width-expand">
                 <div class="uk-card uk-card-default uk-card-body accordion-card ">
                     <ul uk-accordion>
-                        <?php for ($i = 0; $i < 10; $i++) { ?>
-                            <li class="">
-                                <a class="uk-accordion-title pridi-medium" href><?= $fakerFr->sentence ?></a>
-                                <div class="uk-accordion-content">
-                                    <p><?= $fakerFr->text ?></p>
+                        <?php
+                        if ($categories) {
+                            foreach ($categories as $category) { ?>
+                                <!-- Modèle de réponse simple :-->
+                                <div class="uk-card uk-card-default uk-card-body">
+                                    <div class="uk-grid-small uk-flex-middle" uk-grid>
+
+                                        <div class="uk-width-expand">
+                                            <h4 class="uk-card-title"><?= $category->getName() ?></h4>
+
+                                        </div>
+                                    </div>
                                 </div>
-                            </li>
-                        <?php }
+                            <?php }
+                        }
                         ?>
                     </ul>
                 </div>
@@ -25,11 +41,14 @@
                         <div class="uk-grid-small uk-flex-middle" uk-grid>
                             <!-- image -->
                             <div class="uk-width-auto">
-                                <img class="uk-border-circle" width="40" height="40" src="./public/img/profils/moi.jpg" alt="Avatar">
+                                <img class="uk-border-circle" width="40" height="40" src="./public/img/profils/moi.jpg"
+                                    alt="Avatar">
                             </div>
                             <div class="uk-width-expand">
-                                <h3 class="uk-card-title uk-margin-remove-bottom  pridi-regular"><?= $fakerFr->name ?></h3>
-                                <p class="uk-text-meta uk-margin-remove-top"><time datetime="2016-04-01T19:00"><?= $fakerFr->date('d/m/Y') ?></time></p>
+                                <h3 class="uk-card-title uk-margin-remove-bottom  pridi-regular"><?= $fakerFr->name ?>
+                                </h3>
+                                <p class="uk-text-meta uk-margin-remove-top"><time
+                                        datetime="2016-04-01T19:00"><?= $fakerFr->date('d/m/Y') ?></time></p>
                             </div>
                         </div>
                     </div>
