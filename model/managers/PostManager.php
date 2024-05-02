@@ -10,7 +10,7 @@ class PostManager extends Manager
     // on indique la classe POO et la table correspondante en BDD pour le manager concerné
     protected $className = "Model\Entities\Post";
     protected $tableName = "post";
-
+    
     public function __construct()
     {
         parent::connect();
@@ -48,13 +48,8 @@ class PostManager extends Manager
                 ";
         return DAO::delete($sql, ['topic_id' => $id]);
     }
-    /**
-     * Undocumented function
-     *
-     * @param [type] $id
-     * @return void
-     */
-    public function findAllByIdTopic($id)
+
+    public function findAllByIdTopic($id) 
     {
         $sql = "SELECT t.* 
                 FROM " . $this->tableName . " t
@@ -66,11 +61,12 @@ class PostManager extends Manager
             $this->className
         );
     }
+    
     /**
      * Undocumented function
      *
      * @param [type] $id
-     * @return void
+     * 
      */
     public function findAllPostByIdTopicLIMIT($id)
     {

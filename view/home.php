@@ -1,9 +1,7 @@
 <?php
 
-$categories = $result['data']['categories'];
-foreach ($categories as $category) {
-    var_dump($category);
-}
+$results = $result['data']['results'];
+
 ?>
 
 <h1 class="uk-padding-small uk-padding-remove-horizontal pridi-regular uk-animation-slide-bottom">Bienvenue sur le Forum
@@ -11,24 +9,25 @@ foreach ($categories as $category) {
 <div class="uk-section uk-padding-remove">
     <div class=" uk-container">
         <div class="" uk-grid>
+
             <div class="uk-width-expand">
                 <div class="uk-card uk-card-default uk-card-body accordion-card ">
                     <ul uk-accordion>
                         <?php
-                        if ($categories) {
-                            foreach ($categories as $category) { ?>
-                                <!-- Modèle de réponse simple :-->
-                                <div class="uk-card uk-card-default uk-card-body">
-                                    <div class="uk-grid-small uk-flex-middle" uk-grid>
-
-                                        <div class="uk-width-expand">
-                                            <h4 class="uk-card-title"><?= $category->getName() ?></h4>
-
-                                        </div>
-                                    </div>
+                    if ($results) {
+                            foreach ($results as $category => $value) { ?>
+                            <li class="uk-closed">
+                                <a class="uk-accordion-title color-primary" href><h3><?= $category ?></h3></a>
+                                <div class="uk-accordion-content">
+                                    
+                                    <!-- LIST TOPIC -->
+                                    <ul>
+                                        <?= var_dump($value->topics) ?>
+                                    </ul>
                                 </div>
-                            <?php }
-                        }
+                            </li>
+                    <?php }
+                    }
                         ?>
                     </ul>
                 </div>

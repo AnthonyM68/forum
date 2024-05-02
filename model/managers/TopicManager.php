@@ -62,17 +62,16 @@ class TopicManager extends Manager
      * @param [type] $id
      * @return void
      */
-    public function findAllPostByIdTopic()
+    /*public function findAllPostByIdTopic()
     {
-        $sql = "SELECT t.*,
+       $sql = "SELECT t.*,
                 p.*
                 FROM " . $this->tableName . " t
-                LEFT JOIN post p ON post.topic_id = t.id_topic";
+                INNER JOIN post p ON p.topic_id = t.id_topic";
 
         return $this->getMultipleResults(
             DAO::select($sql, []),
             $this->className
         );
-    }
-
+    }*/
 }
