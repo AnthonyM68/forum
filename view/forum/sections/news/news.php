@@ -21,6 +21,7 @@ if (isset($result['section']) && $result['section'] === "home") {
     ?>
     <!-- CONTAINER ACCORDION -->
     <div id="news" class="uk-container">
+    <hr class="uk-divider-icon">
         <div class="uk-grid-match uk-child-width-expand@m" uk-grid>
             <div class="uk-animation-fade">
                 <div class="uk-card uk-card-default uk-card-body accordion-card">
@@ -89,6 +90,7 @@ if (isset($result['section']) && $result['section'] === "home") {
                 </div>
             </div>
         </div>
+        <hr class="uk-divider-icon">
     </div>
 <?php }
 ?>

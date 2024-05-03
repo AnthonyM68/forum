@@ -49,7 +49,14 @@
     </header>
     <!-- MAIN -->
     <main id="forum">
-        <div class="uk-container uk-animation-fade"><?= $page ?></div>
+        <div class="uk-container uk-animation-fade">
+            <nav aria-label="Breadcrumb">
+                <ul id="nav-breadcrumb" class="uk-breadcrumb">
+                    <!-- content request -->
+                </ul>
+            </nav>
+            <?= $page ?>
+        </div>
     </main>
     <footer id="footer"><?= $footer ?></footer>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>

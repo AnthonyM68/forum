@@ -1,27 +1,22 @@
+<?php $categories = $result["data"]['categories']; ?>
+<h1 class="uk-animation-fade pridi-regular">Liste des Catégories</h1>
+<!-- CATEGORIES LIST -->
 <?php
-$categories = $result["data"]['categories'];
-?>
-
-<h1 class="uk-animation-fade pridi-regular">Catégories</h1>
-
-<?php
-if ($categories) {
-    foreach ($categories as $category) { ?>
-<div class="uk-margin">
-    <!--<div class="uk-card uk-card-default uk-card-small">
-        <div class="uk-card-body">
-            <div class="uk-grid-small uk-flex-middle" uk-grid>
-                 Contenu de la carte -->
-                <div class="uk-padding uk-width-expand">
-                    <h4 class="uk-card-title">
-                        <a class="uk-animation-fade pridi-light" href="index.php?ctrl=forum&action=listTopicsByCategory&id=<?= $category->getId() ?>"><?= $category->getName() ?></a>
-                    </h4>
-                </div>
-            <!--</div>
+if ($categories) { ?>
+    <div class="uk-animation-fade uk-container">
+        <div class="uk-grid-margin uk-grid uk-grid-stack" uk-grid>
+            <div class="uk-width-1-1@m">
+                <ul>
+                    <?php
+                    foreach ($categories as $category) { ?>
+                        <li>
+                            <a class="uk-animation-fade pridi-light" href="index.php?ctrl=forum&action=listTopicsByCategory&id=<?= $category->getName() ?>">
+                                <?= $category->getName() ?>
+                            </a>
+                        </li>
+                    <?php } ?>
+                </ul>
+            </div>
         </div>
-    </div>-->
-</div>
-
-
+    </div>
 <?php }
-}

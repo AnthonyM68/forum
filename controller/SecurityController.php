@@ -32,7 +32,7 @@ class SecurityController extends AbstractController
 
             if ($emailExist) {
                 // l'email existe donc l'user est déjà inscrit
-                Session::addFlash("success", "Déjà inscrit");
+                Session::addFlash("success", "Vous êtes déjà inscrit");
                 $this->redirectTo("home", "index");
             }
             // à prévoir un regex de qualité
@@ -108,7 +108,7 @@ class SecurityController extends AbstractController
             // et retournons l'id_user, email
             $userInfos = $userManager->searchIfTokenlExist($token);
             if (!$userInfos) {
-                $_SESSION["error"] = "L'inscription à déjà été confirmer";
+                Session::addFlash("error", "L'inscription à déjà été confirmer");
                 // $this->redirectTo("home", "index");
             }
             if (!empty($userInfos->getToken())) {
@@ -126,13 +126,13 @@ class SecurityController extends AbstractController
                         $content = "<p>Votre inscription est confirmé</p>";
                         // on envois l'email
                         $result = $this->sentEmailTo($userInfos->getEmail(), $subject, $content);
-                        $_SESSION["success"] = "Votre inscription a bien été validé";
+                        Session::addFlash("success", "Votre inscription a bien été validé");
 
                         $this->redirectTo("home", "index");
                     }
-                    $_SESSION["success"] = "La mise à jour du rôle a échouée, veuillez recommencer";
+                    Session::addFlash("success", "La mise à jour du rôle a échouée, veuillez recommencer");
                 }
-                $_SESSION["success"] = "La vérification a échouée, veuillez recommencer";
+                Session::addFlash("success", "La vérification a échouée, veuillez recommencer");
             }
          } 
         // si l'utilisateur se connecte
@@ -145,7 +145,7 @@ class SecurityController extends AbstractController
             $password = filter_input(INPUT_POST, 'password', FILTER_VALIDATE_REGEXP, array("options" => array("regexp" => "/.{6,25}/")));
             if (!$password) {
                 // on affiche une alert a l'utilisateur
-                $_SESSION["error"] = "Le mot de passe ne respecte pas les critères de soumission";
+                Session::addFlash("error", "Le mot de passe ne respecte pas les critères de soumission");
                 $this->redirectTo("home", "index");
             }
             // on vérifie si l'email existe dans la base de données table user
@@ -153,7 +153,7 @@ class SecurityController extends AbstractController
 
             if (!$userInfos) {
                 // on affiche une alert a l'utilisateur
-                $_SESSION["error"] = "Vous n'êtes pas inscrit sur le Forum";
+                Session::addFlash("error", "Vous n'êtes pas inscrit sur le Forum");
                 $this->redirectTo("home", "index");
             }
             // on vérifie que le hash correspond au password
@@ -175,20 +175,21 @@ class SecurityController extends AbstractController
     }
     public function logout()
     {
-        $_SESSION["success"] = "Au revoir " . $_SESSION['username'];
         if($_SESSION['user']) {
             unset($_SESSION['user']);
+            Session::addFlash("success", "Au revoir " . $_SESSION['username']);
         }
         
         $this->redirectTo("home", "index");
     }
     public function profile(){
+        $userManager = new UserManager();
         return [
             "view" => VIEW_DIR."security/users.php",
             "section" => "profile",
-            "meta_description" => "Liste des utilisateurs du forum",
-            "data" => [
-                "user" => $_SESSION['user'] 
+            "meta_description" => "Profil utilisateur",
+            "data" => [ 
+                "user" => $userManager->infoWithoutPassword($_SESSION['user']->getId())
             ]
         ];
     }
@@ -196,13 +197,12 @@ class SecurityController extends AbstractController
     public function allUsers(){
         $this->restrictTo("ROLE_USER");
         $manager = new UserManager();
-        $users = $manager->findAll(['dateRegister', 'DESC']);
         return [
             "view" => VIEW_DIR."security/users.php",
             "section" => "usersList",
             "meta_description" => "Liste des utilisateurs du forum",
             "data" => [ 
-                "users" => $users
+                "users" => $manager->findAll(['dateRegister', 'DESC'])
             ]
         ];
     }

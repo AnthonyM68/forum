@@ -1,14 +1,6 @@
 <div class="uk-animation-fade uk-section">
     <div class="uk-container">
-        <nav aria-label="Breadcrumb">
-            <ul class="uk-breadcrumb pridi-regular">
-                <li><a href="./">Accueil</a></li>
-                <li><a href="#">lien 1</a></li>
-                <li><a href="#">Lien 2</a></li>
-                <li><span aria-current="page">Lorem ipsum dolor sit amet.</span></li>
-            </ul>
-        </nav>
-        <div class="uk-grid-match uk-child-width-expand@m" uk-grid>
+        <div class="uk-grid-match uk-child-width-expand@m uk-text-center" uk-grid>
             <div class="pridi-regular">
                 <div class="uk-card uk-card-default uk-card-body card-footer">
                     <p>&copy; <?= date_create("now")->format("Y") ?> -
@@ -18,7 +10,7 @@
                 </div>
             </div>
             <div>
-                <div class="uk-card uk-card-default uk-card-body card-footer">
+                <div class="uk-card uk-card-default uk-card-body card-footer uk-text-center">
                     <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
                 </div>
             </div>

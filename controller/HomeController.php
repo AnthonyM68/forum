@@ -60,6 +60,7 @@ class HomeController extends AbstractController implements ControllerInterface
             "data" => [
                 "categoryData" => $result
             ],
+            // Statistiques pour la page d'accueil
             "countUsers" => $userManager->countUser(),
             "countTopics" => $topicManager->countTopics(),
             "countPosts" => $postManager->countPosts(),

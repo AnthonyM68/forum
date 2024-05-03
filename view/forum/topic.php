@@ -3,7 +3,6 @@
 $topic = $result["data"]['topic'];
 // ID user
 $user_id = $topic->getUser()->getId();
-var_dump($user_id);
 // on recherche tous les posts du topic
 $posts = $result["data"]['posts'];
 // le nom de controleur à utilisé

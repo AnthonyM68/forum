@@ -145,5 +145,20 @@ class UserManager extends Manager
             $this->className
         );
     }
+    public function infoWithoutPassword($id)
+    {
+        $sql = "SELECT
+        t.username,
+        t.role,
+        t.email
+        FROM " . $this->tableName . " t
+        WHERE t.id_user = :id";
+
+        // la requête renvoie plusieurs enregistrements --> getMultipleResults
+        return $this->getOneOrNullResult(
+            DAO::select($sql, ["id" => $id], false),
+            $this->className
+        );
+    }
     
 }
