@@ -16,8 +16,9 @@ final class User extends Entity
     private $password;
     private $email;
     private $dateRegister;
-    private $roles;
+    private $role;
     private $token;
+    private $token_validity;
 
     public function __construct($data)
     {
@@ -63,7 +64,7 @@ final class User extends Entity
     /**
      * Get the value of password
      */
-    public function getpassword()
+    public function getPassword()
     {
         return $this->password;
     }
@@ -116,7 +117,7 @@ final class User extends Entity
      */
     public function getRoles()
     {
-        return json_decode($this->roles);
+        return json_decode($this->role);
     }
     /**
      * Set the value of role
@@ -125,7 +126,7 @@ final class User extends Entity
      */
     public function setRole($role)
     {
-        $this->roles = $role;
+        $this->role = $role;
         return $this;
     }
     /**
@@ -154,16 +155,35 @@ final class User extends Entity
      */
     public function hasRole($role)
     {
-        if (!empty($this->roles)) {
-            $roles = $this->roles;
-            if (!is_iterable($roles)) {
-                $roles = json_decode($this->roles);
+        if (!empty($this->role)) {
+            $role = $this->role;
+            if (!is_iterable($role)) {
+                $role = json_decode($this->role);
             }
-            foreach ($roles as $role) {
-                if (strcmp($role, $roles[0])) return true;
+            foreach ($role as $role) {
+                if (strcmp($role, $role[0])) return true;
             }
         }
         return false;
+    }
+    /**
+     * Set the value of token validity
+     *
+     * @return  self
+     */
+    public function getTokenValidity()
+    {
+        return $this->token_validity;
+    }
+    /**
+     * Set the value of token validity
+     *
+     * @return  self
+     */
+    public function setTokenValidity($token_validity)
+    {
+        $this->token_validity = $token_validity;
+        return $this;
     }
     public function __toString()
     {

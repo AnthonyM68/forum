@@ -43,7 +43,7 @@
                 </div>
             </div>
             <div class="uk-width-1-4@m uk-padding-small">
-                <div class="uk-card uk-card-default uk-width-1-1@m  uk-box-shadow-large">
+                <div class="uk-card uk-card-default accordion-card uk-width-1-1@m uk-box-shadow-large">
                     <div class="uk-card-header">
                         <h3 class="uk-card-title pridi-medium">Dernier inscrit</h3>
                         <!-- PROFIL LAST USER-->

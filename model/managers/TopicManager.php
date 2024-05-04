@@ -72,22 +72,4 @@ class TopicManager extends Manager
             $this->className
         );
     }
-        /**
-     * Undocumented function
-     *
-     * @param [type] $id
-     * 
-     */
-    /*public function findAllPostByIdTopic()
-    {
-       $sql = "SELECT t.*,
-                p.*
-                FROM " . $this->tableName . " t
-                INNER JOIN post p ON p.topic_id = t.id_topic";
-
-        return $this->getMultipleResults(
-            DAO::select($sql, []),
-            $this->className
-        );
-    }*/
 }

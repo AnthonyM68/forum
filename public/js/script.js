@@ -77,7 +77,28 @@ function generateBreadcrumb(currentUrl, urlMappings) {
 
     return breadcrumb.join(' > '); // Utilisez ">" pour le symbole ">"
 }
-
+// effectuer la suppression du compte 
+function deleteAccount() {
+    // Effectuer une requête AJAX 
+    fetch('/delete-account', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            alert("Votre compte a été supprimé avec succès.");
+            window.location.href = 'index.php?ctrl=forum&action=home';
+        } else {
+            alert("Une erreur s'est produite lors de la suppression de votre compte.");
+        }
+    })
+    .catch(error => {
+        console.error('Erreur lors de la suppression du compte:', error);
+        alert("Une erreur s'est produite lors de la suppression de votre compte. Veuillez réessayer plus tard.");
+    });
+}
 
 
 $(document).ready(function () {
@@ -128,18 +149,31 @@ $(document).ready(function () {
         '/index.php?ctrl=forum&action=index': 'Topic',
         
     };
+    // on recherche l'url
+    let currentUrl = window.location.href; 
+    // on récupérer le chemin après "index.php"
+    let pathAfterIndex = currentUrl.substr(currentUrl.indexOf('/index.php')); 
 
-    let currentUrl = window.location.href; // Utilisation de window.location.href pour obtenir l'URL complète
-    let pathAfterIndex = currentUrl.substr(currentUrl.indexOf('/index.php')); // Récupérer le chemin après "index.php"
-
-    // Générer le fil d'Ariane
+    // on génére le fil d'Ariane
     let breadcrumb = generateBreadcrumb(pathAfterIndex, urlMappings);
     console.log('Breadcrumb:', breadcrumb);
 
     let navBreadcrumb = document.getElementById('nav-breadcrumb');
 
-    // Insérer le fil d'Ariane généré dans l'élément avec l'ID 'nav-breadcrumb'
+    // Insérer le fil d'Ariane généré dans le DOM
     if (navBreadcrumb) {
         navBreadcrumb.innerHTML = breadcrumb;
     }
+    // suppresion du compte utilisateur par l'espace profil
+    let deleteAccount = document.getElementById('delete-account-btn');
+
+    // on place un écouteur d'événement su rle bouton de suppresion
+    deleteAccount.addEventListener('click', function(event) {
+        event.preventDefault();
+        // Afficher une boîte de dialogue de confirmation
+        if (confirm("Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible. Néanmoins vos données de compte utilisateur seront détruite sans pour autant affecté vos fil de discutions qui seront toujours présentes mais anonymisés")) {
+            // Si l'utilisateur confirme, effectuer la suppression du compte via une requête AJAX
+            deleteAccount();
+        }
+    });
 })

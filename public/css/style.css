@@ -48,8 +48,13 @@ a {
 a:hover {
   color: var(--secondary-color) !important;
 }
-
-
+/* BUTTON */
+button {
+  color: var(--link-color) !important;
+}
+button:hover {
+  color: var(--secondary-color) !important;
+}
 /* PARAGRAPH */
 p {
   color: var(--secondary-color) !important;

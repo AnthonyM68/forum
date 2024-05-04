@@ -42,6 +42,7 @@ abstract class DAO
     public static function insert($sql)
     {
         try {
+            // SQL
             $stmt = self::$bdd->prepare($sql);
             $stmt->execute();
             //on renvoie l'id de l'enregistrement qui vient d'être ajouté en base, 
@@ -55,6 +56,7 @@ abstract class DAO
     public static function update($sql, $params)
     {
         try {
+            // SQL
             $stmt = self::$bdd->prepare($sql);
 
             //on renvoie l'état du statement après exécution (true ou false)
@@ -68,6 +70,7 @@ abstract class DAO
     public static function delete($sql, $params)
     {
         try {
+            // SQL
             $stmt = self::$bdd->prepare($sql);
 
             //on renvoie l'état du statement après exécution (true ou false)
@@ -91,6 +94,7 @@ abstract class DAO
     public static function select($sql, $params = null, bool $multiple = true): ?array
     {
         try {
+            // SQL
             $stmt = self::$bdd->prepare($sql);
             $stmt->execute($params);
 

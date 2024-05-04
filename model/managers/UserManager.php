@@ -6,6 +6,7 @@ use App\Manager;
 use App\DAO;
 
 use DateTime;
+
 class UserManager extends Manager
 {
 
@@ -20,9 +21,9 @@ class UserManager extends Manager
     /**
      * Counter users
      *
-     * @return void
+     * @return int 
      */
-    public function countUser() 
+    public function countUser()
     {
         $sql = "SELECT t.*
         FROM " . $this->tableName . " t";
@@ -31,11 +32,31 @@ class UserManager extends Manager
             DAO::select($sql),
             $this->className
         ));
-        
+
         return count($results);
     }
-    
-    
+    /**
+     * Return user by id
+     *
+     * @param [type] $id
+     * @return void
+     */
+    public function searchForDeleteAccount($id)
+    {
+        $sql = "SELECT
+        t.id_user,
+        t.password,
+        t.email
+        FROM " . $this->tableName . " t
+        WHERE t.id_user = :id";
+
+        // la requête renvoie plusieurs enregistrements --> getMultipleResults
+        return $this->getOneOrNullResult(
+            DAO::select($sql, ['id' => $id], false),
+            $this->className
+        );
+    }
+
     /**
      * Return email if exist
      *
@@ -55,8 +76,8 @@ class UserManager extends Manager
             $this->className
         );
     }
-        /**
-     * Return email if exist
+    /**
+     * Return password if exist by email
      *
      * @param [type] $email
      * @return void
@@ -103,8 +124,13 @@ class UserManager extends Manager
     {
         $sql = "SELECT 
         t.id_user,
+        t.username,
+        t.password,
         t.email,
-        t.token 
+        t.dateRegister,
+        t.role,
+        t.token,
+        t.token_validity
         FROM " . $this->tableName . " t
         WHERE t.token = :token";
 
@@ -114,13 +140,24 @@ class UserManager extends Manager
             $this->className
         );
     }
-    public function resetToken($token)
+    public function updateToken($token, $id)
     {
         $updateSql = "UPDATE 
         " . $this->tableName . " t 
+        SET t.token = :token 
+        WHERE t.id_user = :id_user";
+        return DAO::update($updateSql, [
+            'id_user' => $id,
+            'token' => $token
+        ]);
+    }
+    public function resetToken($token)
+    {
+        $resetSql = "UPDATE 
+        " . $this->tableName . " t 
         SET t.token = NULL 
         WHERE t.token = :token";
-        return DAO::update($updateSql, ['token' => $token]);
+        return DAO::update($resetSql, ['token' => $token]);
     }
     public function updateRoleUser($role, $id)
     {
@@ -133,9 +170,9 @@ class UserManager extends Manager
     public function infosUserConnectSession($email)
     {
         $sql = "SELECT
+        t.id_user,
         t.username,
-        t.role,
-        t.id_user
+        t.role
         FROM " . $this->tableName . " t
         WHERE t.email = :email";
 
@@ -148,6 +185,7 @@ class UserManager extends Manager
     public function infoWithoutPassword($id)
     {
         $sql = "SELECT
+        t.id_user,
         t.username,
         t.role,
         t.email
@@ -160,5 +198,37 @@ class UserManager extends Manager
             $this->className
         );
     }
-    
+    public function updateDataHashed($data)
+    {
+        // en cours 
+
+        
+        /*$keys = array_keys($data);
+        $values = array_values($data);
+        $set = [];
+        foreach ($keys as $key) {
+            if($key !== "id_user") {
+                $set[] = "$key = :$key";
+            }
+        }
+
+        $sql = "UPDATE 
+        " . $this->tableName . " t
+        SET " . $setString . "
+        WHERE t.id_user = :id_user";
+
+        return $this->getOneOrNullResult(
+            DAO::update($sql, [
+                "username " => $data['username'],
+                "password " => $data['password'],
+                "email " => $data['email'],
+                "token " => $data['token'],
+                "dateRegister " => $data['dateRegister'],
+                "role " => $data['role'],
+                "token_validity " => $data['token_validity'],
+                "id_user" => $data['id_user']
+            ]),
+            $this->className
+        );*/
+    }
 }

@@ -70,7 +70,9 @@
                                                 </div>
                                             </div>
                                             <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid">
-                                                <label><input class="uk-checkbox" type="checkbox">J'accèpte les conditions d'utilisation.</label>
+                                                <label>
+                                                    <input name="rgpd" class="uk-checkbox" type="checkbox">J'accèpte les conditions d'utilisation.
+                                                </label>
                                             </div>
                                             <div class="uk-margin">
                                                 <input type="submit" class="uk-button uk-button-primary uk-button-large uk-width-1-1" value="Créer compte">
