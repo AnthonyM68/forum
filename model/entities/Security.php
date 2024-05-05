@@ -12,7 +12,7 @@ final class Security extends Entity
 {
 
     private $id;
-    private $encrypted_data;
+    private $encryptedData;
     private $iv;
     private $user;
     private $token;
@@ -47,16 +47,16 @@ final class Security extends Entity
      */
     public function getEncryptedData()
     {
-        return $this->encrypted_data;
+        return $this->encryptedData;
     }
     /**
      * Set the value of encrypted_data
      *
      * @return  self
      */
-    public function setEncryptedData($encrypted_data)
+    public function setEncryptedData($encryptedData)
     {
-        $this->encrypted_data = $encrypted_data;
+        $this->encryptedData = $encryptedData;
         return $this;
     }
     /**
@@ -100,6 +100,11 @@ final class Security extends Entity
     {
         return $this->token;
     }
+    public function setToken($token)
+    {
+        $this->token = $token;
+        return $this;
+    }
     /**
      * Set the value of token validity
      *
@@ -107,7 +112,7 @@ final class Security extends Entity
      */
     public function getTokenValidity()
     {
-        return $this->token;
+        return $this->tokenValidity;
     }
     /**
      * Set the value of token validity

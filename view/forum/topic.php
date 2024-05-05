@@ -26,7 +26,7 @@ $ctrl = new $ctrlNS(); ?>
         </div>
     </div>
     <div class="uk-text-right">
-        <?= $ctrl->convertToString($topic->getUser()->getRoles()) ?>
+        <?= $ctrl->convertToString($topic->getUser()->getRole()) ?>
     </div>
 </div>
 
@@ -67,7 +67,7 @@ if ($posts) {
                 </div>
             </div>
             <div class="uk-text-right">
-                <?= $ctrl->convertToString($post->getTopic()->getUser()->getRoles()) ?>
+                <?= $ctrl->convertToString($post->getTopic()->getUser()->getRole()) ?>
                 <?= $post->getDateCreation() ?>
             </div>
         </div>

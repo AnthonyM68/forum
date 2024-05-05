@@ -1,3 +1,34 @@
+function displayFormConfirmDelete(id)
+{
+    return ` <div class="uk-animation-fade uk-container">
+    <div class="uk-grid-margin uk-grid uk-grid-stack" uk-grid>
+        <div class="uk-width-1-1@m">
+            <h1 class="pridi-regular uk-animation-slide-top">Confirmez la suppresion par mot de passe</h1>
+            <form id="delete-account" action="index.php?ctrl=security&action=deleteAccount&id=${id}" method="post" uk-grid>
+                <legend class="uk-legend color-secondary uk-animation-slide-top"></legend>
+                <div class="uk-width-1-2@s">
+                    <div class="uk-grid-small" uk-grid>
+                        <div class="uk-width-1-2@s">
+                            <label class="uk-form-label" for="password">Nouveau mot de passe</label>
+                            <div class="uk-form-controls">
+                                <input name="password" class="uk-input uk-width-1-1" type="password" uk-autocomplete>
+                            </div>
+                        </div>
+                        <div class="uk-width-1-2@s">
+                            <label class="uk-form-label" for="repeat_password">Répéter mot de passe</label>
+                            <div class="uk-form-controls">
+                                <input name="repeat_password" class="uk-input uk-width-1-1" type="password" uk-autocomplete>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="uk-margin uk-button uk-button-default">Soumettre</button>
+                </div>
+                <!-- second col -->
+            </form>
+        </div>
+    </div>
+    </div>`;
+}
 // faire defiler la page jusqu'à une ancre déclarer dans le controller
 function scrollToAnchor(anchor) {
     let element = document.querySelector(anchor);
@@ -77,29 +108,40 @@ function generateBreadcrumb(currentUrl, urlMappings) {
 
     return breadcrumb.join(' > '); // Utilisez ">" pour le symbole ">"
 }
+
+// IN WORKING 
+
 // effectuer la suppression du compte 
 function deleteAccount() {
+    let element = document.querySelector("#delete-account-btn");
+    let id = element.dataset.id;
+    //alert(`index.php?ctrl=security&action=deleteAccount&id=${id}`);
     // Effectuer une requête AJAX 
-    fetch('/delete-account', {
-        method: 'DELETE',
+    fetch(`index.php?ctrl=security&action=deleteAccount`, {
+        method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         }
     })
-    .then(response => {
-        if (response.ok) {
-            alert("Votre compte a été supprimé avec succès.");
-            window.location.href = 'index.php?ctrl=forum&action=home';
-        } else {
-            alert("Une erreur s'est produite lors de la suppression de votre compte.");
-        }
-    })
-    .catch(error => {
-        console.error('Erreur lors de la suppression du compte:', error);
-        alert("Une erreur s'est produite lors de la suppression de votre compte. Veuillez réessayer plus tard.");
-    });
+        .then(response => {
+            if (response.ok) {
+                return response.json(); // Convertir la réponse JSON
+            } else {
+                throw new Error('Network response was not ok.');
+            }
+        })
+        .then(data => {
+            console.log(data.id); // Afficher la réponse JSON
+            let page = document.getElementById('page');
+            if(page) {
+                page.innerHTML = displayFormConfirmDelete(data.id);
+            }
+        })
+        .catch(error => {
+            console.error('Erreur lors de la récupération de l\'id utilisateur:', error);
+            alert("Une erreur s'est produite. Veuillez réessayer plus tard.");
+        });
 }
-
 
 $(document).ready(function () {
     // on affiche le modal si dans la vue rendu il existe
@@ -121,10 +163,6 @@ $(document).ready(function () {
             });
         }
     });
-
-    $(".delete-btn").on("click", function () {
-        return confirm("Etes-vous sûr de vouloir supprimer?")
-    })
     // éditeur de text pour les utilisateurs
     tinymce.init({
         selector: '.post',
@@ -147,33 +185,31 @@ $(document).ready(function () {
         '/index.php?ctrl=security&action=allUsers': 'Liste des membres',
         '/index.php?ctrl=forum&action=addPost&id=': 'Sujet',
         '/index.php?ctrl=forum&action=index': 'Topic',
-        
+
     };
     // on recherche l'url
-    let currentUrl = window.location.href; 
+    let currentUrl = window.location.href;
     // on récupérer le chemin après "index.php"
-    let pathAfterIndex = currentUrl.substr(currentUrl.indexOf('/index.php')); 
-
+    let pathAfterIndex = currentUrl.substr(currentUrl.indexOf('/index.php'));
     // on génére le fil d'Ariane
     let breadcrumb = generateBreadcrumb(pathAfterIndex, urlMappings);
-    console.log('Breadcrumb:', breadcrumb);
-
     let navBreadcrumb = document.getElementById('nav-breadcrumb');
-
     // Insérer le fil d'Ariane généré dans le DOM
     if (navBreadcrumb) {
         navBreadcrumb.innerHTML = breadcrumb;
     }
     // suppresion du compte utilisateur par l'espace profil
-    let deleteAccount = document.getElementById('delete-account-btn');
-
+    let deleteAcc = document.getElementById('delete-account-btn');
     // on place un écouteur d'événement su rle bouton de suppresion
-    deleteAccount.addEventListener('click', function(event) {
-        event.preventDefault();
-        // Afficher une boîte de dialogue de confirmation
-        if (confirm("Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible. Néanmoins vos données de compte utilisateur seront détruite sans pour autant affecté vos fil de discutions qui seront toujours présentes mais anonymisés")) {
-            // Si l'utilisateur confirme, effectuer la suppression du compte via une requête AJAX
-            deleteAccount();
-        }
-    });
+    if (deleteAcc) {
+        deleteAcc.addEventListener('click', function (event) {
+            event.preventDefault();
+            // Afficher une boîte de dialogue de confirmation
+            if (confirm("Êtes-vous sûr de vouloir supprimer votre compte ?")) {
+                // Si l'utilisateur confirme, effectuer la suppression du compte via une requête AJAX
+                deleteAccount();
+            }
+        });
+    }
+
 })

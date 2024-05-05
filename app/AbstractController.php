@@ -64,55 +64,48 @@ abstract class AbstractController
         $reflection = new ReflectionObject($user);
 
         $properties = $reflection->getProperties();
+
         $hashedData = [];
-
-
-
-
-// en cours
-/*$dataOrdered = [
-    'id_user' => $user->getId(),
-    'username' => $user->getUsername(),
-    'email' => $user->getEmail(),
-    // Ajoutez d'autres clés dans l'ordre souhaité avec leurs valeurs
-];*/
-
-
-
-
-
-
-
-        // Parcourir les propriétés de l'objet et hashons les données
+        // Parcourir les propriétés de l'objet et hash des données
         foreach ($properties as $property) {
             $propertyName = $property->getName();
             $propertyValue = $property->getValue($user);
-            // Hash si valeur
-            if (
-                $propertyValue !== null && $propertyValue !== "" &&
-                $propertyName !== "id" && $propertyName !== "role"
-            ) {
+
+            // Hash si valeur non null, non vide
+            if ($propertyValue !== null && $propertyValue !== "" 
+            && $propertyName !== "id" && $propertyName !== "role" 
+            && $propertyName !== "dateRegister" 
+            && $propertyName !== "tokenValidity") {
                 $hashedValue = password_hash($propertyValue, PASSWORD_DEFAULT);
+            }
+            // on défini une date d'expiration à 30j
+            if ($propertyName === "tokenValidity") {
+                $date = new DateTime();
+                // 30 jours de délai avant suppression définitive
+                $date->modify('+30 days');
+                $tokenValidity = $date->format('Y-m-d H:i:s');
+                $hashedValue = $tokenValidity;
             }
             // on préserve l'id en clair
             if ($propertyName === "id") {
                 $propertyName = "id_user";
                 $hashedValue = $propertyValue;
             }
-            // on préserve la date d'inscription en clair format DATETIME
+            // on préserve la date d'inscription en clair format =>> DATETIME
             if ($propertyName === "dateRegister") {
-                // on convertit la date d'inscription pour la garder en clair
-                $date = DateTime::createFromFormat('d/m/Y H:i:s', $propertyValue);
-                $hashedValue = $date->format('Y-m-d H:i:s');
+                // format DateTime
+                $expectedFormatRegex = '/^\d{2}\-\d{2}\-\d{4} \d{2}:\d{2}:\d{2}$/';
+                // si la date est au format d'affichage on la convertit au format DATETIME
+                if (!preg_match($expectedFormatRegex, $propertyValue)) {
+                    // on convertit la date d'inscription pour la garder en clair
+                    $date = DateTime::createFromFormat('d/m/Y H:i:s', $propertyValue);
+                    $hashedValue = $date->format('Y-m-d H:i:s');
+                } else {
+                    $hashedValue = $propertyValue;
+                }
             }
-            if ($propertyValue !== null && $propertyName === "token_validity") {
-                // on convertit la date d'inscription pour la garder en clair
-                $date = DateTime::createFromFormat('d/m/Y H:i:s', $propertyValue);
-                $hashedValue = $date->format('Y-m-d H:i:s');
-            }
-            // on préserve les rôles au format JSON
+            // on préserve les rôles au format =>> JSON
             if ($propertyName === "role") {
-                // on convertit la date d'inscription pour la garder en clair
                 $hashedValue = $propertyValue;
             }
             // on pousse dans le nouveau tableau sous la forme clé valeur
@@ -194,6 +187,7 @@ abstract class AbstractController
     public static function encryptData($data)
     {
         if (!self::$ivVectorInit) {
+            // on crée un iv aléatoire
             self::$ivVectorInit = openssl_random_pseudo_bytes(16);
         }
         $encryptedData = openssl_encrypt(
@@ -205,7 +199,7 @@ abstract class AbstractController
         );
         // Retourner les données chiffrées et l'IV
         return [
-            "encrypted_data" => $encryptedData,
+            "encryptedData" => $encryptedData,
             "iv" => self::$ivVectorInit
         ];
     }

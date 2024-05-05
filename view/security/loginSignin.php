@@ -42,6 +42,7 @@
                                             </div>
                                         </form>
                                     </li>
+                                
                                     <li>
                                         <h3 class="uk-card-title uk-text-center">Inscrivez-vous. C'est gratuit!</h3>
                                         <form id="register" name="register" action="./index.php?ctrl=security&action=register" method="post">
@@ -70,9 +71,9 @@
                                                 </div>
                                             </div>
                                             <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid">
-                                                <label>
-                                                    <input name="rgpd" class="uk-checkbox" type="checkbox">J'accèpte les conditions d'utilisation.
-                                                </label>
+                                           
+                                                <input name="rgpd" class="uk-checkbox" type="checkbox" required>J'accèpte les conditions d'utilisation.
+                                                
                                             </div>
                                             <div class="uk-margin">
                                                 <input type="submit" class="uk-button uk-button-primary uk-button-large uk-width-1-1" value="Créer compte">
@@ -82,6 +83,7 @@
                                             </div>
                                         </form>
                                     </li>
+                         
                                     <li>
                                         <h3 class="uk-card-title uk-text-center">Mot de passe perdu?</h3>
                                         <p class="uk-text-center uk-width-medium@s uk-margin-auto">Entrez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.</p>

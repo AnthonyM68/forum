@@ -45,13 +45,13 @@ if ($result['section'] === "profile") { ?>
                                 <div class="uk-width-1-2@s">
                                     <label class="uk-form-label" for="password">Nouveau mot de passe</label>
                                     <div class="uk-form-controls">
-                                        <input name="password" class="uk-input uk-width-1-1" type="password">
+                                        <input name="password" class="uk-input uk-width-1-1" type="password" autocomplete="cc-csc">
                                     </div>
                                 </div>
                                 <div class="uk-width-1-2@s">
                                     <label class="uk-form-label" for="repeat_password">Répéter mot de passe</label>
                                     <div class="uk-form-controls">
-                                        <input name="repeat_password" class="uk-input uk-width-1-1" type="password">
+                                        <input name="repeat_password" class="uk-input uk-width-1-1" type="password" autocomplete="cc-csc">
                                     </div>
                                 </div>
                             </div>
@@ -64,7 +64,8 @@ if ($result['section'] === "profile") { ?>
                                     <a class="uk-text-center uk-button uk-button-default" href="index.php?ctrl=security&action=modifyAccount&id=<?= $user->getId() ?>">Modifier mon compte</a>
                                 </p>
                                 <p class="uk-text-center" uk-margin>
-                                    <a class="uk-text-center uk-button uk-button-default" href="index.php?ctrl=security&action=deleteAccount&id=<?= $user->getId() ?>">Supprimer mon compte</a>
+                                    <!-- on declanche une alert js -->
+                                    <a id="delete-account-btn" href="index.php?ctrl=security&action=deleteAccount&id=<?= $user->getId() ?>" data-id="<?= $user->getId(); ?>"class="uk-text-center uk-button uk-button-default" href="#">Supprimer mon compte</a>
                                 </p>
                             </div>
                         </div>
@@ -74,44 +75,4 @@ if ($result['section'] === "profile") { ?>
             </div>
         </div>
     <?php }
-}
-
-if ($result['section'] === "delete-account") { ?>
-    <?php
-    // on recherche l'utilisateur en $_SESSION 
-    $user = $result['data']['user'];
-    if ($user) { ?>
-        <div class="uk-animation-fade uk-container">
-            <div class="uk-grid-margin uk-grid uk-grid-stack" uk-grid>
-                <div class="uk-width-1-1@m">
-                    <h1 class="pridi-regular uk-animation-slide-top">Confirmez la suppresion par mot de passe <?= $user->getUsername() ?></h1>
-                    <form id="delete-account" action="index.php?ctrl=security&action=deleteAccount&id=<?= $user->getId() ?>" method="post" uk-grid>
-                        <legend class="uk-legend color-secondary uk-animation-slide-top"></legend>
-
-                        <div class="uk-width-1-2@s">
-                            <div class="uk-grid-small" uk-grid>
-                                <div class="uk-width-1-2@s">
-                                    <label class="uk-form-label" for="password">Nouveau mot de passe</label>
-                                    <div class="uk-form-controls">
-                                        <input name="password" class="uk-input uk-width-1-1" type="password">
-                                    </div>
-                                </div>
-                                <div class="uk-width-1-2@s">
-                                    <label class="uk-form-label" for="repeat_password">Répéter mot de passe</label>
-                                    <div class="uk-form-controls">
-                                        <input name="repeat_password" class="uk-input uk-width-1-1" type="password">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <button class="uk-margin uk-button uk-button-default">Soumettre</button>
-
-                        </div>
-                        <!-- second col -->
-                    </form>
-                </div>
-            </div>
-        </div>
-<?php
-    }
 }

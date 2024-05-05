@@ -114,6 +114,22 @@ class UserManager extends Manager
             $this->className
         );
     }
+    public function dataUserPseudoAnonymsize($token)
+    {
+        $sql = "SELECT
+        t.id_user,
+        t.username,
+        t.password,
+        t.email,
+        t.dateRegister,
+        t.role
+        FROM " . $this->tableName . " t
+        WHERE t.token = :token";
+        return $this->getOneOrNullResult(
+            DAO::select($sql, ['token' => $token], false),
+            $this->className
+        );
+    }
     /**
      * return token if exist
      *
@@ -130,7 +146,7 @@ class UserManager extends Manager
         t.dateRegister,
         t.role,
         t.token,
-        t.token_validity
+        t.tokenValidity
         FROM " . $this->tableName . " t
         WHERE t.token = :token";
 
@@ -200,35 +216,25 @@ class UserManager extends Manager
     }
     public function updateDataHashed($data)
     {
-        // en cours 
 
-        
-        /*$keys = array_keys($data);
+        // on extrait le premier elem ($id)
+        $id = array_shift($data);
+        $keys = array_keys($data);
         $values = array_values($data);
+        // on concat la chaine SET SQL
         $set = [];
         foreach ($keys as $key) {
-            if($key !== "id_user") {
-                $set[] = "$key = :$key";
-            }
+            $set[] = "$key = :$key";
         }
-
-        $sql = "UPDATE 
+        $setString = implode(', ', $set);
+        // SQL
+        $sql = "UPDATE
         " . $this->tableName . " t
         SET " . $setString . "
         WHERE t.id_user = :id_user";
+        // on replace id_user a la fin du tableau de données
+        $data["id_user"] = $id;
 
-        return $this->getOneOrNullResult(
-            DAO::update($sql, [
-                "username " => $data['username'],
-                "password " => $data['password'],
-                "email " => $data['email'],
-                "token " => $data['token'],
-                "dateRegister " => $data['dateRegister'],
-                "role " => $data['role'],
-                "token_validity " => $data['token_validity'],
-                "id_user" => $data['id_user']
-            ]),
-            $this->className
-        );*/
+        return DAO::update($sql, $data);
     }
 }

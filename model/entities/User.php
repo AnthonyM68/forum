@@ -15,10 +15,11 @@ final class User extends Entity
     private $username;
     private $password;
     private $email;
+    private $token;
+    private $tokenValidity;
     private $dateRegister;
     private $role;
-    private $token;
-    private $token_validity;
+
 
     public function __construct($data)
     {
@@ -112,23 +113,7 @@ final class User extends Entity
         $this->dateRegister = $dateRegister;
         return $this;
     }
-    /**
-     * Get the value of role
-     */
-    public function getRoles()
-    {
-        return json_decode($this->role);
-    }
-    /**
-     * Set the value of role
-     *
-     * @return  self
-     */
-    public function setRole($role)
-    {
-        $this->role = $role;
-        return $this;
-    }
+
     /**
      * Get the value of token
      */
@@ -144,6 +129,42 @@ final class User extends Entity
     public function setToken($token)
     {
         $this->token = $token;
+        return $this;
+    }
+    /**
+     * Set the value of token validity
+     *
+     * @return  self
+     */
+    public function getTokenValidity()
+    {
+        return $this->tokenValidity;
+    }
+    /**
+     * Set the value of token validity
+     *
+     * @return  self
+     */
+    public function setTokenValidity($tokenValidity)
+    {
+        $this->tokenValidity = $tokenValidity;
+        return $this;
+    }
+    /**
+     * Get the value of role
+     */
+    public function getRole()
+    {
+        return json_decode($this->role);
+    }
+    /**
+     * Set the value of role
+     *
+     * @return  self
+     */
+    public function setRole($role)
+    {
+        $this->role = $role;
         return $this;
     }
     /**
@@ -166,25 +187,7 @@ final class User extends Entity
         }
         return false;
     }
-    /**
-     * Set the value of token validity
-     *
-     * @return  self
-     */
-    public function getTokenValidity()
-    {
-        return $this->token_validity;
-    }
-    /**
-     * Set the value of token validity
-     *
-     * @return  self
-     */
-    public function setTokenValidity($token_validity)
-    {
-        $this->token_validity = $token_validity;
-        return $this;
-    }
+
     public function __toString()
     {
         return $this->username;

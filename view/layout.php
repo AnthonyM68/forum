@@ -55,7 +55,8 @@
                     <!-- content request -->
                 </ul>
             </nav>
-            <?= $page ?>
+            <div id="page"><?= $page ?></div>
+            
         </div>
     </main>
     <footer id="footer"><?= $footer ?></footer>

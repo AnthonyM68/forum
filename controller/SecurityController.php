@@ -51,7 +51,9 @@ class SecurityController extends AbstractController
             $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
 
             // si toutes les entrées sont vérifiées
-            if ($username && $email && $password && $repeat_password && $_POST['rgpd']) {
+
+            if ($username && $email && $password && $repeat_password && isset($_POST['rgpd']) && $_POST['rgpd'] === "on") {
+                var_dump("traitement");
                 $userManager = new UserManager();
                 // si l'email existe
                 // XSS
@@ -82,41 +84,47 @@ class SecurityController extends AbstractController
 
                 if (!$usernameExist) {
                     $date = new DateTime("now");
-                    $userManager->add([
+                    $result = $userManager->add([
                         "username" => $username,
                         "password" => password_hash($repeat_password, PASSWORD_DEFAULT),
                         "email" => $email,
                         "token" => $token,
                         "dateRegister" => $date->format('Y-m-d H:i:s'),
-                        "token_validity" => null,
+                        "tokenValidity" => null,
                         "role" => json_encode([
                             "ROLE_SUBSCRIBER" // l'insciption n'étant pas fini il reste visiteur
                         ]),
                     ]);
-                    // EMAIL 
-                    // sujet
-                    $subject = "Merci pour votre inscription au Forum@";
-                    // contenu
-                    $content = "<p>Veuillez confirmer votre inscription en cliquant sur le lien suivant:</p>
-                <a href='http://localhost/forum/index.php?ctrl=security&action=login&token=" . $token . "'>Cliquez ici</a>";
-                    // Envoyer EMAIL
-                    $result = $this->sentEmailTo($email, $subject, $content);
-
-                    $result ? Session::addFlash("success", "Votre inscription est terminée, veuillez vérifier vos email")
-                        : Session::addFlash("error", "Une erreur est survenue lors de l'envois de la confirmation par Email");;
+                    if ($result) {
+                        // EMAIL 
+                        // sujet
+                        $subject = "Merci pour votre inscription au Forum@";
+                        // contenu
+                        $content = "<p>Veuillez confirmer votre inscription en cliquant sur le lien suivant:</p>
+                    <a href='http://localhost/forum/index.php?ctrl=security&action=login&token=" . $token . "'>Cliquez ici</a>";
+                        // Envoyer EMAIL
+                        $result = $this->sentEmailTo($email, $subject, $content);
+                        $result ? Session::addFlash("success", "Votre inscription est terminée, veuillez vérifier vos email")
+                            : Session::addFlash("error", "Une erreur est survenue lors de l'envois de la confirmation par Email");
+                        // on redirige sur le home
+                        $this->redirectTo("home", "index");
+                    } else {
+                        Session::addFlash("error", "L'enregistrement en base de données a échoué");
+                    }
                 } else Session::addFlash("error", "Nom d'utilisateur déjà utilisé");
-                // on redirige sur le home
-                $this->redirectTo("home", "index");
+            } else {
+                Session::addFlash("error", "Vérifiez votre saisie quelque chose ne va pas");
             }
-            var_dump("test");
-        } else {
-            return [
-                "view" => VIEW_DIR . "security/loginSignin.php",
-                "meta_description" => "Créer un compte pour participer au Forum",
-                "data" => []
-            ];
         }
+        return [
+            "view" => VIEW_DIR . "security/loginSignin.php",
+            "section" => "register",
+            "meta_description" => "Créer un compte pour participer au Forum",
+            "data" => []
+        ];
     }
+
+
     public function login()
     {
         // on filtre le token bin2hex {32} caractères
@@ -240,61 +248,84 @@ class SecurityController extends AbstractController
     public function deleteAccount()
     {
         $userManager = new UserManager();
+        // suppression des données utilisateurs par hashage
+        // conservation des données chiffrés 
+        // si le token est présent dans l'url
         if (isset($_GET['token'])) {
             $token = $_GET['token'];
-            $userInfos = $userManager->searchIfTokenlExist($token);
+            var_dump($token);
+            // on recherche les infos que l'on veux pseudo anonymiser
+            $userInfos = $userManager->dataUserPseudoAnonymsize($token);
             var_dump($userInfos);
             // si l'utilisateur est trouvé tout a été vérifier
             // on procéde a l'anonymisation
             if ($userInfos) {
-
-                /******** PSEUDO ANONYMISATION ***************/
+                /******** PSEUDO ANONYMISATION TABLE DATAS_ENCRYPTED***************/
                 // on serialize les données de l'utilisateur
                 $userData = json_encode($userInfos);
-               
                 $securityManager = new SecurityManager();
                 // on chiifre les données
-                /*$encryptedUser = AbstractController::encryptData($userData);
+                $encryptedUser = AbstractController::encryptData($userData);
+                // 30 jours de délai avant suppression définitive
+                $date = new DateTime();
+                $date->modify('+30 days');
                 // on génére un token unique un cas de renoncement de l'utilisateur après suppression
                 $token = $this->generateTokenUnique();
-                
-                // on ajoute les données dans la table de chiffrement identifiable par token unique remis a l'utilisateur
-                $result = $securityManager->addDataEncrypt($encryptedUser['encrypted_data'], $encryptedUser['iv'], $userInfos->getId(), $token);
-                // si tout se passe bien on envoie un mail a l'utilisateur
+                $tokenValidity = $date->format('Y-m-d H:i:s');
+
+                // Spécifiez l'algorithme de chiffrement que vous utilisez (par exemple AES-256-CBC)
+                $cipher = 'aes-256-cbc';
+
+                // Obtenez la longueur de l'IV pour cet algorithme
+                $ivLength = openssl_cipher_iv_length($cipher);
+
+                if (strlen($encryptedUser['iv']) !== $ivLength) {
+                    // Si la longueur est incorrecte, vous pouvez générer un nouvel IV ou gérer l'erreur d'une autre manière
+                    echo "Erreur : la longueur de l'IV est incorrecte.";
+                    die;
+                }
+
+
+
+                // on ajoute les données à la table de chiffrement identifiable par token unique remis a l'utilisateur
+                $result = $securityManager->addDataEncrypted($encryptedUser['encryptedData'], $encryptedUser['iv'], $userInfos->getId(), $token, $tokenValidity);
                 if ($result) {
-                    $subject = "Compte supprimé";
-                    // il disposera de 30 jours avant suppression définitive
-                    $content = "<p>Votre compte a bien été supprimé.Cependant vous disposez d'un délai de 30 jours si toutefois vous changez d'avis. 
-                    Pour retrouver votre compte et toutes ces fonctionnalités vous pouvez le réactiver en cliquant sur le lien suivant.
-                    Au delà de ce délai, vos données seront de manière irréverssible détruites. </p>
-                 <a href='http://localhost/forum/index.php?ctrl=security&action=restorAccount&token=" . $token . "'>Cliquez ici</a>";
-                    // on envois l'email
-                    $result = $this->sentEmailTo($userInfos->getEmail(), $subject, $content);
-                    Session::addFlash("success", $userInfos->getUsername() . "Compte désactiver et anonymiser pendant 30 jours avant anonymisation, veuillez vérifier vos Email");
-                   
+                    // on hash les données de l'utilisateur dans la table user
+                    $hashedData = $this->hashDataUser($userInfos);
+                    if ($hashedData) {
+                        /******** ANONYMISATION TABLE USER ***************/
+                        $result = $userManager->updateDataHashed($hashedData);
+                        if ($result) {
+                            $subject = "Compte supprimé";
+                            // il disposera de 30 jours avant suppression définitive
+                            $content = "<p>Votre compte a bien été supprimé.Cependant vous disposez d'un délai de 30 jours si toutefois vous changez d'avis. 
+                            Pour retrouver votre compte et toutes ces fonctionnalités vous pouvez le réactiver en cliquant sur le lien suivant.
+                            Au delà de ce délai, vos données seront de manière irréverssible détruites. </p>
+                         <a href='http://localhost/forum/index.php?ctrl=security&action=restorAccount&token=" . $token . "'>Cliquez ici</a>";
+                            // on envois l'email
+                            $result = $this->sentEmailTo($userInfos->getEmail(), $subject, $content);
+                            $this->logout();
+                            Session::addFlash("success", $userInfos->getUsername() . "Compte désactiver et anonymiser pendant 30 jours avant anonymisation, veuillez vérifier vos Email");
+                        } else {
+                            Session::addFlash("error", "Erreur lors de l'insertion des données hashées");
+                        }
+                    } else {
+                        Session::addFlash("error", "La Pseudo Anonymisation a échoué veuillez soumettre a nouveau votre demande");
+                    }
                 } else {
-                    Session::addFlash("error", "La Pseudo Anonymisation a échoué veuillez soumettre a nouveau votre demande");
-                    $this->redirectTo("home", "index");
-                }*/
-                /******** ANONYMISATION ***************/
-
-                $hashedData = $this->hashDataUser($userInfos);
-                var_dump($hashedData);
-                $result = $userManager->updateDataHashed($hashedData);
-                var_dump($result);
-     
-
-
-
-
+                    Session::addFlash("error", "Erreur lors de l'insertion des données encryptées");
+                }
             } else {
-                Session::addFlash("warning", "La vérification a échouée");
+                Session::addFlash("warning", "La vérification a échouée où l'anonymisation a déjà eu lieu");
             }
-            //$this->redirectTo("home", "index");
+            Session::addFlash("warning", "La vérification a échouée où l'anonymisation a déjà eu lieu");
+            $this->redirectTo("home", "index");
         }
-        die;
-
+        /**
+         * si la confirmation par mot de passe est soumise
+         */
         $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+
         $password = filter_input(
             INPUT_POST,
             'password',
@@ -307,6 +338,7 @@ class SecurityController extends AbstractController
                 )
             )
         );
+
         $repeat_password = filter_input(
             INPUT_POST,
             'repeat_password',
@@ -318,6 +350,16 @@ class SecurityController extends AbstractController
                 )
             )
         );
+        // Si l'utilisateur a confirmé la suppression par mot de passe
+        // on lui renvoie son id pour l'insérer dans le form de confirmation par mot de passe
+        // que JS va afficher pour confirmer la demande de suppression
+        if (!$password && !$repeat_password && !isset($_GET['token'])) {
+            echo json_encode([
+                "id" => Session::getUser()->getId()
+            ]);
+            die;
+        }
+        // Si les informations sont bien vérifiés
         if ($id && $password && $repeat_password) {
             // si les password ne respectent pas les critères de soumission
             if (!$password || !$repeat_password) {
@@ -352,20 +394,12 @@ class SecurityController extends AbstractController
             }
         } else {
             Session::addFlash("warning", $_SESSION['user']->getUsername() . " Pour supprimer votre compte vous devez indiqué et confirmé votre mot de passe.");
+            $this->redirectTo("home", "index");
         }
-        $userInfos = $userManager->infoWithoutPassword($id);
-        return [
-            "view" => VIEW_DIR . "security/users.php",
-            "section" => "delete-account",
-            "meta_description" => "Profil utilisateur",
-            "data" => [
-                "user" => $userInfos
-            ]
-        ];
     }
     public function modifyAccount()
     {
-        Session::addFlash("warning", $_SESSION['user']->getUsername() . " cette section reste a terminée");
+        Session::addFlash("warning", $_SESSION['user']->getUsername() . " Token:" . $_GET['token'] . "");
         return [
             "view" => VIEW_DIR . "security/users.php",
             "section" => "profile",
@@ -374,5 +408,41 @@ class SecurityController extends AbstractController
                 "user" => $_SESSION['user']
             ]
         ];
+    }
+    public function restorAccount()
+    {
+        if (isset($_GET['token'])) {
+            $token = $_GET['token'];
+
+            $securityManager = new SecurityManager();
+            $encryptedUser = $securityManager->searchIfTokenlExist($token);
+
+            // Spécifiez l'algorithme de chiffrement que vous utilisez (par exemple AES-256-CBC)
+            $cipher = 'aes-256-cbc';
+
+            // Obtenez la longueur de l'IV pour cet algorithme
+            $ivLength = openssl_cipher_iv_length($cipher);
+
+            // Vérifiez si la longueur de votre IV est correcte
+            if (strlen($encryptedUser->getIv()) !== $ivLength) {
+                // Si la longueur est incorrecte, vous pouvez générer un nouvel IV ou gérer l'erreur d'une autre manière
+                echo "Erreur : la longueur de l'IV est incorrecte.";
+            } else {
+                // L'IV a une longueur correcte, vous pouvez continuer avec votre processus de chiffrement ou de déchiffrement
+            }
+
+            $decryptedUser = AbstractController::decryptData($encryptedUser->getEncryptedData(), $encryptedUser->getIv());
+            var_dump($decryptedUser);
+        }
+        die;
+        //Session::addFlash("warning", $_SESSION['user']->getUsername() . " Token:" . $_GET['token'] . "");
+        /*return [
+            "view" => VIEW_DIR . "security/users.php",
+            "section" => "profile",
+            "meta_description" => "Profil utilisateur",
+            "data" => [
+                "user" => $_SESSION['user']
+            ]
+        ];*/
     }
 }

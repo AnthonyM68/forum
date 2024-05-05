@@ -53,8 +53,6 @@
                         // ADMINISTRATOR
                         if (App\Session::isAdmin()) {
                         ?>
-                            <li><a href="./index.php?ctrl=forum&action=fakerTopicWithFirstPost">Générer FakerTopic (x10)</a></li>
-                            <li><a href="./index.php?ctrl=forum&action=dropTable">Vider table Topic</a></li>
                             <li>
                                 <a href="index.php?ctrl=forum&action=addTopic">
                                     <span class="fa fa-plus"> </span>

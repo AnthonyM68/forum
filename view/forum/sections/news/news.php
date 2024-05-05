@@ -52,9 +52,9 @@ if (isset($result['section']) && $result['section'] === "home") {
                                             <!-- TOPIC AUTHOR -->
                                             <?php
                                             echo $topic->getUser()->getUsername() . " ";
-                                            $roles = $topic->getUser()->getRoles(); ?>
+                                            $roles = $topic->getUser()->getRole(); ?>
                                             <small
-                                                class="color-primary"><?= $ctrl->convertToString($post->getTopic()->getUser()->getRoles()) . " Depuis le: " . $topic->getDateCreation() ?></span></small>
+                                                class="color-primary"><?= $ctrl->convertToString($post->getTopic()->getUser()->getRole()) . " Depuis le: " . $topic->getDateCreation() ?></span></small>
                                         </p>
                                         <!-- LINKS -->
                                         <span class="fa fa-reply" aria-hidden="true"></span>
