@@ -158,30 +158,43 @@ class UserManager extends Manager
     }
     public function updateToken($token, $id)
     {
-        $updateSql = "UPDATE 
+        $sql = "UPDATE 
         " . $this->tableName . " t 
         SET t.token = :token 
         WHERE t.id_user = :id_user";
-        return DAO::update($updateSql, [
+        return DAO::update($sql, [
             'id_user' => $id,
             'token' => $token
         ]);
     }
     public function resetToken($token)
     {
-        $resetSql = "UPDATE 
+        $sql = "UPDATE 
         " . $this->tableName . " t 
-        SET t.token = NULL 
-        WHERE t.token = :token";
-        return DAO::update($resetSql, ['token' => $token]);
+        SET t.token = NULL, t.tokenValidity = NULL
+        WHERE t.token = :token ";
+        return DAO::update($sql, ['token' => $token]);
     }
     public function updateRoleUser($role, $id)
     {
-        $updateSql = "UPDATE 
+        $sql = "UPDATE 
         " . $this->tableName . " t
         SET t.role = :role 
         WHERE t.id_user = :id_user";
-        return DAO::update($updateSql, ['role' => $role, "id_user" => $id]);
+        return DAO::update($sql, ['role' => $role, "id_user" => $id]);
+    }
+    public function updateAfterRestaur($username, $password, $email, $id_user)
+    {
+        $sql = "UPDATE 
+        " . $this->tableName . " t 
+        SET t.username = :username, t.password = :password, t.email = :email 
+        WHERE t.id_user = :id_user";
+        return DAO::update($sql, [
+            'username' => $username,
+            'password' => $password,
+            'email' => $email,
+            'id_user' => $id_user
+        ]);
     }
     public function infosUserConnectSession($email)
     {

@@ -8,13 +8,13 @@ class SecurityManager extends Manager
 {
     // on indique la classe POO et la table correspondante en BDD pour le manager concerné
     protected $className = "Model\Entities\Security";
-    protected $tableName = "datasEncrypted";
+    protected $tableName = "datasencrypted";
 
     public function __construct()
     {
         parent::connect();
     }
-    public function addDataEncrypted($encryptedData, $iv, $id, $token, $tokenValidity = null )
+    public function addDataEncrypted($encryptedData, $iv, $id, $token, $tokenValidity)
     {
         return $this->add([
             "encryptedData" => $encryptedData,

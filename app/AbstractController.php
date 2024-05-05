@@ -186,23 +186,31 @@ abstract class AbstractController
     }
     public static function encryptData($data)
     {
-        if (!self::$ivVectorInit) {
-            // on crée un iv aléatoire
-            self::$ivVectorInit = openssl_random_pseudo_bytes(16);
+        // Générer un IV aléatoire
+        $iv = openssl_random_pseudo_bytes(16); // IV de 16 octets pour AES-256-CBC
+        // Vérifier la longueur de l'IV
+        $ivLength = strlen($iv);
+        if ($ivLength !== 16) {
+            // La longueur de l'IV est incorrecte
+            throw new Exception("Erreur : la longueur de l'IV est incorrecte.");
         }
+    
+        // Chiffrer les données avec l'IV généré
         $encryptedData = openssl_encrypt(
-            $data, // l'utilisateur a sérialiser et chiffre SECRET
-            "AES-256-CBC", // type de chiffrement
-            self::PRIVATE_KEY, // clés privée de chiffrement
-            0, // option facultatif
-            self::$ivVectorInit // vecteur d'initialisation PAS FORCEMENT SECRET
+            $data,
+            "AES-256-CBC",
+            self::PRIVATE_KEY,
+            0,
+            $iv
         );
+    
         // Retourner les données chiffrées et l'IV
         return [
             "encryptedData" => $encryptedData,
-            "iv" => self::$ivVectorInit
+            "iv" => $iv
         ];
     }
+    
     public static function decryptData($encryptedData, $ivector)
     {
         return openssl_decrypt(

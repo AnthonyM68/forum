@@ -253,16 +253,14 @@ class SecurityController extends AbstractController
         // si le token est présent dans l'url
         if (isset($_GET['token'])) {
             $token = $_GET['token'];
-            var_dump($token);
             // on recherche les infos que l'on veux pseudo anonymiser
             $userInfos = $userManager->dataUserPseudoAnonymsize($token);
-            var_dump($userInfos);
             // si l'utilisateur est trouvé tout a été vérifier
             // on procéde a l'anonymisation
             if ($userInfos) {
                 /******** PSEUDO ANONYMISATION TABLE DATAS_ENCRYPTED***************/
                 // on serialize les données de l'utilisateur
-                $userData = json_encode($userInfos);
+                $userData = serialize($userInfos);
                 $securityManager = new SecurityManager();
                 // on chiifre les données
                 $encryptedUser = AbstractController::encryptData($userData);
@@ -272,21 +270,6 @@ class SecurityController extends AbstractController
                 // on génére un token unique un cas de renoncement de l'utilisateur après suppression
                 $token = $this->generateTokenUnique();
                 $tokenValidity = $date->format('Y-m-d H:i:s');
-
-                // Spécifiez l'algorithme de chiffrement que vous utilisez (par exemple AES-256-CBC)
-                $cipher = 'aes-256-cbc';
-
-                // Obtenez la longueur de l'IV pour cet algorithme
-                $ivLength = openssl_cipher_iv_length($cipher);
-
-                if (strlen($encryptedUser['iv']) !== $ivLength) {
-                    // Si la longueur est incorrecte, vous pouvez générer un nouvel IV ou gérer l'erreur d'une autre manière
-                    echo "Erreur : la longueur de l'IV est incorrecte.";
-                    die;
-                }
-
-
-
                 // on ajoute les données à la table de chiffrement identifiable par token unique remis a l'utilisateur
                 $result = $securityManager->addDataEncrypted($encryptedUser['encryptedData'], $encryptedUser['iv'], $userInfos->getId(), $token, $tokenValidity);
                 if ($result) {
@@ -319,6 +302,7 @@ class SecurityController extends AbstractController
                 Session::addFlash("warning", "La vérification a échouée où l'anonymisation a déjà eu lieu");
             }
             Session::addFlash("warning", "La vérification a échouée où l'anonymisation a déjà eu lieu");
+            die;
             $this->redirectTo("home", "index");
         }
         /**
@@ -412,37 +396,72 @@ class SecurityController extends AbstractController
     public function restorAccount()
     {
         if (isset($_GET['token'])) {
-            $token = $_GET['token'];
-
+            $token = $_GET['token']; 
             $securityManager = new SecurityManager();
             $encryptedUser = $securityManager->searchIfTokenlExist($token);
-
-            // Spécifiez l'algorithme de chiffrement que vous utilisez (par exemple AES-256-CBC)
-            $cipher = 'aes-256-cbc';
-
-            // Obtenez la longueur de l'IV pour cet algorithme
-            $ivLength = openssl_cipher_iv_length($cipher);
-
-            // Vérifiez si la longueur de votre IV est correcte
-            if (strlen($encryptedUser->getIv()) !== $ivLength) {
-                // Si la longueur est incorrecte, vous pouvez générer un nouvel IV ou gérer l'erreur d'une autre manière
-                echo "Erreur : la longueur de l'IV est incorrecte.";
-            } else {
-                // L'IV a une longueur correcte, vous pouvez continuer avec votre processus de chiffrement ou de déchiffrement
-            }
-
             $decryptedUser = AbstractController::decryptData($encryptedUser->getEncryptedData(), $encryptedUser->getIv());
-            var_dump($decryptedUser);
+            $decryptedUser = unserialize($decryptedUser);
+            if (isset($_GET['id'])) {
+                $id = $_GET['id'];
+                $password = filter_input(
+                    INPUT_POST,
+                    'password',
+                    FILTER_VALIDATE_REGEXP,
+                    array(
+                        "options" => array(
+                            // 12 et 25 caractères avec au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial :
+                            // `/(?=.[A-Z])(?=.[a-z])(?=.\d)(?=.[!@#$%^&*()_+}{:;'?/>,-])(?!.*\s).{12,25}/`
+                            "regexp" => "/.{6,25}/"
+                        )
+                    )
+                );
+                $repeat_password = filter_input(
+                    INPUT_POST,
+                    'repeat_password',
+                    FILTER_VALIDATE_REGEXP,
+                    array(
+                        "options" => array(
+                            // `/(?=.[A-Z])(?=.[a-z])(?=.\d)(?=.[!@#$%^&*()_+}{:;'?/>,-])(?!.*\s).{12,25}/`
+                            "regexp" => "/.{6,25}/"
+                        )
+                    )
+                );
+                if ($password && $repeat_password) {
+                    // si les password ne respectent pas les critères de soumission
+                    if (!$password || !$repeat_password) {
+                        // on affiche une alert 
+                        Session::addFlash("warning", "Les mots de passe ne respectent pas les critères de soumission");
+                        $this->redirectTo("home", "index");
+                    }
+                    // si les password ne sont pas égaux
+                    if ($password !== $repeat_password) {
+                        // on affiche une alert 
+                        Session::addFlash("error", "Les mots de passe ne sont pas identique");
+                        $this->redirectTo("home", "index");
+                    }
+                    $userManager = new UserManager();
+                    $result = $userManager->updateAfterRestaur($decryptedUser->getUsername(), $decryptedUser->getPassword(), $decryptedUser->getEmail(), $id);
+                    $subject = "Bon retour sur le Forum";
+                    $content = "<p>Vous retrouvez toues les fonctionnalités du Forum</p>";
+                    // on envois l'email
+                    $result = $this->sentEmailTo($decryptedUser->getEmail(), $subject, $content);
+                    Session::addFlash("success", "Bon retour parmis nous vous êtes désormais à nouveau identifiable.");
+                    $this->redirectTo("home", "index");
+
+                } else {
+                    Session::addFlash("warning", "Vous devez remplacez votre mot de passe");
+                }
+            }
         }
-        die;
-        //Session::addFlash("warning", $_SESSION['user']->getUsername() . " Token:" . $_GET['token'] . "");
-        /*return [
+        return [
             "view" => VIEW_DIR . "security/users.php",
             "section" => "profile",
+            "restor" => true,
+            "token" => $token,
             "meta_description" => "Profil utilisateur",
             "data" => [
-                "user" => $_SESSION['user']
+                "user" => $decryptedUser
             ]
-        ];*/
+        ];
     }
 }
