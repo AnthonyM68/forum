@@ -396,11 +396,15 @@ class SecurityController extends AbstractController
     public function restorAccount()
     {
         if (isset($_GET['token'])) {
-            $token = $_GET['token']; 
+            $token = $_GET['token'];
             $securityManager = new SecurityManager();
             $encryptedUser = $securityManager->searchIfTokenlExist($token);
+            var_dump($encryptedUser);
+       
             $decryptedUser = AbstractController::decryptData($encryptedUser->getEncryptedData(), $encryptedUser->getIv());
             $decryptedUser = unserialize($decryptedUser);
+
+
             if (isset($_GET['id'])) {
                 $id = $_GET['id'];
                 $password = filter_input(
@@ -439,15 +443,23 @@ class SecurityController extends AbstractController
                         Session::addFlash("error", "Les mots de passe ne sont pas identique");
                         $this->redirectTo("home", "index");
                     }
+                    
                     $userManager = new UserManager();
                     $result = $userManager->updateAfterRestaur($decryptedUser->getUsername(), $decryptedUser->getPassword(), $decryptedUser->getEmail(), $id);
-                    $subject = "Bon retour sur le Forum";
-                    $content = "<p>Vous retrouvez toues les fonctionnalités du Forum</p>";
-                    // on envois l'email
-                    $result = $this->sentEmailTo($decryptedUser->getEmail(), $subject, $content);
-                    Session::addFlash("success", "Bon retour parmis nous vous êtes désormais à nouveau identifiable.");
-                    $this->redirectTo("home", "index");
-
+                    if ($result) { 
+                        var_dump($encryptedUser->getId());
+                        $result = $securityManager->deleteFromTableEncrypted($encryptedUser->getId());
+                        if ($result) {
+                            $subject = "Bon retour sur le Forum";
+                            $content = "<p>Vous retrouvez toues les fonctionnalités du Forum</p>";
+                            // on envois l'email
+                            $result = $this->sentEmailTo($decryptedUser->getEmail(), $subject, $content);
+                            Session::addFlash("success", "Bon retour parmis nous vous êtes désormais à nouveau identifiable.");
+                            $this->redirectTo("home", "index");
+                        }
+                    } else {
+                        Session::addFlash("warning", "Une erreur est survenue vérifiez vos données");
+                    }
                 } else {
                     Session::addFlash("warning", "Vous devez remplacez votre mot de passe");
                 }

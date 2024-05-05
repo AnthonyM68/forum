@@ -33,6 +33,7 @@ class SecurityManager extends Manager
     public function searchIfTokenlExist($token)
     {
         $sql = "SELECT 
+        t.id,
         t.encryptedData,
         t.iv,
         t.user_id,
@@ -45,5 +46,11 @@ class SecurityManager extends Manager
             DAO::select($sql, ['token' => $token], false),
             $this->className
         );
+    }
+    public function deleteFromTableEncrypted($id)
+    {
+        $sql = "DELETE FROM " . $this->tableName . " t
+                WHERE t.id = :id";
+        return DAO::delete($sql, ['id' => $id]);
     }
 }
