@@ -53,6 +53,7 @@ class HomeController extends AbstractController implements ControllerInterface
                 $result[$categoryName] = $categoryData;
             }   
         }
+        var_dump($result);
         return [
             "view" => VIEW_DIR . "home.php",
             "section" => "home",
