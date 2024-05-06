@@ -13,35 +13,13 @@ class HomeController extends AbstractController implements ControllerInterface
 {
     public function index()
     {
-        // les instanciations
         $categoryManager = new CategoryManager();
         $topicManager = new TopicManager();
         $postManager = new PostManager();
         $userManager = new UserManager();
-        $result = [];
         // on recherche toutes les catégories
-        $categories = $categoryManager->findAll();
-        //on parcours toutes les catégories
+        $categories = $categoryManager->findAll(["name", "ASC"]);
 
-
-
-
-        //$result = $topicManager->fullyInformationsNewsExperimentale(2);
-
-        //$result2["categoryname2"] = $topicManager->findTopicsByCategory(2);
-      
-
-        // foreach($result as $val) {
-        
-        //     var_dump($val);
-        //     if(is_iterable($val)) {
-        //         foreach($val as $v) {
-        //             var_dump($v); 
-        //         }
-        //     }
-            
-        // }
-        // die;
         return [
             "view" => VIEW_DIR . "home.php",
             "section" => "home",

@@ -8,6 +8,6 @@ $topics = $result["data"]['topics'];
 <?php
 if ($topics) {
     foreach ($topics as $topic) { ?>
-        <p><a href="#"><?= $topic ?></a> par <?= $topic->getUser()->getEmail() ?></p>
+        <li><a href="#"><?= $topic ?></a> par <?= $topic->getUser()->getUsername() ?> Créer le <?= $topic->getDateCreation() ?></li>
 <?php }
 }

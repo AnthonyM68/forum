@@ -1,4 +1,6 @@
-<?php $categoryDatas = $result['data']['categoryData'];
+<?php 
+
+$categoryDatas = $result['data']['categoryData'];
 
 ?>
 <!-- TITLE PAGE -->
@@ -17,9 +19,8 @@
                             foreach ($categoryDatas as $category) {
                                 ?>
                                 <div class="uk-card uk-card-body">
-                                <a href="index.php"><?= $category->getName() ?></a>
+                                    <a href="index.php?ctrl=forum&action=listTopicsByCategory&id=<?= $category->getId() ?>"><?= $category->getName() ?></a>
                                 </div>
-                               
                             <?php }
                         }
                         ?>

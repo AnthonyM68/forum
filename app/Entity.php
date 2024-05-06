@@ -39,12 +39,6 @@ abstract class Entity
                     // Si le champ est 'roles' on décode (format enregistré en bdd)
                     $this->$method(json_decode($value));
                 }
-                if ($fieldArray[0] === 'dateCreation') {
-                    $dateTime = DateTime::createFromFormat("Y-m-d H:i:s", $value);
-                    // on convertis les données Sql en un objet DateTime valide
-                    $formattedDate = $dateTime->format("d/m/Y H:i:s");
-                    $this->$method($formattedDate);
-                } 
                 if ($fieldArray[0] === 'dateRegister') {
                     $dateTime = DateTime::createFromFormat("Y-m-d H:i:s", $value);
                     // on convertis les données Sql en un objet DateTime valide

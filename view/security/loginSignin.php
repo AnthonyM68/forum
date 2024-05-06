@@ -1,7 +1,3 @@
-
-<?php 
-
-?>
 <div id="loginSignin" class="uk-flex-top" uk-modal>
     <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
         <div class="uk-section uk-section-muted uk-flex uk-flex-middle uk-animation-fade" uk-height-viewport>
@@ -39,6 +35,7 @@
                                                 <a href="#" uk-switcher-item="2">Mot de pass perdu?</a>
                                             </div>
                                             <div class="uk-margin">
+                                            <input name="token-hidden" class="uk-input uk-form-large" type="text" value="<?= $_SESSION["token"] ?>" style="visibility:hidden">
                                                 <input type="submit" class="uk-button uk-button-primary uk-button-large uk-width-1-1">
                                             </div>
                                             <div class="uk-text-small uk-text-center">
@@ -100,6 +97,7 @@
                                                 </div>
                                             </div>
                                             <div class="uk-margin">
+                                            <input name="token-hidden" class="uk-input uk-form-large" type="text" value="<?= $_SESSION["token"] ?>" style="visibility:hidden">
                                                 <button class="uk-button uk-button-primary uk-button-large uk-width-1-1">Envoyer Email</button>
                                             </div>
                                             <div class="uk-text-small uk-text-center">

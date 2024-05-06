@@ -7,13 +7,13 @@ if ($result['section'] === "usersList") { ?>
             <div class="uk-width-1-1@m">
                 <ul>
                     <?php
-                    $users = $result["data"]['user'];
+                    $users = $result["data"]['users'];
                     if ($users) {
                         foreach ($users as $user) { ?>
-                            <li><a class="uk-animation-fade pridi-light">
-                                    <?= $user->getUsername() ?>
-                                    Inscrit depuis:
-                                    <?= $user->getDateRegister() ?>
+                            <li class="uk-animation-fade pridi-light">
+                                    <span class="color-primary"><?= $user->getUsername() ?></span>
+                                    
+                                    <span class="color-secondary">Inscrit depuis: <?= $user->getDateRegister() ?></span>
                             </li>
                         <?php }
                     }
@@ -30,11 +30,9 @@ if ($result['section'] === "profile") { ?>
     // on recherche l'utilisateur en $_SESSION 
     $user = $result['data']['user'];
     $restorAccount = false;
-
     if (isset($result['form']) && $result['form'] === "restorAccount") {
         $form = $result['form'];
         $restorAccount = true;
-
     }
     if ($user) { ?>
         <div class="uk-animation-fade uk-container">
@@ -54,12 +52,8 @@ if ($result['section'] === "profile") { ?>
                             <?php if ($restorAccount) { ?>
                                 <p class="uk-text-center uk-text-danger uk-text-uppercase" uk-margin>
                                     Veuillez renouvellé votre mot de passe par mesure de sécurité
-
                                 </p>
                             <?php } ?>
-
-
-
                             <div class="uk-grid-small" uk-grid>
                                 <div class="uk-width-1-2@s">
                                     <label class="uk-form-label" for="password">Nouveau mot de passe</label>
@@ -89,7 +83,6 @@ if ($result['section'] === "profile") { ?>
                                             mon compte</a>
                                     </p>
                                     <p class="uk-text-center" uk-margin>
-                                        <!-- on declanche une alert js -->
                                         <a id="delete-account-btn"
                                             href="index.php?ctrl=security&action=deleteAccount&id=<?= $user->getId() ?>"
                                             data-id="<?= $user->getId(); ?>" class="uk-text-center uk-button uk-button-default"

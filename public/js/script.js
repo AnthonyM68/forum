@@ -21,6 +21,7 @@ function displayFormConfirmDelete(id)
                             </div>
                         </div>
                     </div>
+                    <input name="token-hidden" class="uk-input uk-form-large" type="text" value="<?= $_SESSION["token"] ?>" style="visibility:hidden">
                     <button class="uk-margin uk-button uk-button-default">Soumettre</button>
                 </div>
                 <!-- second col -->
@@ -95,7 +96,6 @@ function generateBreadcrumb(currentUrl, urlMappings) {
             break;
         }
     }
-
     // Ajouter chaque niveau de la hiérarchie au fil d'Ariane
     for (let i = 0; i < currentHierarchy.length; i++) {
         let item = currentHierarchy[i];
@@ -181,10 +181,15 @@ $(document).ready(function () {
     // objet javascript pour le breadcrumb
     let urlMappings = {
         './': 'Accueil',
-        '/index.php?ctrl=forum&action=index': 'Liste des catégories',
+        '/index.php?ctrl=security&action=profile': 'Votre Profil',
+        '/index.php?ctrl=forum&action=listCategories': 'Liste des catégories',
         '/index.php?ctrl=security&action=allUsers': 'Liste des membres',
-        '/index.php?ctrl=forum&action=addPost&id=': 'Sujet',
+        '/index.php?ctrl=forum&action=addPost&id=': 'Ajouter Post',
         '/index.php?ctrl=forum&action=index': 'Topic',
+        '/index.php?ctrl=forum&action=addTopic': 'Ajouter Topic',
+        '/index.php?ctrl=forum&action=addCategory': 'Ajouter Catégorie',
+        '/index.php?ctrl=forum&action=showFullTopic': 'Topic',
+        '/index.php?ctrl=forum&action=listTopicsByCategory': 'Liste des Topics',
 
     };
     // on recherche l'url

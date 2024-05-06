@@ -9,7 +9,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="index.php?ctrl=forum&action=index">
+                    <a href="index.php?ctrl=forum&action=listCategories">
                         <span class="fas fa-list-ol"></span>
                         Liste des catégories
                     </a>

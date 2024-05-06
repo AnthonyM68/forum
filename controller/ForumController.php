@@ -26,9 +26,12 @@ class ForumController extends AbstractController implements ControllerInterface
      *
      * @return void
      */
-    public function index(): array
+    public function index()
     {
-        // créer une nouvelle instance de CategoryManager
+    }
+
+    public function listCategories()
+    {
         $categoryManager = new CategoryManager();
         // récupérer la liste de toutes les catégories grâce à la méthode 
         // findAll de Manager.php (triés par nom)
@@ -56,10 +59,10 @@ class ForumController extends AbstractController implements ControllerInterface
      * @param [type] $id
      * @return void
      */
-    public function findAllPostByIdTopicLIMIT($id)
+    public function findLast5PostsByTopic($id)
     {
         $postManager = new PostManager();
-        return $postManager->findAllPostByIdTopicLIMIT($id);
+        return $postManager->findLast5PostsByTopic($id);
     }
     /**
      * Undocumented function
@@ -69,14 +72,14 @@ class ForumController extends AbstractController implements ControllerInterface
      */
     public function listTopicsByCategory($id): array
     {
-
-        $topicManager = new TopicManager();
         $categoryManager = new CategoryManager();
+        $topicManager = new TopicManager();
+        // changer de methode plutot que findOneById
+        // besoin de convertir la date lors de la sortie sql
         $category = $categoryManager->findOneById($id);
         $topics = $topicManager->findTopicsByCategory($id);
-
         return [
-            "view" => VIEW_DIR . "forum/listTopics.php",
+            "view" => VIEW_DIR . "forum/listTopicsByCategory.php",
             "meta_description" => "Liste des topics par catégorie : " . $category,
             "data" => [
                 "category" => $category,
@@ -85,7 +88,7 @@ class ForumController extends AbstractController implements ControllerInterface
         ];
     }
     /**
-     * Undocumented function
+     * Regroupe tous les posts d'un topic
      *
      * @param [type] $id
      * @return void
@@ -94,6 +97,9 @@ class ForumController extends AbstractController implements ControllerInterface
     {
         $postManager = new PostManager();
         $posts = $postManager->findAllByIdTopic($id);
+        foreach ($posts as $post) {
+            var_dump($post);
+        }
         return [
             "view" => VIEW_DIR . "forum/topic.php",
             "section" => "topic",
@@ -104,7 +110,7 @@ class ForumController extends AbstractController implements ControllerInterface
         ];
     }
     /**
-     * Undocumented function
+     * Fournit les 5 derniers Topics pour la section news
      *
      * @return void
      */
@@ -116,13 +122,12 @@ class ForumController extends AbstractController implements ControllerInterface
             "view" => VIEW_DIR . "forum/home.php",
             "meta_description" => "Liste des topics : ",
             "data" => [
-
                 "topics" => $topics
             ]
         ];
     }
     /**
-     * Undocumented function
+     * Fournit les 5 derniers posts pour la section news
      *
      * @return void
      */
@@ -165,6 +170,26 @@ class ForumController extends AbstractController implements ControllerInterface
             "data" => []
         ];
     }
+    public function showFullTopic()
+    {
+        if (isset($_GET['id'])) {
+            $id = $_GET['id'];
+            $topicManager = new TopicManager();
+            $topic = $topicManager->findOneById($id);
+
+            $postManager = new PostManager();
+            $posts = $postManager->findAllByIdTopic($id);
+        }
+        return [
+            "view" => VIEW_DIR . "forum/topic.php",
+            "section" => "edit-topic",
+            "meta_description" => "Ajouter un Article : ",
+            "data" => [
+                "topic" => $topic,
+                "posts" => $posts
+            ]
+        ];
+    }
     /**
      * Undocumented function
      *
@@ -197,6 +222,7 @@ class ForumController extends AbstractController implements ControllerInterface
 
             if ($result) {
                 Session::addFlash("success", "Votre Topic a bien été sauvegarder");
+                $this->redirectTo("home", "index");
             } else {
                 Session::addFlash("error", "Une erreur est survenue veuillez recommencer");
             }
@@ -214,58 +240,38 @@ class ForumController extends AbstractController implements ControllerInterface
      *
      * @return void
      */
-    public function addPost(): array
+    public function addPost()
     {
         // on filtre les entrées
         $content = filter_input(INPUT_POST, 'content', FILTER_SANITIZE_SPECIAL_CHARS);
-        $topic_id = filter_input(INPUT_POST, 'topic_id', FILTER_VALIDATE_INT);
-        $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-
-        
-        // si elles sont toutes vérifiées
-        if ($content && $topic_id && $id) {
-
-            $postManager = new PostManager();
-            $posts = $postManager->findAllByIdTopic($id);
-            $topicManager = new TopicManager();
-            $topic = $topicManager->findOneById($id);
-            $date = new DateTime();
-
-            $result = $postManager->add([
-                "content" => $content,
-                "dateCreation" => $date->format('Y-m-d H:i:s'),
-                "topic_id" => $topic_id
-            ]);
-
-            if ($result) {
-                Session::addFlash("success", "Votre Article a bien été sauvegarder");
-            } else {
-                Session::addFlash("error", "Une erreur est survenue veuillez recommencer");
-            }
-
-
-            return [
-                "view" => VIEW_DIR . "forum/topic.php",
-                "section" => "edit-topic",
-                "meta_description" => "Ajouter un Article : ",
-                "data" => [
-                    "topic" => $topic,
-                    "posts" => $posts
-                ]
-            ];
-        }
-
-        $postManager = new PostManager();
-        $posts = $postManager->findAllByIdTopic($id);
+        $topic_id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
         $topicManager = new TopicManager();
-        $topic = $topicManager->findOneById($id);
+        $postManager = new PostManager();
+        if (isset($_POST['token-hidden']) && $_POST['token-hidden'] === $_SESSION['token']) {
+            // si elles sont toutes vérifiées
+            if ($content && $topic_id) {
+
+                $date = new DateTime();
+                $result = $postManager->add([
+                    "content" => $content,
+                    "dateCreation" => $date->format('Y-m-d H:i:s'),
+                    "topic_id" => $topic_id,
+                    "user_id" => Session::getUser()->getId()
+                ]);
+                if ($result) {
+                    Session::addFlash("success", "Votre Article a bien été sauvegarder");
+                } else {
+                    Session::addFlash("error", "Une erreur est survenue veuillez recommencer");
+                }
+            }
+        }
         return [
-            "view" => VIEW_DIR . "forum/published.php",
-            "section" => "post",
+            "view" => VIEW_DIR . "forum/topic.php",
+            "section" => "edit-topic",
             "meta_description" => "Ajouter un Article : ",
             "data" => [
-                "topic" => $topic,
-                "posts" => $posts
+                "topic" => $topicManager->findOneById($topic_id),
+                "posts" => $postManager->findAllByIdTopic($topic_id)
             ]
         ];
     }

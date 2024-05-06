@@ -68,15 +68,12 @@ if ($action == "ajax") { //si l'action était ajax
 } else {
 
     ob_start(); //démarre un buffer (tampon de sortie)
-
     include VIEW_DIR . "forum/sections/header/header.php";
     $header = ob_get_contents();
     ob_clean(); // Nettoie le tampon de sortie
-
     include VIEW_DIR . "forum/sections/news/news.php";
     $news = ob_get_contents();
     ob_clean(); // Nettoie le tampon de sortie
-
     // Inclusion du deuxième fichier et récupération du contenu
     include VIEW_DIR . "forum/sections/footer/footer.php";
     $footer = ob_get_contents();
