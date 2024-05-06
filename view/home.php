@@ -2,7 +2,8 @@
 
 ?>
 <!-- TITLE PAGE -->
-<h1 class="uk-padding-small uk-padding-remove-horizontal pridi-regular uk-animation-slide-bottom">Bienvenue sur le Forum</h1>
+<h1 class="uk-padding-small uk-padding-remove-horizontal pridi-regular uk-animation-slide-bottom">Bienvenue sur le Forum
+</h1>
 
 <div class="uk-section uk-padding-remove">
     <div class=" uk-container">
@@ -13,33 +14,13 @@
                     <ul uk-accordion>
                         <?php
                         if ($categoryDatas) {
-                            foreach ($categoryDatas as $categoryName => $categoryData) { 
-                                 ?>
-                                <li class="uk-closed">
-                                    <!-- TITLE CATEGORY -->
-                                    <a class="uk-accordion-title color-primary" href><?= $categoryName ?></a>
-                                    <div class="uk-accordion-content">
-                                        <ul>
-                                            <?php
-                                            foreach ($categoryData as $topicData ) {
-                                               ?>
-                                                <li>
-                                                    <a href="index.php?ctrl=forum&action=addPost&id=<?= $topicData->getId() ?>"><?= $topicData->getTitle() ?></a>
-                                                </li>
-                                                <?php 
-                                                foreach ($categoryData as $post) { 
-                                                    ?>
-                                                    <li>
-                                                        <!-- CONTENT POST
-                                                        <a href="#"></a> -->
-                                                    </li>
-                                            <?php }
-                                            }
-                                            ?>
-                                        </ul>
-                                    </div>
-                                </li>
-                        <?php }
+                            foreach ($categoryDatas as $category) {
+                                ?>
+                                <div class="uk-card uk-card-body">
+                                <a href="index.php"><?= $category->getName() ?></a>
+                                </div>
+                               
+                            <?php }
                         }
                         ?>
                     </ul>
@@ -53,14 +34,16 @@
                         <div class="uk-grid-small uk-flex-middle" uk-grid>
                             <!-- IMAGE -->
                             <div class="uk-width-auto">
-                                <img class="uk-border-circle" width="40" height="40" src="./public/img/profils/moi.jpg" alt="Avatar">
+                                <img class="uk-border-circle" width="40" height="40" src="./public/img/profils/moi.jpg"
+                                    alt="Avatar">
                             </div>
                             <!-- USERNAME -->
                             <div class="uk-width-expand">
                                 <h3 class="uk-card-title uk-margin-remove-bottom  pridi-regular">
                                     <?= $fakerFr->name ?>
                                 </h3>
-                                <p class="uk-text-meta uk-margin-remove-top"><time datetime="2016-04-01T19:00"><?= $fakerFr->date('d/m/Y') ?></time></p>
+                                <p class="uk-text-meta uk-margin-remove-top"><time
+                                        datetime="2016-04-01T19:00"><?= $fakerFr->date('d/m/Y') ?></time></p>
                             </div>
                         </div>
                     </div>

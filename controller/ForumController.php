@@ -220,11 +220,17 @@ class ForumController extends AbstractController implements ControllerInterface
         $content = filter_input(INPUT_POST, 'content', FILTER_SANITIZE_SPECIAL_CHARS);
         $topic_id = filter_input(INPUT_POST, 'topic_id', FILTER_VALIDATE_INT);
         $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+
+        
         // si elles sont toutes vérifiées
-        if ($content && $topic_id) {
+        if ($content && $topic_id && $id) {
 
             $postManager = new PostManager();
+            $posts = $postManager->findAllByIdTopic($id);
+            $topicManager = new TopicManager();
+            $topic = $topicManager->findOneById($id);
             $date = new DateTime();
+
             $result = $postManager->add([
                 "content" => $content,
                 "dateCreation" => $date->format('Y-m-d H:i:s'),
@@ -236,12 +242,8 @@ class ForumController extends AbstractController implements ControllerInterface
             } else {
                 Session::addFlash("error", "Une erreur est survenue veuillez recommencer");
             }
-        } else if ($id) {
-            $id = $_GET['id'];
-            $postManager = new PostManager();
-            $posts = $postManager->findAllByIdTopic($id);
-            $topicManager = new TopicManager();
-            $topic = $topicManager->findOneById($id);
+
+
             return [
                 "view" => VIEW_DIR . "forum/topic.php",
                 "section" => "edit-topic",
@@ -252,11 +254,19 @@ class ForumController extends AbstractController implements ControllerInterface
                 ]
             ];
         }
+
+        $postManager = new PostManager();
+        $posts = $postManager->findAllByIdTopic($id);
+        $topicManager = new TopicManager();
+        $topic = $topicManager->findOneById($id);
         return [
             "view" => VIEW_DIR . "forum/published.php",
             "section" => "post",
             "meta_description" => "Ajouter un Article : ",
-            "data" => []
+            "data" => [
+                "topic" => $topic,
+                "posts" => $posts
+            ]
         ];
     }
 }

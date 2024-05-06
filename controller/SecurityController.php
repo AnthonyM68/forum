@@ -145,8 +145,6 @@ class SecurityController extends AbstractController
 
         // si la requête provient d'une inscription et validation par email
         if (isset($_GET['token'])) {
-
-            die;
             // si le token est vérifié
             if ($token) {
                 $userManager = new UserManager();
@@ -157,6 +155,7 @@ class SecurityController extends AbstractController
                     Session::addFlash("warning", "L'inscription à déjà été confirmer");
                     $this->redirectTo("home", "index");
                 }
+            
                 // s'il existe un token en bdd pour cet user
                 if (!empty($userInfos->getToken())) {
                     // on nettoye le token devenu inutile
@@ -184,12 +183,11 @@ class SecurityController extends AbstractController
             }
             Session::addFlash("warning", "La vérification a échouée, veuillez recommencer");
         }
-        /*if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // si l'utilisateur se connecte
             if ($email && $password) {
                 // on instancie UserManager
                 $userManager = new UserManager();
-
                 if (!$password) {
                     // on affiche une alert a l'utilisateur
                     Session::addFlash("error", "Le mot de passe ne respecte pas les critères de soumission");
@@ -213,7 +211,7 @@ class SecurityController extends AbstractController
                 }
                 $this->redirectTo("home", "index");
             }
-        }*/
+        }
         return [
             "view" => VIEW_DIR . "security/loginSignin.php",
             "meta_description" => "Connectez-vous pour participer au Forum",
@@ -235,7 +233,7 @@ class SecurityController extends AbstractController
         return [
             "view" => VIEW_DIR . "security/users.php",
             "section" => "profile",
-            "restor" => false,
+            "form" => "account",
             "meta_description" => "Profil utilisateur",
             "data" => [
                 // on recherche les infos utilisateur hormis le password
@@ -406,79 +404,52 @@ class SecurityController extends AbstractController
     }
     public function restorAccount()
     {
+
+
         if (isset($_GET['token'])) {
             $token = $_GET['token'];
             $securityManager = new SecurityManager();
             $encryptedUser = $securityManager->searchIfTokenlExist($token);
-            var_dump($encryptedUser);
+            $decryptedUser = AbstractController::decryptData($encryptedUser->getEncryptedData(), $encryptedUser->getIv());
+            $decryptedUser = unserialize($decryptedUser);
+           
+        } 
+        if (isset($_POST['token-hidden']) && $_POST['token-hidden'] === $_SESSION['token'] ) {
 
+            
+
+            $securityManager = new SecurityManager();
+            $encryptedUser = $securityManager->searchIfTokenlExist($_GET['token']);
             $decryptedUser = AbstractController::decryptData($encryptedUser->getEncryptedData(), $encryptedUser->getIv());
             $decryptedUser = unserialize($decryptedUser);
 
-
-            if (isset($_GET['id'])) {
-                $id = $_GET['id'];
-                $password = filter_input(
-                    INPUT_POST,
-                    'password',
-                    FILTER_VALIDATE_REGEXP,
-                    array(
-                        "options" => array(
-                            // 12 et 25 caractères avec au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial :
-                            // `/(?=.[A-Z])(?=.[a-z])(?=.\d)(?=.[!@#$%^&*()_+}{:;'?/>,-])(?!.*\s).{12,25}/`
-                            "regexp" => "/.{6,25}/"
-                        )
-                    )
-                );
-                $repeat_password = filter_input(
-                    INPUT_POST,
-                    'repeat_password',
-                    FILTER_VALIDATE_REGEXP,
-                    array(
-                        "options" => array(
-                            // `/(?=.[A-Z])(?=.[a-z])(?=.\d)(?=.[!@#$%^&*()_+}{:;'?/>,-])(?!.*\s).{12,25}/`
-                            "regexp" => "/.{6,25}/"
-                        )
-                    )
-                );
-                if ($password && $repeat_password) {
-                    // si les password ne respectent pas les critères de soumission
-                    if (!$password || !$repeat_password) {
-                        // on affiche une alert 
-                        Session::addFlash("warning", "Les mots de passe ne respectent pas les critères de soumission");
-                        $this->redirectTo("home", "index");
-                    }
-                    // si les password ne sont pas égaux
-                    if ($password !== $repeat_password) {
-                        // on affiche une alert 
-                        Session::addFlash("error", "Les mots de passe ne sont pas identique");
-                        $this->redirectTo("home", "index");
-                    }
-
-                    $userManager = new UserManager();
-                    $result = $userManager->updateAfterRestaur($decryptedUser->getUsername(), $decryptedUser->getPassword(), $decryptedUser->getEmail(), $id);
-                    if ($result) {
-                        $result = $securityManager->deleteFromTableEncrypted($encryptedUser->getId());
-                        if ($result) {
-                            $subject = "Bon retour sur le Forum";
-                            $content = "<p>Vous retrouvez toues les fonctionnalités du Forum</p>";
-                            // on envois l'email
-                            $result = $this->sentEmailTo($decryptedUser->getEmail(), $subject, $content);
-                            Session::addFlash("success", "Bon retour parmis nous vous êtes désormais à nouveau identifiable.");
-                            $this->redirectTo("home", "index");
-                        }
-                    } else {
-                        Session::addFlash("warning", "Une erreur est survenue vérifiez vos données");
-                    }
-                } else {
-                    Session::addFlash("warning", "Vous devez remplacez votre mot de passe");
+            $userManager = new UserManager();
+            $result = $userManager->updateAfterRestaur($decryptedUser->getUsername(), $decryptedUser->getPassword(), $decryptedUser->getEmail(), $decryptedUser->getId());
+            var_dump($decryptedUser->getId());
+            
+           
+            if ($result) {
+                $result = $securityManager->deleteFromTableEncrypted($encryptedUser->getId());
+                if ($result) {
+                    $subject = "Bon retour sur le Forum";
+                    $content = "<p>Vous retrouvez toues les fonctionnalités du Forum</p>";
+                    // on envois l'email
+                    $result = $this->sentEmailTo($decryptedUser->getEmail(), $subject, $content);
+                    
+                    Session::addFlash("success", "Bon retour parmis nous vous êtes désormais à nouveau identifiable.");
+                    $this->redirectTo("home", "index");
                 }
+
+            } else {
+                Session::addFlash("warning", "Une erreur est survenue vérifiez vos données");
             }
         }
+
+        
         return [
             "view" => VIEW_DIR . "security/users.php",
             "section" => "profile",
-            "restor" => true,
+            "form" => "restorAccount",
             "token" => $token,
             "meta_description" => "Profil utilisateur",
             "data" => [

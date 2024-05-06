@@ -139,7 +139,6 @@ class UserManager extends Manager
     public function searchIfTokenlExist($token)
     {
         $sql = "SELECT 
-        t.id,
         t.id_user,
         t.username,
         t.password,

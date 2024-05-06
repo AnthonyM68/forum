@@ -2,6 +2,8 @@
 // on recherche le topic principal
 $topic = $result["data"]['topic'];
 // ID user
+
+
 $user_id = $topic->getUser()->getId();
 // on recherche tous les posts du topic
 $posts = $result["data"]['posts'];

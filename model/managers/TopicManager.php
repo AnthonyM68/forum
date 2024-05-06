@@ -29,7 +29,8 @@ class TopicManager extends Manager
         $results = iterator_to_array($this->getMultipleResults(
             DAO::select($sql),
             $this->className
-        ));
+        )
+        );
 
         return count($results);
     }
@@ -75,33 +76,32 @@ class TopicManager extends Manager
     public function fullyInformationsNewsExperimentale($id_category)
     {
         $sql = "SELECT 
-        t.id_topic,
-        t.title AS title,
+        t.id_topic AS id_topic,
+     	t.title AS title,
         t.dateCreation AS dateCreation,
-        t.user_id AS user,
+        t.user_id,
         c.id_category AS category,
         c.name AS name,
         u1.id_user,
-        u1.username AS topic_username,
-        p.id_post AS id_post,
-        p.content AS post_content,
-        p.dateCreation AS post_ddateCreation,
-        u2.id_user AS user,
-        u2.username AS post_username
-    FROM " . $this->tableName . " t
-    JOIN 
-        category c ON t.category_id = c.id_category
-    JOIN 
-        user u1 ON t.user_id = u1.id_user
-    LEFT JOIN 
-        post p ON t.id_topic = p.topic_id
-    LEFT JOIN 
-        user u2 ON p.user_id = u2.id_user
-    WHERE
-        t.category_id = :category_id
-    ORDER BY
-        t.id_topic, p.id_post;
-    ";
+        u1.username AS username,
+        p.id_post,
+        p.content AS content,
+        p.dateCreation AS dateCreation,
+        u2.id_user,
+        u2.username AS username
+        FROM " . $this->tableName . " t
+        JOIN 
+            category c ON t.category_id = c.id_category
+        JOIN 
+            user u1 ON t.user_id = u1.id_user
+        LEFT JOIN 
+            post p ON t.id_topic = p.topic_id
+        LEFT JOIN 
+            user u2 ON p.user_id = u2.id_user
+        WHERE
+            t.category_id = :category_id
+        ORDER BY
+            t.id_topic, p.id_post";
 
         return $this->getMultipleResults(
             DAO::select($sql, ["category_id" => $id_category]),
