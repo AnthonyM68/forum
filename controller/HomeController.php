@@ -21,20 +21,34 @@ class HomeController extends AbstractController implements ControllerInterface
         $result = [];
         // on recherche toutes les catégories
         $categories = $categoryManager->findAll();
+
         //on parcours toutes les catégories
         foreach ($categories as $category) {
             // on get le nom de catégorie
             $categoryName = $category->getName();
             // on get son Id et recherchons tous les posts associés
-            $topics = $topicManager->fullyInformationsNewsExperimentale($category->getId());
+            $result[$categoryName] = $topicManager->fullyInformationsNewsExperimentale($category->getId());
+          
         }
+
+        /*foreach($result as $cat) {
+            var_dump($cat);
+            if(is_iterable($cat))
+            {
+                foreach($cat as $c) {
+                var_dump($c);
+                }
+            }   
+        }
+
+        die;*/
 
         return [
             "view" => VIEW_DIR . "home.php",
             "section" => "home",
             "meta_description" => "Page d'accueil du forum",
             "data" => [
-                "categoryData" => $topics
+                "categoryData" => $result
             ],
             // Statistiques pour la page d'accueil
             "countUsers" => $userManager->countUser(),

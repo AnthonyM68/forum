@@ -15,7 +15,10 @@ class SecurityController extends AbstractController
     // contiendra les méthodes liées à l'authentification : register, login et logout
     public function register()
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // générer un token unique de vérification 
+        // CSRF
+        if(isset($_POST['token-hidden']) && $_POST['token-hidden'] === $_SESSION['token']) {
+                   
             $password = filter_input(
                 INPUT_POST,
                 'password',
@@ -53,7 +56,7 @@ class SecurityController extends AbstractController
             // si toutes les entrées sont vérifiées
 
             if ($username && $email && $password && $repeat_password && isset($_POST['rgpd']) && $_POST['rgpd'] === "on") {
-                var_dump("traitement");
+
                 $userManager = new UserManager();
                 // si l'email existe
                 // XSS
@@ -75,22 +78,25 @@ class SecurityController extends AbstractController
                     Session::addFlash("error", "Les mots de passe ne sont pas identique");
                     $this->redirectTo("home", "index");
                 }
-                // générer un token unique de vérification 
-                // CSRF
-                $token = $this->generateTokenUnique();
+
 
                 // on recherche si l'username existe
                 $usernameExist = $userManager->searchIfUsernamelExist($username);
 
+                $date = new DateTime();
+                $date->modify('+30 days');
+                $tokenValidity = $date->format('Y-m-d H:i:s');
+
                 if (!$usernameExist) {
                     $date = new DateTime("now");
+                    $tokenValidity = $date->modify('+30 days');
                     $result = $userManager->add([
                         "username" => $username,
                         "password" => password_hash($repeat_password, PASSWORD_DEFAULT),
                         "email" => $email,
-                        "token" => $token,
+                        "token" => $_SESSION['token'],
+                        "tokenValidity" => $tokenValidity->format('Y-m-d H:i:s'),
                         "dateRegister" => $date->format('Y-m-d H:i:s'),
-                        "tokenValidity" => null,
                         "role" => json_encode([
                             "ROLE_SUBSCRIBER" // l'insciption n'étant pas fini il reste visiteur
                         ]),
@@ -101,7 +107,7 @@ class SecurityController extends AbstractController
                         $subject = "Merci pour votre inscription au Forum@";
                         // contenu
                         $content = "<p>Veuillez confirmer votre inscription en cliquant sur le lien suivant:</p>
-                    <a href='http://localhost/forum/index.php?ctrl=security&action=login&token=" . $token . "'>Cliquez ici</a>";
+                        <a href='http://localhost/forum/index.php?ctrl=security&action=login&token=" . $_SESSION['token'] . "'>Cliquez ici</a>";
                         // Envoyer EMAIL
                         $result = $this->sentEmailTo($email, $subject, $content);
                         $result ? Session::addFlash("success", "Votre inscription est terminée, veuillez vérifier vos email")
@@ -111,11 +117,13 @@ class SecurityController extends AbstractController
                     } else {
                         Session::addFlash("error", "L'enregistrement en base de données a échoué");
                     }
-                } else Session::addFlash("error", "Nom d'utilisateur déjà utilisé");
+                } else
+                    Session::addFlash("error", "Nom d'utilisateur déjà utilisé");
             } else {
                 Session::addFlash("error", "Vérifiez votre saisie quelque chose ne va pas");
             }
         }
+        
         return [
             "view" => VIEW_DIR . "security/loginSignin.php",
             "section" => "register",
@@ -124,19 +132,21 @@ class SecurityController extends AbstractController
         ];
     }
 
-
     public function login()
     {
         // on filtre le token bin2hex {32} caractères
         $token = filter_input(INPUT_GET, 'token', FILTER_VALIDATE_REGEXP, array(
             "options" => array("regexp" => "/^[a-f0-9]{64}$/")
-        ));
+        )
+        );
         // on filtre toutes les entrées
         $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
         $password = filter_input(INPUT_POST, 'password', FILTER_VALIDATE_REGEXP, array("options" => array("regexp" => "/.{6,25}/")));
 
         // si la requête provient d'une inscription et validation par email
         if (isset($_GET['token'])) {
+
+            die;
             // si le token est vérifié
             if ($token) {
                 $userManager = new UserManager();
@@ -174,7 +184,7 @@ class SecurityController extends AbstractController
             }
             Session::addFlash("warning", "La vérification a échouée, veuillez recommencer");
         }
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        /*if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // si l'utilisateur se connecte
             if ($email && $password) {
                 // on instancie UserManager
@@ -203,7 +213,7 @@ class SecurityController extends AbstractController
                 }
                 $this->redirectTo("home", "index");
             }
-        }
+        }*/
         return [
             "view" => VIEW_DIR . "security/loginSignin.php",
             "meta_description" => "Connectez-vous pour participer au Forum",
@@ -225,6 +235,7 @@ class SecurityController extends AbstractController
         return [
             "view" => VIEW_DIR . "security/users.php",
             "section" => "profile",
+            "restor" => false,
             "meta_description" => "Profil utilisateur",
             "data" => [
                 // on recherche les infos utilisateur hormis le password
@@ -400,7 +411,7 @@ class SecurityController extends AbstractController
             $securityManager = new SecurityManager();
             $encryptedUser = $securityManager->searchIfTokenlExist($token);
             var_dump($encryptedUser);
-       
+
             $decryptedUser = AbstractController::decryptData($encryptedUser->getEncryptedData(), $encryptedUser->getIv());
             $decryptedUser = unserialize($decryptedUser);
 
@@ -443,10 +454,10 @@ class SecurityController extends AbstractController
                         Session::addFlash("error", "Les mots de passe ne sont pas identique");
                         $this->redirectTo("home", "index");
                     }
-                    
+
                     $userManager = new UserManager();
                     $result = $userManager->updateAfterRestaur($decryptedUser->getUsername(), $decryptedUser->getPassword(), $decryptedUser->getEmail(), $id);
-                    if ($result) { 
+                    if ($result) {
                         $result = $securityManager->deleteFromTableEncrypted($encryptedUser->getId());
                         if ($result) {
                             $subject = "Bon retour sur le Forum";

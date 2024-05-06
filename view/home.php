@@ -1,4 +1,6 @@
-<?php $categoryDatas = $result['data']['categoryData']; ?>
+<?php $categoryDatas = $result['data']['categoryData'];
+
+?>
 <!-- TITLE PAGE -->
 <h1 class="uk-padding-small uk-padding-remove-horizontal pridi-regular uk-animation-slide-bottom">Bienvenue sur le Forum</h1>
 
@@ -11,24 +13,25 @@
                     <ul uk-accordion>
                         <?php
                         if ($categoryDatas) {
-                            foreach ($categoryDatas as $categoryName => $categoryData) { ?>
+                            foreach ($categoryDatas as $categoryName => $categoryData) { 
+                                 ?>
                                 <li class="uk-closed">
                                     <!-- TITLE CATEGORY -->
                                     <a class="uk-accordion-title color-primary" href><?= $categoryName ?></a>
                                     <div class="uk-accordion-content">
                                         <ul>
                                             <?php
-                                            foreach ($categoryData as $topicData) {
-                                                $topic = $topicData['topic'];
-                                                $posts = $topicData['posts']; ?>
+                                            foreach ($categoryData as $topicData ) {
+                                               ?>
                                                 <li>
-                                                    <!-- TITLE TOPIC -->
-                                                    <a href="index.php?ctrl=forum&action=addPost&id=<?= $topic->getId() ?>"><?= $topic->getTitle() ?></a>
+                                                    <a href="index.php?ctrl=forum&action=addPost&id=<?= $topicData->getId() ?>"><?= $topicData->getTitle() ?></a>
                                                 </li>
-                                                <?php foreach ($posts as $post) { ?>
+                                                <?php 
+                                                foreach ($categoryData as $post) { 
+                                                    ?>
                                                     <li>
-                                                        <!-- CONTENT POST -->
-                                                        <a href="#"><?= $post->getContent() ?></a>
+                                                        <!-- CONTENT POST
+                                                        <a href="#"></a> -->
                                                     </li>
                                             <?php }
                                             }

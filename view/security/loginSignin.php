@@ -1,4 +1,7 @@
 
+<?php 
+
+?>
 <div id="loginSignin" class="uk-flex-top" uk-modal>
     <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
         <div class="uk-section uk-section-muted uk-flex uk-flex-middle uk-animation-fade" uk-height-viewport>
@@ -15,6 +18,7 @@
                                     <li><a href="#">MDP</a></li>
                                     <li class="uk-hidden">Mot de passe perdu</li>
                                 </ul>
+                                <!-- login -->
                                 <ul class="uk-switcher uk-margin">
                                     <li>
                                         <h3 class="uk-card-title uk-text-center">Connectez-vous</h3>
@@ -42,7 +46,7 @@
                                             </div>
                                         </form>
                                     </li>
-                                
+                                    <!-- register -->
                                     <li>
                                         <h3 class="uk-card-title uk-text-center">Inscrivez-vous. C'est gratuit!</h3>
                                         <form id="register" name="register" action="./index.php?ctrl=security&action=register" method="post">
@@ -76,6 +80,7 @@
                                                 
                                             </div>
                                             <div class="uk-margin">
+                                                <input name="token-hidden" class="uk-input uk-form-large" type="text" value="<?= $_SESSION["token"] ?>" style="visibility:hidden">
                                                 <input type="submit" class="uk-button uk-button-primary uk-button-large uk-width-1-1" value="Créer compte">
                                             </div>
                                             <div class="uk-text-small uk-text-center">

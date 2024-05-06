@@ -31,11 +31,19 @@ class Session
         if (isset($_SESSION[$categ])) {
             $msg = $_SESSION[$categ];
             unset($_SESSION[$categ]);
-        } else $msg = "";
+        } else
+            $msg = "";
 
         return $msg;
     }
 
+    public static function generateTokenUnique()
+    {
+        $token = bin2hex(random_bytes(32));
+        if (!isset($_SESSION["user"])) {
+            $_SESSION["token"] = $token;
+        } 
+    }
 
     /**
      *   met un user dans la session (pour le maintenir connecté)

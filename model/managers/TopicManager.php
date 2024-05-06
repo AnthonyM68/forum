@@ -61,10 +61,10 @@ class TopicManager extends Manager
             $this->className
         );
     }
-    public function findAllId($foreign)
+    public function findAllId($id)
     {
 
-        $sql = "SELECT " . $foreign . "
+        $sql = "SELECT " . $id . "
                 FROM " . $this->tableName . "";
 
         return $this->getMultipleResults(
@@ -76,16 +76,17 @@ class TopicManager extends Manager
     {
         $sql = "SELECT 
         t.id_topic,
-        t.title AS topic_title,
-        t.dateCreation AS topic_dateCreation,
-        c.id_category,
-        c.name AS category_name,
-        u1.id_user AS topic_user_id,
+        t.title AS title,
+        t.dateCreation AS dateCreation,
+        t.user_id AS user,
+        c.id_category AS category,
+        c.name AS name,
+        u1.id_user,
         u1.username AS topic_username,
-        p.id_post,
+        p.id_post AS id_post,
         p.content AS post_content,
         p.dateCreation AS post_ddateCreation,
-        u2.id_user AS post_user_id,
+        u2.id_user AS user,
         u2.username AS post_username
     FROM " . $this->tableName . " t
     JOIN 
