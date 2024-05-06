@@ -68,7 +68,7 @@ class PostManager extends Manager
 
     public function findAllByIdTopic($id) 
     {
-        $sql = "SELECT t.* 
+        $sql = "SELECT t.user_id 
                 FROM " . $this->tableName . " t
                 WHERE t.topic_id = :topic_id
                 ";
@@ -96,5 +96,4 @@ class PostManager extends Manager
             $this->className
         );
     }
-
 }

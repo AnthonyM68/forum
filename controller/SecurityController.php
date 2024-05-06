@@ -447,7 +447,6 @@ class SecurityController extends AbstractController
                     $userManager = new UserManager();
                     $result = $userManager->updateAfterRestaur($decryptedUser->getUsername(), $decryptedUser->getPassword(), $decryptedUser->getEmail(), $id);
                     if ($result) { 
-                        var_dump($encryptedUser->getId());
                         $result = $securityManager->deleteFromTableEncrypted($encryptedUser->getId());
                         if ($result) {
                             $subject = "Bon retour sur le Forum";
