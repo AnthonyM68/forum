@@ -15,6 +15,6 @@
                 </div>
             </div>
         </div>
-        <p class="uk-text-center">&copy; <?= date_create("now")->format("Y") ?></p>
+        <p class="uk-text-center">Uikit &copy; <?= date_create("now")->format("Y") ?></p>
     </div>
 </div>

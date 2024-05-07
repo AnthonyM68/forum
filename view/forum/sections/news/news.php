@@ -59,7 +59,7 @@ if (isset($result['section']) && $result['section'] === "home") {
                                     </p>
                                     <!-- LINKS -->
                                     <span class="fa fa-reply" aria-hidden="true"></span>
-                                    <a href="./index.php?ctrl=forum&action=addPost&id=<?= $topic->getId() ?>">Répondre à la suite du topic</a>
+                                    <a href="index.php?ctrl=forum&action=addPost&id=<?= $topic->getId() ?>">Répondre à la suite du topic</a>
                                 </div>
                             </li>
                         <?php }
@@ -72,16 +72,11 @@ if (isset($result['section']) && $result['section'] === "home") {
                     <h3 class="uk-card-title color-primary uk-text-uppercase">5 derniers Posts</h3>
                     <!-- 5 LAST POSTS -->
                     <ul uk-accordion>
-                        <!--<?php for ($i = 0; $i < 5; $i++) { ?>
-                        <li class="">
-                            <a class="uk-accordion-title" href><?= $fakerFr->sentence ?></a>
-                        </li>
-                    <?php } ?>-->
                         <?php
                         if ($posts) {
                             foreach ($posts as $post) { ?>
                                 <li class="uk-open">
-                                    <a class="uk-accordion-title" href><?= $post->getContent() ?></a>
+                                    <a class="" href="index.php?ctrl=forum&action=showFullTopic&id=<?= $post->getTopic()->getId() ?>"><?= $post->getContent() ?></a>
                                 </li>
                         <?php }
                         } ?>

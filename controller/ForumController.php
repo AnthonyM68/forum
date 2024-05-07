@@ -143,33 +143,7 @@ class ForumController extends AbstractController implements ControllerInterface
             ]
         ];
     }
-    /**
-     * Undocumented function
-     *
-     * @return void
-     */
-    public function addCategory(): array
-    {
-        $this->restrictTo("ROLE_USER");
 
-        if (isset($_POST['name']) && !empty($_POST['name'])) {
-            $nameCategory = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_SPECIAL_CHARS);
-            $categoryManager = new CategoryManager();
-            $result = $categoryManager->add(["name" => $nameCategory]);
-            if ($result) {
-                Session::addFlash("success", "Catégorie ajouté avec succès");
-            } else {
-                Session::addFlash("error", "Erreur lors de la soumission de la catégorie");
-            }
-            $this->redirectTo("forum", "index");
-        }
-        return [
-            "view" => VIEW_DIR . "forum/published.php",
-            "section" => "category",
-            "meta_description" => "Ajouter une catégorie : ",
-            "data" => []
-        ];
-    }
     public function showFullTopic()
     {
         if (isset($_GET['id'])) {
@@ -190,41 +164,76 @@ class ForumController extends AbstractController implements ControllerInterface
             ]
         ];
     }
+
+
     /**
-     * Undocumented function
+     * Ajouter une catégorie 
+     *
+     * @return void
+     */
+    public function addCategory(): array
+    {
+        $this->restrictTo("ROLE_USER");
+
+        if (isset($_POST['name']) && !empty($_POST['name'])) {
+            // CSRF
+            if (isset($_POST['token-hidden']) && $_POST['token-hidden'] === $_SESSION['token']) {
+
+                $nameCategory = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_SPECIAL_CHARS);
+                $categoryManager = new CategoryManager();
+                $result = $categoryManager->add(["name" => $nameCategory]);
+                if ($result) {
+                    Session::addFlash("success", "Catégorie ajouté avec succès");
+                } else {
+                    Session::addFlash("error", "Erreur lors de la soumission de la catégorie");
+                }
+                $this->redirectTo("forum", "index");
+            }
+        }
+        return [
+            "view" => VIEW_DIR . "forum/published.php",
+            "section" => "category",
+            "meta_description" => "Ajouter une catégorie : ",
+            "data" => []
+        ];
+    }
+    /**
+     * Ajouter un Topic
      *
      * @return void
      */
     public function addTopic(): array
     {
         $this->restrictTo("ROLE_USER");
-
         // on filtre les entrées
         $title = filter_input(INPUT_POST, 'title', FILTER_SANITIZE_SPECIAL_CHARS);
         $content = filter_input(INPUT_POST, 'content', FILTER_SANITIZE_SPECIAL_CHARS);
         $category_id = filter_input(INPUT_POST, 'category', FILTER_VALIDATE_INT);
         // si elles sont toutes vérifiées
         if ($title && $content && $category_id) {
-            $topicManager = new TopicManager();
-            $date = new DateTime();
-            $id_topic = $topicManager->add([
-                "title" => $title,
-                "dateCreation" => $date->format('Y-m-d H:i:s'),
-                "category_id" => $category_id,
-                "user_id" => 1
-            ]);
-            $postManager = new PostManager();
-            $result = $postManager->add([
-                "content" => $content,
-                "dateCreation" => $date->format('Y-m-d H:i:s'),
-                "topic_id" => $id_topic
-            ]);
+            // CSRF
+            if (isset($_POST['token-hidden']) && $_POST['token-hidden'] === $_SESSION['token']) {
+                $topicManager = new TopicManager();
+                $date = new DateTime();
+                $id_topic = $topicManager->add([
+                    "title" => $title,
+                    "dateCreation" => $date->format('Y-m-d H:i:s'),
+                    "category_id" => $category_id,
+                    "user_id" => 1
+                ]);
+                $postManager = new PostManager();
+                $result = $postManager->add([
+                    "content" => $content,
+                    "dateCreation" => $date->format('Y-m-d H:i:s'),
+                    "topic_id" => $id_topic
+                ]);
 
-            if ($result) {
-                Session::addFlash("success", "Votre Topic a bien été sauvegarder");
-                $this->redirectTo("home", "index");
-            } else {
-                Session::addFlash("error", "Une erreur est survenue veuillez recommencer");
+                if ($result) {
+                    Session::addFlash("success", "Votre Topic a bien été sauvegarder");
+                    $this->redirectTo("home", "index");
+                } else {
+                    Session::addFlash("error", "Une erreur est survenue veuillez recommencer");
+                }
             }
         }
         return [
@@ -236,7 +245,7 @@ class ForumController extends AbstractController implements ControllerInterface
     }
 
     /**
-     * Undocumented function
+     * Ajouter un Post
      *
      * @return void
      */
