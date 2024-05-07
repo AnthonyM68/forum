@@ -11,21 +11,24 @@ use Model\Managers\PostManager;
 
 class HomeController extends AbstractController implements ControllerInterface
 {
+    /**
+     * Home
+     *
+     * @return void
+     */
     public function index()
     {
         $categoryManager = new CategoryManager();
         $topicManager = new TopicManager();
         $postManager = new PostManager();
         $userManager = new UserManager();
-        // on recherche toutes les catégories
-        $categories = $categoryManager->findAll(["name", "ASC"]);
-
         return [
             "view" => VIEW_DIR . "home.php",
             "section" => "home",
             "meta_description" => "Page d'accueil du forum",
             "data" => [
-                "categoryData" => $categories
+                "categoryData" => $categoryManager->findAll(["name", "ASC"]),
+                "lastUser" =>  $userManager->findLatestUser()
             ],
             // Statistiques pour la page d'accueil
             "countUsers" => $userManager->countUser(),

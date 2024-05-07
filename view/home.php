@@ -1,7 +1,6 @@
 <?php 
-
 $categoryDatas = $result['data']['categoryData'];
-
+$lastUser = $result['data']['lastUser'];
 ?>
 <!-- TITLE PAGE -->
 <h1 class="uk-padding-small uk-padding-remove-horizontal pridi-regular uk-animation-slide-bottom">Bienvenue sur le Forum
@@ -12,20 +11,18 @@ $categoryDatas = $result['data']['categoryData'];
         <div class="" uk-grid>
             <div class="uk-width-expand">
                 <!-- CARD -->
-                <div class="uk-card uk-card-default uk-card-body accordion-card ">
-                    <ul uk-accordion>
-                        <?php
-                        if ($categoryDatas) {
-                            foreach ($categoryDatas as $category) {
-                                ?>
-                                <div class="uk-card uk-card-body">
-                                    <a href="index.php?ctrl=forum&action=listTopicsByCategory&id=<?= $category->getId() ?>"><?= $category->getName() ?></a>
-                                </div>
-                            <?php }
-                        }
-                        ?>
-                    </ul>
-                </div>
+                <?php
+                if ($categoryDatas) {
+                    foreach ($categoryDatas as $category) { ?>
+                        <div class="uk-grid-small uk-flex-middle" uk-grid>
+                            <h3><a href="index.php?ctrl=forum&action=listTopicsByCategory&id=<?= $category->getId() ?>"><?= $category->getName() ?></a></h3>
+                            <!--<span class="uk-label uk-margin-auto-left color-secondary">Rejoindre</span>-->
+                            <span></span>
+                        </div>
+                <?php }
+                }
+                ?>
+
             </div>
             <div class="uk-width-1-4@m uk-padding-small">
                 <div class="uk-card uk-card-default accordion-card uk-width-1-1@m uk-box-shadow-large">
@@ -35,16 +32,14 @@ $categoryDatas = $result['data']['categoryData'];
                         <div class="uk-grid-small uk-flex-middle" uk-grid>
                             <!-- IMAGE -->
                             <div class="uk-width-auto">
-                                <img class="uk-border-circle" width="40" height="40" src="./public/img/profils/moi.jpg"
-                                    alt="Avatar">
+                                <img class="uk-border-circle" width="40" height="40" src="./public/img/profils/moi.jpg" alt="Avatar">
                             </div>
                             <!-- USERNAME -->
                             <div class="uk-width-expand">
                                 <h3 class="uk-card-title uk-margin-remove-bottom  pridi-regular">
-                                    <?= $fakerFr->name ?>
+                                    <?= $lastUser['username'] ?>
                                 </h3>
-                                <p class="uk-text-meta uk-margin-remove-top"><time
-                                        datetime="2016-04-01T19:00"><?= $fakerFr->date('d/m/Y') ?></time></p>
+                                <p class="uk-text-meta uk-margin-remove-top"><time datetime="2016-04-01T19:00"><?= $lastUser['dateRegister'] ?></time></p>
                             </div>
                         </div>
                     </div>

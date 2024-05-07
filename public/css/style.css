@@ -140,3 +140,6 @@ li span {
 .card-footer {
   background-color:transparent !important;
 }
+span .uk-label {
+  background-color:red !important;
+}

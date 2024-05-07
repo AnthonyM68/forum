@@ -36,6 +36,27 @@ class UserManager extends Manager
         return count($results);
     }
     /**
+     * Recherche le dernier utilisateur inscrit
+     *
+     * @return void
+     */
+    public function findLatestUser()
+    {
+        $sql = "SELECT
+            t.id_user,
+            t.username,
+            t.role,
+            t.email,
+            DATE_FORMAT(t.dateRegister, '%d/%m/%Y %H:%i:%s') AS dateRegister
+            FROM " . $this->tableName . " t
+            ORDER BY t.dateRegister DESC
+            LIMIT 1";
+            return $this->getSingleScalarResult(
+                DAO::select($sql),
+                $this->className
+            );
+    }
+    /**
      * Return user by id
      *
      * @param [type] $id

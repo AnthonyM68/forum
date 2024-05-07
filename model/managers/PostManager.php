@@ -99,11 +99,6 @@ class PostManager extends Manager
             $this->className
         );
     }
-
-
-
-
-
     /**
      * Undocumented function
      *

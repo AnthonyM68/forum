@@ -37,19 +37,14 @@ if (isset($result['section']) && $result['section'] === "home") {
                                     <ul>
                                         <?php // on recherche les 5 derniers posts
                                         $last5Posts = $ctrl->findLast5PostsByTopic($topic->getId());
-
-                                        if ($last5Posts) {
-                                            foreach ($last5Posts as $post) { ?>
-                                                <li>
-                                                    <span class="color-secondary"><a href="index.php?ctrl=forum&action=showFullTopic&id=<?= $topic->getId() ?>"><?= $post->getContent() ?></a></span>
-                                                    <span class="color-primary"> Crée le: <?= $post->getDateCreation() ?></span>
-                                                </li>
+                                        foreach ($last5Posts as $post) { ?>
+                                            <li>
+                                                <span class="color-secondary"><a href="index.php?ctrl=forum&action=showFullTopic&id=<?= $topic->getId() ?>"><?= $post->getContent() ?></a></span>
+                                                <span class="color-primary"> Crée le: <?= $post->getDateCreation() ?></span>
+                                            </li>
                                         <?php }
-                                        } ?>
+                                        ?>
                                     </ul>
-
-
-
                                     <!-- ACCORDION FOOTER -->
                                     <p class="uk-accordion-footer">
                                         <span class="fas fa-user"></span>
@@ -66,9 +61,6 @@ if (isset($result['section']) && $result['section'] === "home") {
                                     <span class="fa fa-reply" aria-hidden="true"></span>
                                     <a href="./index.php?ctrl=forum&action=addPost&id=<?= $topic->getId() ?>">Répondre à la suite du topic</a>
                                 </div>
-
-
-
                             </li>
                         <?php }
                         ?>
