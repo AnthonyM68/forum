@@ -29,6 +29,7 @@
 - hashage des données utilisateur, permettant de conserver topics et posts associés.
 - possibilité de restaurer les données encryptés, lors de la récupération d'un compte.
 - lutte contre la faille XSCF eXtended System Control Facility, XSS Cross-site Scripting, SQL
+- intercepteur d'email et échange avec l'utilisateur sécurisé par token
 
 <h3 align="left">Sécurisation à venir</h3>
 
