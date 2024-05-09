@@ -14,14 +14,25 @@
 
 </p>
 
-<h3 align="left">Technologies de l'application</h3>
-
 <p align="left">
+
+<h3 align="left">Technologies de l'application</h3>
 
 - HTML, CSS, JS, JQuery, UIKIT langages de présentation (côté client).
 - PHP en langage d'interpretation.
 - PDO (PHP Data Object) pour l'exploitation de la base de données.
 - MySQL 
+
+<h3 align="left">Sécurisation</h3>
+
+- Encryptage des données personnel (prévoir durée jusqu'a effacement total) en cas de suppression de compte (offre anssi une possibilité de retour en arrière).
+- hashage des données utilisateur, permettant de conserver topics et posts associés.
+- possibilité de restaurer les données encryptés, lors de la récupération d'un compte.
+- lutte contre la faille XSCF eXtended System Control Facility, XSS Cross-site Scripting, SQL
+
+<h3 align="left">Sécurisation à venir</h3>
+
+- lutte contre la faille upload
 
 </p>
 
@@ -43,14 +54,14 @@ abstract class DAO{
 
 ```
 
-<h3 align="left">Schémas :</h3>
+<h3 align="left">Schémas:v2</h3>
 <p align="left">
 
 > Réalisation des schémas conceptuels de données :
 
- ![MCD](https://github.com/AnthonyM68/forum/blob/main/MCD.jpg)
- ![UML](https://github.com/AnthonyM68/forum/blob/main/UML.jpg)
- ![MLD](https://github.com/AnthonyM68/forum/blob/main/MLD.jpg)
+ ![MCD](https://github.com/AnthonyM68/forum/blob/main/MCDv2.jpg)
+ ![UML](https://github.com/AnthonyM68/forum/blob/main/UMLv2.jpg)
+ ![MLD](https://github.com/AnthonyM68/forum/blob/main/MLDv2.jpg)
 </p>
 
 <h3 align="center">Languages and Tools:</h3>
