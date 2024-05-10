@@ -67,17 +67,7 @@ class TopicManager extends Manager
             $this->className
         );
     }
-    // renvoie une liste d'Id 
-    /*public function findAllId($id)
-    {
-        $sql = "SELECT " . $id . "
-                FROM " . $this->tableName . "";
 
-        return $this->getMultipleResults(
-            DAO::select($sql),
-            $this->className
-        );
-    }*/
 
     /**
      * recherche toutes les infos d'un topic

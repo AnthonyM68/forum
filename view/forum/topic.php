@@ -27,7 +27,25 @@ $posts = $result["data"]['posts'];
                 <h4 class="uk-card-title"><?= $topic->getUser()->getUsername() ?></h4>
                 <h2><?= htmlspecialchars_decode($topic->getTitle()) ?></h2>
             </div>
+            <?php if (Session::getUser()) {
+            // XSCF
+        ?>
+            <form id="" method="post" action="./index.php?ctrl=forum&action=">
+                <input name="token-form-link" type="hidden" value="<?= $_SESSION["token"] ?>">
+            </form>
+            <?php
+            // Si l'utilisateur connecté est l'auteur du topic
+            if (Session::getUser()->getId() === $topic->getUser()->getId()) { 
+            ?>
+                <a data-action="./index.php?ctrl=forum&action=editPost&id=<?= $topic->getId() ?>&anchor=card-<?= $topic->getId() ?> " href="#" class="token-link uk-icon-button uk-margin-small-right" uk-icon="icon: pencil" uk-tooltip="title: Éditer; pos: top-left"></a>
+
+                <a data-action="./index.php?ctrl=forum&action=deleteTopicAndPosts&id=<?= $topic->getId() ?>" href="#" class="token-link uk-icon-button uk-margin-small-right" uk-icon="icon: trash" uk-tooltip="title: Supprimer; pos: top-left"></a>
+        <?php }
+        }
+        // LIKE en développement  
+        ?>
         </div>
+        
         <div class="uk-text-right">
             <?= $ctrl->convertToString($topic->getUser()->getRole()) ?>
             <?= $topic->getDateCreation() ?>
@@ -52,14 +70,14 @@ if ($posts) {
                 <div class="uk-width-auto">
                     <?php if (Session::getUser()) {
                         // XSCF
-                        ?>
+                    ?>
                         <form id="token_form" method="post" action="./index.php?ctrl=forum&action=">
                             <input name="token-form-link" type="hidden" value="<?= $_SESSION["token"] ?>">
                         </form>
 
-                        <a data-action="./index.php?ctrl=forum&action=replyPost&id=<?= $post->getId() ?>" href="#" class="token-link uk-icon-button uk-margin-small-right" uk-icon="icon: reply" uk-tooltip="title: Répondre; pos: top-left"></a>
+                        <!--<a data-action="./index.php?ctrl=forum&action=replyPost&id=<?= $post->getId() ?>" href="#" class="token-link uk-icon-button uk-margin-small-right" uk-icon="icon: reply" uk-tooltip="title: Répondre; pos: top-left"></a>-->
                         <?php
-                        // Si l'utilisateur connecté est l'auteur du topic
+                        // Si l'utilisateur connecté est l'auteur du post
                         if (Session::getUser()->getId() === $post->getUser()->getId()) { // modifier topic
                         ?>
                             <a data-action="./index.php?ctrl=forum&action=editPost&id=<?= $post->getId() ?>&anchor=card-<?= $post->getId() ?> " href="#" class="token-link uk-icon-button uk-margin-small-right" uk-icon="icon: pencil" uk-tooltip="title: Éditer; pos: top-left"></a>

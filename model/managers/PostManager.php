@@ -32,7 +32,20 @@ class PostManager extends Manager
 
         return count($results);
     }
+    // renvoie une liste d'Id 
+    public function findAllIdPostByIdTopic($id)
+    {
+        $sql = "SELECT 
+        t.id_post,
+        t.topic_id
+        FROM " . $this->tableName . " t
+        WHERE t.topic_id = :id";
 
+        return $this->getMultipleResults(
+            DAO::select($sql, ['id' => $id]),
+            $this->className
+        );
+    }
     /**
      * REcherche les 5 derniers Post
      *
@@ -122,12 +135,12 @@ class PostManager extends Manager
      * @param [type] $id
      * @return void
      */
-    public function deleteByTopicId($id)
+   /* public function deleteByTopicId($id)
     {
         $sql = "DELETE 
                 FROM " . $this->tableName . " t
                 WHERE t.topic_id = :topic_id
                 ";
         return DAO::delete($sql, ['topic_id' => $id]);
-    }
+    }*/
 }

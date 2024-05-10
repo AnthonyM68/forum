@@ -223,9 +223,44 @@ class ForumController extends AbstractController implements ControllerInterface
         ];
     }
 
-    /*************************POST***************************** */
+    /*************************TOPIC POSTS***************************** */
     public function deleteTopicAndPosts()
     {
+        if (isset($_POST['token-form-link']) && $_POST['token-form-link'] === $_SESSION['token']) {
+            if (isset($_GET['id'])) {
+                $postManager = new PostManager();
+                $topicManager = new TopicManager();
+
+                $allPosts = $postManager->findAllIdPostByIdTopic($_GET['id']);
+
+                if ($allPosts) {
+                    foreach ($allPosts as $post) {
+                        $result = $postManager->delete($post->getId());
+                    }
+                    if ($result) {
+                        $result = $topicManager->delete($_GET['id']);
+                    }
+                }
+                if ($result) {
+                    Session::addFlash("success", "Topic et Posts supprimés");
+                    $this->redirectTo("home", "index");
+                } else {
+                    Session::addFlash("error", "Une erreur est survenue veuillez recommencer");
+                    return [
+                        "view" => VIEW_DIR . "forum/published.php",
+                        "edit" => false,
+                        "meta_description" => "Ajouter un Article : ",
+                        "data" => []
+                    ];
+                }
+            } else {
+                Session::addFlash("error", "Oups!, un problème est servenu");
+                $this->redirectTo("home", "index");
+            }
+        } else {
+            Session::addFlash("error", "L'identifiant de session n'est pas reconu, veuillez recommencer");
+            $this->redirectTo("forum", "showFullTopic", $_GET['id']);
+        }
     }
 
     /**
@@ -296,7 +331,6 @@ class ForumController extends AbstractController implements ControllerInterface
                 $post = $postManager->findOneById($_GET['id']);
 
                 if ($postManager->updatePost($_GET['id'], $content)) {
-
                     Session::addFlash("success", "Post mis à jour");
                     $this->redirectTo("forum", "showFullTopic", $post->getTopic()->getId(), "card-" . $_GET['id'] . "");
                 } else {
@@ -331,14 +365,9 @@ class ForumController extends AbstractController implements ControllerInterface
     {
         // XSCF
         if (isset($_POST['token-hidden']) && $_POST['token-hidden'] === $_SESSION['token']) {
-
             $content = filter_input(INPUT_POST, 'content', FILTER_SANITIZE_SPECIAL_CHARS);
-
             if ($content && isset($_GET['id'])) {
-
                 $topicManager = new TopicManager();
-                $topic = $topicManager->findOneByIdTopic($_GET['id']);
-
                 $postManager = new PostManager();
 
                 $date = new DateTime();
@@ -371,69 +400,21 @@ class ForumController extends AbstractController implements ControllerInterface
             $this->redirectTo("forum", "showFullTopic", $_GET['id']);
         }
     }
-    public function replyPost()
-    {
-        $this->restrictTo("ROLE_USER");
-        // XSCF
-        if (isset($_POST['token-form-link']) && $_POST['token-form-link'] === $_SESSION['token']) {
-            Session::addFlash("error", "Fonctionnalité non terminé");
-            $this->redirectTo("forum", "showFullTopic", $_GET['id']);
-            /* $content = filter_input(INPUT_POST, 'content', FILTER_SANITIZE_SPECIAL_CHARS);
-            var_dump($content);
-            if ($content && isset($_GET['id'])) {
-                $topicManager = new TopicManager();
-                $postManager = new PostManager();
-
-                $date = new DateTime();
-                $result = $postManager->add([
-                    "content" => $content,
-                    "dateCreation" => $date->format('Y-m-d H:i:s'),
-                    "topic_id" => $_GET['id'],
-                    "user_id" => Session::getUser()->getId()
-                ]);
-                if ($result) {
-                    Session::addFlash("success", "Votre Article a bien été sauvegarder");
-                    $this->redirectTo("forum", "showFullTopic", $post->getTopic()->getId(), "card-" . $_GET['id'] . "");
-                } else {
-                    Session::addFlash("error", "Une erreur est survenue veuillez recommencer");
-                }
-                return [
-                    "view" => VIEW_DIR . "forum/topic.php",
-                    "section" => "edit-topic",
-                    "meta_description" => "Ajouter un Article : ",
-                    "data" => [
-                        "topic" => $topicManager->findOneByIdTopic($topic_id),
-                        "posts" => $postManager->findAllByIdTopic($topic_id)
-                    ]
-                ];
-            } else {
-                Session::addFlash("error", "Oups!, un problème est servenu");
-                $this->redirectTo("home", "index");
-            }*/
-        } else {
-            Session::addFlash("error", "L'identifiant de session n'est pas reconu, veuillez recommencer");
-            $this->redirectTo("forum", "showFullTopic", $_GET['id']);
-        }
-    }
     /**
      * delete post
      * */
     public function deletePost()
     {
         if (isset($_POST['token-form-link']) && $_POST['token-form-link'] === $_SESSION['token']) {
-
             if (isset($_GET['id'])) {
-
                 $postManager = new PostManager();
                 $post = $postManager->findOneById($_GET['id']);
-
                 if ($postManager->delete($post->getId())) {
                     Session::addFlash("success", "Post supprimé");
                     $this->redirectTo("forum", "showFullTopic", $post->getTopic()->getId(), "card-" . $_GET['id'] . "");
                 } else {
                     Session::addFlash("error", "Une erreur est survenue veuillez recommencer");
                     $topicManager = new TopicManager();
-
                     return [
                         "view" => VIEW_DIR . "forum/topic.php",
                         "section" => "edit-topic",
