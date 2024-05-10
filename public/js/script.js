@@ -1,5 +1,4 @@
-function displayFormConfirmDelete(id)
-{
+function displayFormConfirmDelete(id) {
     return ` <div class="uk-animation-fade uk-container">
     <div class="uk-grid-margin uk-grid uk-grid-stack" uk-grid>
         <div class="uk-width-1-1@m">
@@ -24,13 +23,24 @@ function displayFormConfirmDelete(id)
                     <input name="token-hidden" class="uk-input uk-form-large" type="text" value="<?= $_SESSION["token"] ?>" style="visibility:hidden">
                     <button class="uk-margin uk-button uk-button-default">Soumettre</button>
                 </div>
-                <!-- second col -->
             </form>
         </div>
     </div>
     </div>`;
 }
-// faire defiler la page jusqu'à une ancre déclarer dans le controller
+function displayFormEditPost() {
+    return `<div id="edit-topic" class=" uk-column-1-1">
+    <form id="add_post" name="add_post" action="./index.php?ctrl=forum&action=addPost&id=<?= $post->getId() ?>" method="post" class="uk-form-horizontal uk-margin-large">
+        <div class="uk-margin">
+            <textarea name="content" class="post"><?= $post->getContent() ?></textarea>
+        </div>
+        <input name="topic-id-reload" type="hidden" value="<?= $post->getTopic()->getId() ?>">
+        <input name="token-hidden" class="uk-input uk-form-large" type="text" value="<?= $_SESSION["token"] ?>" style="visibility:hidden">
+        <input type="submit" class="uk-button uk-button-primary uk-button-large uk-width-1-1">
+    </form>
+</div>`
+}
+// faire defiler la page jusqu'à une ancre déclarer dans la vue
 function scrollToAnchor(anchor) {
     let element = document.querySelector(anchor);
     if (element) {
@@ -133,7 +143,7 @@ function deleteAccount() {
         .then(data => {
             console.log(data.id); // Afficher la réponse JSON
             let page = document.getElementById('page');
-            if(page) {
+            if (page) {
                 page.innerHTML = displayFormConfirmDelete(data.id);
             }
         })
@@ -222,5 +232,21 @@ $(document).ready(function () {
             }
         });
     }
+    /**
+     * interception de click sur les lien edit, delete, répondre et ajout d'un token 
+     */
 
+    let tokenForm = document.getElementById('token_form');
+    let tokenLinks = document.querySelectorAll('.token-link');
+
+    tokenLinks.forEach(function (link) {
+        link.addEventListener('click', function (event) {
+            event.preventDefault();
+            // Récupérer l'action spécifique du lien
+            let action = this.getAttribute('data-action');
+            // Modifier l'action du formulaire
+            tokenForm.action = action;
+            tokenForm.submit();
+        });
+    });
 })

@@ -53,13 +53,15 @@ if (isset($_GET['action']) && method_exists($ctrl, $_GET['action'])) {
 if (isset($_GET['id'])) {
     $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 } else $id = null;
+
+if (isset($_GET['anchor'])) {
+    $anchor = filter_input(INPUT_GET, 'anchor', FILTER_SANITIZE_SPECIAL_CHARS);
+    $anchor = $anchor ? '#' . $anchor : ''; 
+} else $anchor = null;
 //ex : HomeController->users(null)
 $result = $ctrl->$action($id);
-
-
+// Générate token unique pour la session
 Session::generateTokenUnique();
-/* Générate token unique */
-
 
 /*--------CHARGEMENT PAGE--------*/
 if ($action == "ajax") { //si l'action était ajax

@@ -41,6 +41,9 @@ h6 {
 .color-secondary {
   color: var(--secondary-color) !important;
 }
+.color-link-topic-news p {
+  color: var(--link-color) !important;
+}
 /* LINK GENERAL */
 a {
   color: var(--link-color) !important;
@@ -127,13 +130,7 @@ tr {
 .fas {
   padding-right: 5px !important;
 }
-ul li,
-ul li span {
-  color: var(--secondary-color) !important;
-}
-li span {
-  display: block;
-}
+
 #footer {
   background-color: var(--background-color) !important;
 }

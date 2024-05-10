@@ -143,31 +143,7 @@ class ForumController extends AbstractController implements ControllerInterface
             ]
         ];
     }
-    /**
-     * recherche toutes les infos d'un topic par son id
-     *
-     * @return le topic et tous ces posts
-     */
-    public function showFullTopic()
-    {
-        if (isset($_GET['id'])) {
-            $id = $_GET['id'];
-            $topicManager = new TopicManager();
-            $topic = $topicManager->findOneByIdTopic($id);
 
-            $postManager = new PostManager();
-            $posts = $postManager->findAllByIdTopic($id);
-        }
-        return [
-            "view" => VIEW_DIR . "forum/topic.php",
-            "section" => "edit-topic",
-            "meta_description" => "Ajouter un Article : ",
-            "data" => [
-                "topic" => $topic,
-                "posts" => $posts
-            ]
-        ];
-    }
 
     /**
      * Ajouter une catégorie 
@@ -215,7 +191,7 @@ class ForumController extends AbstractController implements ControllerInterface
         // si elles sont toutes vérifiées
         if ($title && $content && $category_id) {
             // CSRF
-            if (isset($_POST['token-hidden']) && $_POST['token-hidden'] === $_SESSION['token']) {
+            if (isset($_POST['token-form-link']) && $_POST['token-form-link'] === $_SESSION['token']) {
                 $topicManager = new TopicManager();
                 $date = new DateTime();
                 $id_topic = $topicManager->add([
@@ -247,43 +223,234 @@ class ForumController extends AbstractController implements ControllerInterface
         ];
     }
 
+    /*************************POST***************************** */
+    public function deleteTopicAndPosts()
+    {
+    }
+
+    /**
+     * Affiche le contenu d'un topic et ces posts associés
+     *
+     * @return le topic et tous ces posts
+     */
+    public function showFullTopic()
+    {
+        if (isset($_GET['id'])) {
+            $topicManager = new TopicManager();
+            $postManager = new PostManager();
+            return [
+                "view" => VIEW_DIR . "forum/topic.php",
+                "post" => true,
+                "meta_description" => "Ajouter un Article : ",
+                "data" => [
+                    "topic" => $topicManager->findOneByIdTopic($_GET['id']),
+                    "posts" => $postManager->findAllByIdTopic($_GET['id'])
+                ]
+            ];
+        } else {
+            Session::addFlash("error", "Oups!, un problème est servenu");
+            $this->redirectTo("home", "index");
+        }
+    }
+    /**
+     * éditer un post
+     */
+    public function editPost()
+    {
+        //XSCF
+        if (isset($_POST['token-form-link']) && $_POST['token-form-link'] === $_SESSION['token']) {
+            if (isset($_GET['id'])) {
+                $postManager = new PostManager();
+                $post = $postManager->findOneById($_GET['id']);
+                return [
+                    "view" => VIEW_DIR . "forum/topic.php",
+                    "edit" =>  true,
+                    "meta_description" => "Modifier un Article : ",
+                    "data" => [
+                        "topic" => $post->getTopic(),
+                        "posts" => $postManager->findAllByIdTopic($post->getTopic()->getId())
+                    ]
+                ];
+            } else {
+                Session::addFlash("error", "Oups!, un problème est servenu");
+                $this->redirectTo("home", "index");
+            }
+        } else {
+            Session::addFlash("error", "L'identifiant de session n'est pas reconu, veuillez recommencer");
+            $this->redirectTo("forum", "showFullTopic", $_GET['id']);
+        }
+    }
+    /**
+     * mise à jour d'un post
+     */
+    public function updatePost()
+    {
+        //XSCF
+        if (isset($_POST['token-hidden']) && $_POST['token-hidden'] === $_SESSION['token']) {
+
+            $content = filter_input(INPUT_POST, 'content', FILTER_SANITIZE_SPECIAL_CHARS);
+
+            if ($content && isset($_GET['id'])) {
+
+                $postManager = new PostManager();
+                $post = $postManager->findOneById($_GET['id']);
+
+                if ($postManager->updatePost($_GET['id'], $content)) {
+
+                    Session::addFlash("success", "Post mis à jour");
+                    $this->redirectTo("forum", "showFullTopic", $post->getTopic()->getId(), "card-" . $_GET['id'] . "");
+                } else {
+
+                    Session::addFlash("error", "Une erreur lors de l'enregistrement en base de données");
+
+                    $topicManager = new TopicManager();
+                    return [
+                        "view" => VIEW_DIR . "forum/topic.php",
+                        "edit" =>  false,
+                        "meta_description" => "Modifier un Article : ",
+                        "data" => [
+                            "topic" => $topicManager->findOneByIdTopic($post->getTopic()->getId()),
+                            "posts" => $postManager->findAllByIdTopic($post->getTopic()->getId())
+                        ]
+                    ];
+                }
+            } else {
+                Session::addFlash("error", "Oups!, un problème est servenu");
+                $this->redirectTo("home", "index");
+            }
+        } else {
+            Session::addFlash("error", "L'identifiant de session n'est pas reconu, veuillez recommencer");
+            $this->redirectTo("forum", "showFullTopic", $_GET['id']);
+        }
+    }
+
     /**
      * Ajouter un Post
-     *
-     * @return void
      */
-    public function addPost()
+    public function replyTopic()
     {
-        // on filtre les entrées
-        $content = filter_input(INPUT_POST, 'content', FILTER_SANITIZE_SPECIAL_CHARS);
-        $topic_id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-        $topicManager = new TopicManager();
-        $postManager = new PostManager();
-        //if (isset($_POST['token-hidden']) && $_POST['token-hidden'] === $_SESSION['token']) {
-        // si elles sont toutes vérifiées
-        if ($content && $topic_id) {
+        // XSCF
+        if (isset($_POST['token-hidden']) && $_POST['token-hidden'] === $_SESSION['token']) {
 
-            $date = new DateTime();
-            $result = $postManager->add([
-                "content" => htmlspecialchars($content),
-                "dateCreation" => $date->format('Y-m-d H:i:s'),
-                "topic_id" => $topic_id,
-                "user_id" => Session::getUser()->getId()
-            ]);
-            if ($result) {
-                Session::addFlash("success", "Votre Article a bien été sauvegarder");
+            $content = filter_input(INPUT_POST, 'content', FILTER_SANITIZE_SPECIAL_CHARS);
+
+            if ($content && isset($_GET['id'])) {
+
+                $topicManager = new TopicManager();
+                $topic = $topicManager->findOneByIdTopic($_GET['id']);
+
+                $postManager = new PostManager();
+
+                $date = new DateTime();
+                $id_post = $postManager->add([
+                    "content" => $content,
+                    "dateCreation" => $date->format('Y-m-d H:i:s'),
+                    "topic_id" => $_GET['id'],
+                    "user_id" => Session::getUser()->getId()
+                ]);
+                if ($id_post) {
+                    $this->redirectTo("forum", "showFullTopic", $_GET['id'], "card-" . $id_post . "");
+                } else {
+                    Session::addFlash("error", "Une erreur est survenue veuillez recommencer");
+                    return [
+                        "view" => VIEW_DIR . "forum/topic.php",
+                        "edit" =>  true,
+                        "meta_description" => "Ajouter un Article : ",
+                        "data" => [
+                            "topic" => $topicManager->findOneByIdTopic($_GET['id']),
+                            "posts" => $postManager->findAllByIdTopic($_GET['id'])
+                        ]
+                    ];
+                }
             } else {
-                Session::addFlash("error", "Une erreur est survenue veuillez recommencer");
+                Session::addFlash("error", "Oups!, un problème est servenu");
+                $this->redirectTo("home", "index");
             }
+        } else {
+            Session::addFlash("error", "L'identifiant de session n'est pas reconu, veuillez recommencer");
+            $this->redirectTo("forum", "showFullTopic", $_GET['id']);
         }
-        return [
-            "view" => VIEW_DIR . "forum/topic.php",
-            "section" => "edit-topic",
-            "meta_description" => "Ajouter un Article : ",
-            "data" => [
-                "topic" => $topicManager->findOneByIdTopic($topic_id),
-                "posts" => $postManager->findAllByIdTopic($topic_id)
-            ]
-        ];
+    }
+    public function replyPost()
+    {
+        $this->restrictTo("ROLE_USER");
+        // XSCF
+        if (isset($_POST['token-form-link']) && $_POST['token-form-link'] === $_SESSION['token']) {
+            Session::addFlash("error", "Fonctionnalité non terminé");
+            $this->redirectTo("forum", "showFullTopic", $_GET['id']);
+            /* $content = filter_input(INPUT_POST, 'content', FILTER_SANITIZE_SPECIAL_CHARS);
+            var_dump($content);
+            if ($content && isset($_GET['id'])) {
+                $topicManager = new TopicManager();
+                $postManager = new PostManager();
+
+                $date = new DateTime();
+                $result = $postManager->add([
+                    "content" => $content,
+                    "dateCreation" => $date->format('Y-m-d H:i:s'),
+                    "topic_id" => $_GET['id'],
+                    "user_id" => Session::getUser()->getId()
+                ]);
+                if ($result) {
+                    Session::addFlash("success", "Votre Article a bien été sauvegarder");
+                    $this->redirectTo("forum", "showFullTopic", $post->getTopic()->getId(), "card-" . $_GET['id'] . "");
+                } else {
+                    Session::addFlash("error", "Une erreur est survenue veuillez recommencer");
+                }
+                return [
+                    "view" => VIEW_DIR . "forum/topic.php",
+                    "section" => "edit-topic",
+                    "meta_description" => "Ajouter un Article : ",
+                    "data" => [
+                        "topic" => $topicManager->findOneByIdTopic($topic_id),
+                        "posts" => $postManager->findAllByIdTopic($topic_id)
+                    ]
+                ];
+            } else {
+                Session::addFlash("error", "Oups!, un problème est servenu");
+                $this->redirectTo("home", "index");
+            }*/
+        } else {
+            Session::addFlash("error", "L'identifiant de session n'est pas reconu, veuillez recommencer");
+            $this->redirectTo("forum", "showFullTopic", $_GET['id']);
+        }
+    }
+    /**
+     * delete post
+     * */
+    public function deletePost()
+    {
+        if (isset($_POST['token-form-link']) && $_POST['token-form-link'] === $_SESSION['token']) {
+
+            if (isset($_GET['id'])) {
+
+                $postManager = new PostManager();
+                $post = $postManager->findOneById($_GET['id']);
+
+                if ($postManager->delete($post->getId())) {
+                    Session::addFlash("success", "Post supprimé");
+                    $this->redirectTo("forum", "showFullTopic", $post->getTopic()->getId(), "card-" . $_GET['id'] . "");
+                } else {
+                    Session::addFlash("error", "Une erreur est survenue veuillez recommencer");
+                    $topicManager = new TopicManager();
+
+                    return [
+                        "view" => VIEW_DIR . "forum/topic.php",
+                        "section" => "edit-topic",
+                        "meta_description" => "Ajouter un Article : ",
+                        "data" => [
+                            "topic" => $topicManager->findOneByIdTopic(),
+                            "posts" => $postManager->findAllByIdTopic($post->getTopic()->getId())
+                        ]
+                    ];
+                }
+            } else {
+                Session::addFlash("error", "Oups!, un problème est servenu");
+                $this->redirectTo("home", "index");
+            }
+        } else {
+            Session::addFlash("error", "L'identifiant de session n'est pas reconu, veuillez recommencer");
+            $this->redirectTo("forum", "showFullTopic", $_GET['id']);
+        }
     }
 }

@@ -26,10 +26,11 @@ class TopicManager extends Manager
         $sql = "SELECT t.*
         FROM " . $this->tableName . " t";
         // pour convertir le générateur en tableau
-        $results = iterator_to_array($this->getMultipleResults(
-            DAO::select($sql),
-            $this->className
-        )
+        $results = iterator_to_array(
+            $this->getMultipleResults(
+                DAO::select($sql),
+                $this->className
+            )
         );
 
         return count($results);
@@ -50,7 +51,12 @@ class TopicManager extends Manager
     }
     public function findLast5Topics()
     {
-        $sql = "SELECT * 
+        $sql = "SELECT
+                t.id_topic,
+                t.title,
+                DATE_FORMAT(t.dateCreation, '%d/%m/%Y') AS dateCreation,
+                t.category_id,
+                t.user_id
                 FROM " . $this->tableName . " t
                 ORDER BY t.dateCreation DESC
                 LIMIT 5";
@@ -62,7 +68,7 @@ class TopicManager extends Manager
         );
     }
     // renvoie une liste d'Id 
-    public function findAllId($id)
+    /*public function findAllId($id)
     {
         $sql = "SELECT " . $id . "
                 FROM " . $this->tableName . "";
@@ -71,7 +77,7 @@ class TopicManager extends Manager
             DAO::select($sql),
             $this->className
         );
-    }
+    }*/
 
     /**
      * recherche toutes les infos d'un topic

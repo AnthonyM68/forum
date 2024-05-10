@@ -57,7 +57,7 @@ class PostManager extends Manager
     }
 
     /**
-     * REcherche les 5 derniers Post d'un topic
+     * Recherche les 5 derniers Post d'un topic
      *
      * @return void
      */
@@ -98,6 +98,23 @@ class PostManager extends Manager
             DAO::select($sql, ['topic_id' => $id]),
             $this->className
         );
+    }
+    /**
+     * Undocumented function
+     *
+     * @param [type] $id
+     * @return void
+     */
+    public function updatePost($id, $content)
+    {
+        $sql = "UPDATE " . $this->tableName . "
+        SET content = :content
+        WHERE id_". $this->tableName ." = :id_post";
+        var_dump($sql);
+        return DAO::update($sql, [
+            'id_post' => $id,
+            'content' => $content
+        ]);
     }
     /**
      * Undocumented function

@@ -31,16 +31,17 @@ if (isset($result['section']) && $result['section'] === "home") {
                         <?php
                         foreach ($last5Topics as $topic) { ?>
                             <li class="uk-closed">
-                                <a class="uk-accordion-title" href><?= $topic->getTitle() ?></a>
+                                <a class="uk-accordion-title" href><?= htmlspecialchars_decode($topic->getTitle()) ?></a>
                                 <div class="uk-accordion-content">
                                     <!-- LIST TOPIC -->
-                                    <ul>
-                                        <?php // on recherche les 5 derniers posts
+                                    <ul> <?php // on recherche les 5 derniers posts
                                         $last5Posts = $ctrl->findLast5PostsByTopic($topic->getId());
+
                                         foreach ($last5Posts as $post) { ?>
                                             <li>
-                                                <span class="color-secondary"><a href="index.php?ctrl=forum&action=showFullTopic&id=<?= $topic->getId() ?>"><?= $post->getContent() ?></a></span>
-                                                <span class="color-primary"> Crée le: <?= $post->getDateCreation() ?></span>
+                                                <p class="color-secondary">
+                                                    <a href="index.php?ctrl=forum&action=showFullTopic&id=<?= $topic->getId() ?>&anchor=card-<?= $post->getId() ?>" class="color-link-topic-news"><?= htmlspecialchars_decode($post->getContent()) ?></a></p>
+                                                    <span class="color-primary"> Crée le: <?= $post->getDateCreation() ?></span>
                                             </li>
                                         <?php }
                                         ?>
@@ -50,7 +51,7 @@ if (isset($result['section']) && $result['section'] === "home") {
                                         <span class="fas fa-user"></span>
                                         <!-- TOPIC AUTHOR -->
                                         <?php
-                                        echo $topic->getUser()->getUsername() . " ";
+                                        echo $topic->getUser()->getUsername() . " <small class='color-primary'>Auteur de ce topic: </small>";
                                         $roles = $topic->getUser()->getRole(); ?>
 
                                         <small class="color-primary">
@@ -59,7 +60,7 @@ if (isset($result['section']) && $result['section'] === "home") {
                                     </p>
                                     <!-- LINKS -->
                                     <span class="fa fa-reply" aria-hidden="true"></span>
-                                    <a href="index.php?ctrl=forum&action=addPost&id=<?= $topic->getId() ?>">Répondre à la suite du topic</a>
+                                    <a href="index.php?ctrl=forum&action=showFullTopic&id=<?= $topic->getId() ?>&anchor=post" class="color-primary">Répondre à la suite du topic</a>
                                 </div>
                             </li>
                         <?php }
@@ -76,7 +77,7 @@ if (isset($result['section']) && $result['section'] === "home") {
                         if ($posts) {
                             foreach ($posts as $post) { ?>
                                 <li class="uk-open">
-                                    <a class="" href="index.php?ctrl=forum&action=showFullTopic&id=<?= $post->getTopic()->getId() ?>"><?= $post->getContent() ?></a>
+                                    <a class="" href="index.php?ctrl=forum&action=showFullTopic&id=<?= $post->getTopic()->getId() ?>" ><?= htmlspecialchars_decode($post->getContent()) ?></a>
                                 </li>
                         <?php }
                         } ?>

@@ -24,11 +24,12 @@ abstract class AbstractController
     // 16 bytes init vector
     private static $ivVectorInit;
 
-    public function redirectTo($ctrl = null, $action = null, $id = null)
+    public function redirectTo($ctrl = null, $action = null, $id = null, $anchor = null)
     {
         $url = $ctrl ? "?ctrl=" . $ctrl : "";
         $url .= $action ? "&action=" . $action : "";
         $url .= $id ? "&id=" . $id : "";
+        $url .= $anchor ? "&anchor=" . $anchor : "";
 
         header("Location: $url");
         die();

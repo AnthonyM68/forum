@@ -40,9 +40,7 @@ class Session
     public static function generateTokenUnique()
     {
         $token = bin2hex(random_bytes(32));
-       
-            $_SESSION["token"] = $token;
-        
+        $_SESSION["token"] = $token;
     }
 
     /**

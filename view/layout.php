@@ -20,6 +20,7 @@
 </head>
 
 <body>
+
     <!-- HEADER -->
     <header id="header">
 
@@ -56,10 +57,19 @@
                 </ul>
             </nav>
             <div id="page"><?= $page ?></div>
-            
+
         </div>
     </main>
     <footer id="footer"><?= $footer ?></footer>
+
+    <script>
+        // faire défiler la page jusqu'à une ancre
+        document.addEventListener("DOMContentLoaded", function() {
+           
+            scrollToAnchor("<?php echo $anchor; ?>");
+        });
+    </script>
+
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <!-- UIKIT -->
     <script src="<?= PUBLIC_DIR ?>/js/uikit.js"></script>
