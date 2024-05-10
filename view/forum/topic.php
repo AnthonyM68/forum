@@ -1,4 +1,5 @@
 <?php
+
 use App\Session as Session;
 // on récupère le topic principal
 $topic = $result["data"]['topic'];
@@ -21,18 +22,19 @@ $ctrl = new $ctrlNS(); ?>
         </div>
         <div class="uk-width-expand">
             <h4 class="uk-card-title"><?= $topic->getUser()->getUsername() ?></h4>
-            <h2><?= $topic->getTitle() ?></h2>
+            <h2><?= htmlspecialchars_decode($topic->getTitle()) ?></h2>
         </div>
     </div>
     <div class="uk-text-right">
         <?= $ctrl->convertToString($topic->getUser()->getRole()) ?>
+        <?= $topic->getDateCreation() ?>
     </div>
 </div>
 
 <!-- LIST POSTS -->
 <?php
 if ($posts) {
-    foreach ($posts as $post) {?>
+    foreach ($posts as $post) { ?>
         <div class="uk-card uk-card-default uk-card-body uk-margin-bottom">
             <div class="uk-grid-small uk-flex-middle" uk-grid>
                 <div class="uk-width-auto">
@@ -40,17 +42,23 @@ if ($posts) {
                 </div>
                 <div class="uk-width-expand">
                     <h4 class="uk-card-title"><?= $post->getTopic()->getUser()->getUsername() ?></h4>
-                    <p><?= $post->getContent() ?></p>
+                    <p><?= htmlspecialchars_decode($post->getContent()) ?></p>
                 </div>
                 <div class="uk-width-auto">
-                    <a href="#" class="uk-icon-button uk-margin-small-right" uk-icon="icon: reply"
-                        uk-tooltip="title: Répondre; pos: top-left"></a>
-                    <a href="#" class="uk-icon-button uk-margin-small-right" uk-icon="icon: pencil"
-                        uk-tooltip="title: Éditer; pos: top-left"></a>
-                    <a href="#" class="uk-icon-button uk-margin-small-right" uk-icon="icon: trash"
-                        uk-tooltip="title: Supprimer; pos: top-left"></a>
-                    <a href="#" class="uk-icon-button uk-margin-small-right" uk-icon="icon: heart"
-                        uk-tooltip="title: Like; pos: top-left">
+                    <?php if (Session::getUser()) {
+                        // Si l'utilisateur connecté est l'auteur du topic
+                        if (Session::getUser()->getId() === $post->getTopic()->getUser()->getId()) {
+                    ?>
+                            <a href="#" class="uk-icon-button uk-margin-small-right" uk-icon="icon: reply" uk-tooltip="title: Répondre; pos: top-left"></a>
+
+                            <a href="#" class="uk-icon-button uk-margin-small-right" uk-icon="icon: pencil" uk-tooltip="title: Éditer; pos: top-left"></a>
+
+                            <a href="#" class="uk-icon-button uk-margin-small-right" uk-icon="icon: trash" uk-tooltip="title: Supprimer; pos: top-left"></a>
+
+                    <?php }
+                    } ?>
+
+                    <a href="#" class="uk-icon-button uk-margin-small-right" uk-icon="icon: heart" uk-tooltip="title: Like; pos: top-left">
                     </a>
                     <span>10</span>
                 </div>
@@ -60,26 +68,24 @@ if ($posts) {
                 <?= $post->getDateCreation() ?>
             </div>
         </div>
-    <?php }
-    if(Session::getUser()) {
-    if ($result['section'] === "edit-topic") { ?>
-        <!-- TINYMCE -->
-        <div class=" uk-column-1-1">
-            <h3 class="color-primary">Editez votre réponse</h3>
-            <form id="newCAt" name="newCat" action="./index.php?ctrl=forum&action=addPost&id=<?= $topic->getId() ?>" method="post"
-                class="uk-form-horizontal uk-margin-large">
-                <div class="uk-margin">
-                    <textarea name="content" class="post">Votre article</textarea>
-                </div>
-                <input name="token-hidden" class="uk-input uk-form-large" type="text" value="<?= $_SESSION["token"] ?>" style="visibility:hidden">
-                <input type="submit" class="uk-button uk-button-primary uk-button-large uk-width-1-1">
-            </form>
-        </div>
-    <?php }   
-    }else { ?>
+        <?php }
+    if (Session::getUser()) {
+        if ($result['section'] === "edit-topic") { ?>
+            <!-- TINYMCE -->
+            <div class=" uk-column-1-1">
+                <h3 class="color-primary">Editez votre réponse</h3>
+                <form id="newCAt" name="newCat" action="./index.php?ctrl=forum&action=addPost&id=<?= $topic->getId() ?>" method="post" class="uk-form-horizontal uk-margin-large">
+                    <div class="uk-margin">
+                        <textarea name="content" class="post">Votre article</textarea>
+                    </div>
+                    <input name="token-hidden" class="uk-input uk-form-large" type="text" value="<?= $_SESSION["token"] ?>" style="visibility:hidden">
+                    <input type="submit" class="uk-button uk-button-primary uk-button-large uk-width-1-1">
+                </form>
+            </div>
+        <?php }
+    } else { ?>
         <p class="uk-text-center uk-text-danger uk-text-uppercase" uk-margin>
-           Vous devez êtres inscrit pour répondre à ce Topic
-       </p>
-   <?php }     
-
+            Vous devez êtres inscrit pour répondre à ce Topic
+        </p>
+<?php }
 }

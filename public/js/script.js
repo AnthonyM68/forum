@@ -167,6 +167,7 @@ $(document).ready(function () {
     tinymce.init({
         selector: '.post',
         menubar: false,
+        encode_entities: true,
         plugins: [
             'advlist autolink lists link image charmap print preview anchor',
             'searchreplace visualblocks code fullscreen',
@@ -178,6 +179,9 @@ $(document).ready(function () {
             'removeformat | help',
         content_css: '//www.tiny.cloud/css/codepen.min.css'
     });
+
+
+
     // objet javascript pour le breadcrumb
     let urlMappings = {
         './': 'Accueil',
@@ -203,6 +207,8 @@ $(document).ready(function () {
     if (navBreadcrumb) {
         navBreadcrumb.innerHTML = breadcrumb;
     }
+
+
     // suppresion du compte utilisateur par l'espace profil
     let deleteAcc = document.getElementById('delete-account-btn');
     // on place un écouteur d'événement su rle bouton de suppresion

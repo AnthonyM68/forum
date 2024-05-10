@@ -99,7 +99,6 @@ final class Post extends Entity
     {
         return $this->user;
     }
-
     /**
      * Set the value of user
      *

@@ -19,6 +19,8 @@ abstract class AbstractController
 {
     // 32 bytes aes-256-cbc
     private const PRIVATE_KEY = 'HJIeGmF8zwE9Z4B9Eo7oC+IBDG9I0HXEyBWEyRuQqnHI2o8pIOQQ+T51ECOl8rD8';
+    // format DateTime
+    private const REG_DATETIME = '/^\d{2}\-\d{2}\-\d{4} \d{2}:\d{2}:\d{2}$/';
     // 16 bytes init vector
     private static $ivVectorInit;
 
@@ -31,7 +33,6 @@ abstract class AbstractController
         header("Location: $url");
         die();
     }
-
     public function restrictTo($role): void
     {
         // s'il n'y a pas de session de démarrer
@@ -47,13 +48,13 @@ abstract class AbstractController
         return  bin2hex(random_bytes($length));
     }
     // méthode pour hasher un mot de passe
-    public function generatePasswordHash($password): string
+    public static function generatePasswordHash($password): string
     {
         return password_hash($password, PASSWORD_DEFAULT);
     }
     // méthode pour vérifer si un hash récupéré dans la base de données correspond
     // au mot de pass clair saisie par l'utilisateur lors de sa connexion
-    public function deHashPassword($password, $password_hash): bool
+    public static function deHashPassword($password, $password_hash): bool
     {
         return ((password_verify($password, $password_hash))) ?? false;
     }
@@ -91,12 +92,10 @@ abstract class AbstractController
                 $propertyName = "id_user";
                 $hashedValue = $propertyValue;
             }
-            // on préserve la date d'inscription en clair format =>> DATETIME
+            // on préserve la date d'inscription en clair format => DATETIME
             if ($propertyName === "dateRegister") {
-                // format DateTime
-                $expectedFormatRegex = '/^\d{2}\-\d{2}\-\d{4} \d{2}:\d{2}:\d{2}$/';
                 // si la date est au format d'affichage on la convertit au format DATETIME
-                if (!preg_match($expectedFormatRegex, $propertyValue)) {
+                if (!preg_match(self::REG_DATETIME, $propertyValue)) {
                     // on convertit la date d'inscription pour la garder en clair
                     $date = DateTime::createFromFormat('d/m/Y H:i:s', $propertyValue);
                     $hashedValue = $date->format('Y-m-d H:i:s');
@@ -104,7 +103,7 @@ abstract class AbstractController
                     $hashedValue = $propertyValue;
                 }
             }
-            // on préserve les rôles au format =>> JSON
+            // on préserve les rôles au format => JSON
             if ($propertyName === "role") {
                 $hashedValue = $propertyValue;
             }
@@ -188,13 +187,6 @@ abstract class AbstractController
     {
         // Générer un IV aléatoire
         $iv = openssl_random_pseudo_bytes(16); // IV de 16 octets pour AES-256-CBC
-        // Vérifier la longueur de l'IV
-        $ivLength = strlen($iv);
-        if ($ivLength !== 16) {
-            // La longueur de l'IV est incorrecte
-            throw new Exception("Erreur : la longueur de l'IV est incorrecte.");
-        }
-    
         // Chiffrer les données avec l'IV généré
         $encryptedData = openssl_encrypt(
             $data,
@@ -203,14 +195,12 @@ abstract class AbstractController
             0,
             $iv
         );
-    
         // Retourner les données chiffrées et l'IV
         return [
             "encryptedData" => $encryptedData,
             "iv" => $iv
         ];
     }
-    
     public static function decryptData($encryptedData, $ivector)
     {
         return openssl_decrypt(

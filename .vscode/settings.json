@@ -1,0 +1,96 @@
+{
+    "folder-color.pathColors": [
+        {
+            "folderPath": "forum\\view\\security\\",
+            "color": "foldercolorizer.red"
+        },
+        {
+            "folderPath": "forum\\sections\\",
+            "color": "foldercolorizer.red"
+        },
+        {
+            "folderPath": "forum\\listCategories.php\\",
+            "color": "foldercolorizer.green"
+        },
+        {
+            "folderPath": "forum\\published.php\\",
+            "color": "foldercolorizer.green"
+        },
+        {
+            "folderPath": "forum\\listTopics.php\\",
+            "color": "foldercolorizer.green"
+        },
+        {
+            "folderPath": "forum\\listTopicsByCategory.php\\",
+            "color": "foldercolorizer.green"
+        },
+        {
+            "folderPath": "forum\\topic.php\\",
+            "color": "foldercolorizer.green"
+        },
+        {
+            "folderPath": "forum\\view\\",
+            "color": "foldercolorizer.green"
+        },
+        {
+            "folderPath": "forum\\view\\security\\loginSignin.php\\",
+            "color": "foldercolorizer.green"
+        },
+        {
+            "folderPath": "forum\\view\\security\\users.php\\",
+            "color": "foldercolorizer.green"
+        },
+        {
+            "folderPath": "forum\\sections\\footer\\footer.php\\",
+            "color": "foldercolorizer.green"
+        },
+        {
+            "folderPath": "forum\\sections\\header\\header.php\\",
+            "color": "foldercolorizer.green"
+        },
+        {
+            "folderPath": "forum\\sections\\news\\news.php\\",
+            "color": "foldercolorizer.green"
+        },
+        {
+            "folderPath": "forum\\index.php\\",
+            "color": "foldercolorizer.PureGold"
+        },
+        {
+            "folderPath": "forum\\view\\layout.php\\",
+            "color": "foldercolorizer.PureGold"
+        },
+        {
+            "folderPath": "forum\\controller\\",
+            "color": "foldercolorizer.LightRed"
+        },
+        {
+            "folderPath": "forum\\model\\",
+            "color": "foldercolorizer.blue"
+        },
+        {
+            "folderPath": "forum\\public\\",
+            "color": "foldercolorizer.PureGold"
+        },
+        {
+            "folderPath": "forum\\app\\Entity.php\\",
+            "color": "foldercolorizer.blue"
+        },
+        {
+            "folderPath": "forum\\app\\DAO.php\\",
+            "color": "foldercolorizer.Coral"
+        },
+        {
+            "folderPath": "forum\\app\\AbstractController.php\\",
+            "color": "foldercolorizer.red"
+        },
+        {
+            "folderPath": "forum\\app\\Session.php\\",
+            "color": "foldercolorizer.PureTan"
+        },
+        {
+            "folderPath": "forum\\app\\Manager.php\\",
+            "color": "foldercolorizer.LightPink"
+        }
+    ]
+}

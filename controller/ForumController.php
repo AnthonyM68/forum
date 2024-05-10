@@ -143,13 +143,17 @@ class ForumController extends AbstractController implements ControllerInterface
             ]
         ];
     }
-
+    /**
+     * recherche toutes les infos d'un topic par son id
+     *
+     * @return le topic et tous ces posts
+     */
     public function showFullTopic()
     {
         if (isset($_GET['id'])) {
             $id = $_GET['id'];
             $topicManager = new TopicManager();
-            $topic = $topicManager->findOneById($id);
+            $topic = $topicManager->findOneByIdTopic($id);
 
             $postManager = new PostManager();
             $posts = $postManager->findAllByIdTopic($id);
@@ -164,7 +168,6 @@ class ForumController extends AbstractController implements ControllerInterface
             ]
         ];
     }
-
 
     /**
      * Ajouter une catégorie 
@@ -256,22 +259,21 @@ class ForumController extends AbstractController implements ControllerInterface
         $topic_id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
         $topicManager = new TopicManager();
         $postManager = new PostManager();
-        if (isset($_POST['token-hidden']) && $_POST['token-hidden'] === $_SESSION['token']) {
-            // si elles sont toutes vérifiées
-            if ($content && $topic_id) {
+        //if (isset($_POST['token-hidden']) && $_POST['token-hidden'] === $_SESSION['token']) {
+        // si elles sont toutes vérifiées
+        if ($content && $topic_id) {
 
-                $date = new DateTime();
-                $result = $postManager->add([
-                    "content" => $content,
-                    "dateCreation" => $date->format('Y-m-d H:i:s'),
-                    "topic_id" => $topic_id,
-                    "user_id" => Session::getUser()->getId()
-                ]);
-                if ($result) {
-                    Session::addFlash("success", "Votre Article a bien été sauvegarder");
-                } else {
-                    Session::addFlash("error", "Une erreur est survenue veuillez recommencer");
-                }
+            $date = new DateTime();
+            $result = $postManager->add([
+                "content" => htmlspecialchars($content),
+                "dateCreation" => $date->format('Y-m-d H:i:s'),
+                "topic_id" => $topic_id,
+                "user_id" => Session::getUser()->getId()
+            ]);
+            if ($result) {
+                Session::addFlash("success", "Votre Article a bien été sauvegarder");
+            } else {
+                Session::addFlash("error", "Une erreur est survenue veuillez recommencer");
             }
         }
         return [
@@ -279,7 +281,7 @@ class ForumController extends AbstractController implements ControllerInterface
             "section" => "edit-topic",
             "meta_description" => "Ajouter un Article : ",
             "data" => [
-                "topic" => $topicManager->findOneById($topic_id),
+                "topic" => $topicManager->findOneByIdTopic($topic_id),
                 "posts" => $postManager->findAllByIdTopic($topic_id)
             ]
         ];

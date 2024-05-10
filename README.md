@@ -25,7 +25,7 @@
 
 <h3 align="left">Sécurisation</h3>
 
-- Encryptage des données personnel (prévoir durée jusqu'a effacement total) en cas de suppression de compte (offre anssi une possibilité de retour en arrière).
+- Encryptage des données personnel AES-256-cbc avec clé privée et IV (prévoir durée jusqu'à effacement total) en cas de suppression de compte (offre anssi une possibilité de retour en arrière).
 - hashage des données utilisateur, permettant de conserver topics et posts associés.
 - possibilité de restaurer les données encryptés, lors de la récupération d'un compte.
 - lutte contre la faille XSCF eXtended System Control Facility, XSS Cross-site Scripting, SQL
@@ -33,6 +33,7 @@
 
 <h3 align="left">Sécurisation à venir</h3>
 
+- système d'éffacement des lignes dont la validité arrive a terme, par un cron.php
 - lutte contre la faille upload
 
 </p>

@@ -50,7 +50,6 @@ class TopicManager extends Manager
     }
     public function findLast5Topics()
     {
-
         $sql = "SELECT * 
                 FROM " . $this->tableName . " t
                 ORDER BY t.dateCreation DESC
@@ -62,14 +61,36 @@ class TopicManager extends Manager
             $this->className
         );
     }
+    // renvoie une liste d'Id 
     public function findAllId($id)
     {
-
         $sql = "SELECT " . $id . "
                 FROM " . $this->tableName . "";
 
         return $this->getMultipleResults(
             DAO::select($sql),
+            $this->className
+        );
+    }
+
+    /**
+     * recherche toutes les infos d'un topic
+     *
+     * @param [type] $id_topic
+     * @return void
+     */
+    public function findOneByIdTopic($id)
+    {
+        $sql = "SELECT
+        t.id_topic,
+        t.title,
+        DATE_FORMAT(t.dateCreation, '%d/%m/%Y %H:%i:%s') AS dateCreation,
+        t.category_id,
+        t.user_id
+        FROM " . $this->tableName . " t
+        WHERE t.id_" . $this->tableName . " = :id";
+        return $this->getOneOrNullResult(
+            DAO::select($sql, ['id' => $id], false),
             $this->className
         );
     }
