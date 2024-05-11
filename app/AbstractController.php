@@ -74,10 +74,12 @@ abstract class AbstractController
             $propertyValue = $property->getValue($user);
 
             // Hash si valeur non null, non vide
-            if ($propertyValue !== null && $propertyValue !== "" 
-            && $propertyName !== "id" && $propertyName !== "role" 
-            && $propertyName !== "dateRegister" 
-            && $propertyName !== "tokenValidity") {
+            if (
+                $propertyValue !== null && $propertyValue !== ""
+                && $propertyName !== "id" && $propertyName !== "role"
+                && $propertyName !== "dateRegister"
+                && $propertyName !== "tokenValidity"
+            ) {
                 $hashedValue = password_hash($propertyValue, PASSWORD_DEFAULT);
             }
             // on défini une date d'expiration à 30j
@@ -159,20 +161,33 @@ abstract class AbstractController
     public static function convertToString($roles): string
     {
         if (is_array($roles)) {
-            // on retir le dernier élément du tableau
+            // on retire le dernier élément du tableau
             $lastElement = array_pop($roles);
             // on initialise une string vide
             $formattedRoles = "";
             // s'il reste des rôles dans le tableau
             foreach ($roles as $userRoles) {
-                // on annalyse le contenu des rôles
-                $formattedRoles .= ($userRoles === "ROLE_USER" ? "Membre du Forum" : ($userRoles === "ROLE_ADMIN" ? "Administrateur" : ""));
+                // on analyse le contenu des rôles
+                switch ($userRoles) {
+                    case "ROLE_USER":
+                        $formattedRoles .= "Membre du Forum";
+                        break;
+                    case "ROLE_EDITOR":
+                        $formattedRoles .= "Editeur";
+                        break;
+                    case "ROLE_ADMIN":
+                        $formattedRoles .= "Administrateur";
+                        break;
+                    default:
+                        // si le rôle n'est pas parmi les trois rôles spécifiés, ne rien ajouter
+                        break;
+                }
                 // on ajoute la virgule
                 $formattedRoles .= ", ";
             }
             // si la chaine existe et non vide
             if ($formattedRoles !== "") {
-                // on retir la dernière virgule
+                // on retire la dernière virgule
                 $formattedRoles = rtrim($formattedRoles, ", ");
                 // on la remplace par un "et"
                 $formattedRoles .= " et";
@@ -180,10 +195,24 @@ abstract class AbstractController
             // on ajoute un petit espace
             $formattedRoles .= " ";
             // on analyse le dernier élément du tableau de rôles initial
-            $formattedRoles .= $lastElement === "ROLE_USER" ? "Membre du Forum" : ($lastElement === "ROLE_ADMIN" ? "Administrateur" : "");
+            switch ($lastElement) {
+                case "ROLE_USER":
+                    $formattedRoles .= "Membre du Forum";
+                    break;
+                case "ROLE_EDITOR":
+                    $formattedRoles .= "Editeur";
+                    break;
+                case "ROLE_ADMIN":
+                    $formattedRoles .= "Administrateur";
+                    break;
+                default:
+                    // Si le rôle n'est pas parmi les trois rôles spécifiés, ne rien ajouter
+                    break;
+            }
         }
         return $formattedRoles;
     }
+
     public static function encryptData($data)
     {
         // Générer un IV aléatoire

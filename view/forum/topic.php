@@ -1,18 +1,44 @@
 <?php
-
 use App\Session as Session;
-// le nom de controleur à utilisé
-$ctrlname = "forum";
-//on construit le namespace de la classe Controller à appeller
-$ctrlNS = "controller\\" . ucfirst($ctrlname) . "Controller";
-$ctrl = new $ctrlNS();
 // on récupère le topic principal
 $topic = $result["data"]['topic'];
 // on récupère tous les posts du topic
 $posts = $result["data"]['posts'];
+// on recherche toutes les catégories
+$categories = $ctrl->findAllCategories();
 ?>
 
 <h1 class="uk-animation-fade pridi-regular"></h1>
+<!-- ADD TOPIC -->
+<?php
+if (isset($result['section']) && $result['section'] === "topic") { ?>
+    <div class="uk-grid-margin uk-grid uk-grid-stack" uk-grid>
+        <div class="uk-width-1-2@m">
+            <form id="newCAt" name="newCat" action="./index.php?ctrl=forum&action=addTopic" method="post" class="uk-form-horizontal uk-margin-large">
+                <div class="uk-margin">
+                    <select name="category" class="uk-select" aria-label="Select">
+                        <?php foreach ($categories as $category) { ?>
+                            <option value="<?= $category->getId() ?>"><?= $category->getName() ?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-horizontal-text">Titre du Topic</label>
+                    <div class="uk-form-controls">
+                        <input name="title" class="uk-input" id="form-horizontal-text" type="text" placeholder="Nouveau topic">
+                    </div>
+                </div>
+                <div class="uk-margin">
+                    <textarea name="content" class="post">Premier Article obligatoire</textarea>
+                </div>
+                <input name="token-hidden" class="uk-input uk-form-large" type="text" value="<?= $_SESSION["token"] ?>" style="visibility:hidden">
+                <button type="submit" class="uk-text-center color-primary uk-button uk-button-default uk-button-large uk-width-1-1">Ajouter Topic</button>
+            </form>
+        </div>
+    </div>
+<?php }
+?>
+<!-- DISPLAY FULL -->
 <?php if ($topic) { ?>
     <!-- TOPIC -->
     <div class="uk-card uk-card-default uk-card-body uk-margin-bottom">
@@ -142,7 +168,6 @@ if ($posts) {
                 <div class="uk-margin">
                     <textarea name="content" class="post"></textarea>
                     <input type="submit" class="uk-button uk-button-success uk-button-large uk-width-1-1">
-                    //CS
                     <input name="token-hidden" class="uk-input uk-form-large" type="text" value="<?= $_SESSION["token"] ?>" style="visibility:hidden">
                 </div>
             </form>

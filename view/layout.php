@@ -56,7 +56,7 @@
                     <!-- content request -->
                 </ul>
             </nav>
-            <form id="token_form" method="post" action="./index.php?ctrl=forum&action=">
+            <form id="token_form" method="post" action="#">
                 <input name="token-form-link" type="hidden" value="<?= $_SESSION["token"] ?>">
             </form>
             <div id="page"><?= $page ?></div>

@@ -38,7 +38,7 @@ class ForumController extends AbstractController implements ControllerInterface
         $categories = $categoryManager->findAll(["name", "ASC"]);
         // le controller communique avec la vue "listCategories" (view) pour lui envoyer la liste des catégories (data)
         return [
-            "view" => VIEW_DIR . "forum/listCategories.php",
+            "view" => VIEW_DIR . "forum/categories.php",
             "meta_description" => "Liste des catégories du forum",
             "data" => [
                 "categories" => $categories
@@ -70,16 +70,16 @@ class ForumController extends AbstractController implements ControllerInterface
      * @param [type] $id
      * @return void
      */
-    public function listTopicsByCategory($id): array
+    public function listTopicsByCategory(): array
     {
         $categoryManager = new CategoryManager();
         $topicManager = new TopicManager();
         // changer de methode plutot que findOneById
         // besoin de convertir la date lors de la sortie sql
-        $category = $categoryManager->findOneById($id);
-        $topics = $topicManager->findTopicsByCategory($id);
+        $category = $categoryManager->findOneById($_GET['id']);
+        $topics = $topicManager->findTopicsByCategory($_GET['id']);
         return [
-            "view" => VIEW_DIR . "forum/listTopicsByCategory.php",
+            "view" => VIEW_DIR . "forum/listTopics.php",
             "meta_description" => "Liste des topics par catégorie : " . $category,
             "data" => [
                 "category" => $category,
@@ -144,7 +144,7 @@ class ForumController extends AbstractController implements ControllerInterface
         ];
     }
 
-
+    /***************************CATEGORY *****************************/
     /**
      * Ajouter une catégorie 
      *
@@ -153,27 +153,33 @@ class ForumController extends AbstractController implements ControllerInterface
     public function addCategory(): array
     {
         $this->restrictTo("ROLE_USER");
+        // CSRF
+        if (isset($_POST['token-hidden']) && $_POST['token-hidden'] === $_SESSION['token']) {
 
-        if (isset($_POST['name']) && !empty($_POST['name'])) {
-            // CSRF
-            if (isset($_POST['token-hidden']) && $_POST['token-hidden'] === $_SESSION['token']) {
+            $nameCategory = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_SPECIAL_CHARS);
 
-                $nameCategory = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_SPECIAL_CHARS);
+            if ($nameCategory) {
+        
                 $categoryManager = new CategoryManager();
-                $result = $categoryManager->add(["name" => $nameCategory]);
-                if ($result) {
+                
+                if ($categoryManager->add(["name" => $nameCategory])) {
                     Session::addFlash("success", "Catégorie ajouté avec succès");
                 } else {
                     Session::addFlash("error", "Erreur lors de la soumission de la catégorie");
                 }
-                $this->redirectTo("forum", "index");
+                $this->redirectTo("forum", "listCategories");
+            } else {
+                Session::addFlash("error", "Oups!, un problème est servenu");
+                $this->redirectTo("home", "index");
             }
-        }
+        } 
         return [
-            "view" => VIEW_DIR . "forum/published.php",
+            "view" => VIEW_DIR . "forum/categories.php",
             "section" => "category",
             "meta_description" => "Ajouter une catégorie : ",
-            "data" => []
+            "data" => [
+                "categories" => null
+            ]
         ];
     }
     /*******************************TOPIC**************************/
@@ -192,35 +198,38 @@ class ForumController extends AbstractController implements ControllerInterface
         // si elles sont toutes vérifiées
         if ($title && $content && $category_id) {
             // CSRF
-            if (isset($_POST['token-form-link']) && $_POST['token-form-link'] === $_SESSION['token']) {
+            if (isset($_POST['token-hidden']) && $_POST['token-hidden'] === $_SESSION['token']) {
                 $topicManager = new TopicManager();
                 $date = new DateTime();
                 $id_topic = $topicManager->add([
                     "title" => $title,
                     "dateCreation" => $date->format('Y-m-d H:i:s'),
                     "category_id" => $category_id,
-                    "user_id" => 1
+                    "user_id" => Session::getUser()->getId()
                 ]);
                 $postManager = new PostManager();
                 $result = $postManager->add([
                     "content" => $content,
                     "dateCreation" => $date->format('Y-m-d H:i:s'),
-                    "topic_id" => $id_topic
+                    "topic_id" => $id_topic,
+                    "user_id" => Session::getUser()->getId()
                 ]);
-
                 if ($result) {
                     Session::addFlash("success", "Votre Topic a bien été sauvegarder");
-                    $this->redirectTo("home", "index");
+                    $this->redirectTo("forum", "showFullTopic", $id_topic);
                 } else {
                     Session::addFlash("error", "Une erreur est survenue veuillez recommencer");
                 }
             }
         }
         return [
-            "view" => VIEW_DIR . "forum/published.php",
+            "view" => VIEW_DIR . "forum/topic.php",
             "section" => "topic",
             "meta_description" => "Ajouter un Article : ",
-            "data" => []
+            "data" => [
+                "topic" => null,
+                "posts" => null
+            ]
         ];
     }
     /**
@@ -252,7 +261,7 @@ class ForumController extends AbstractController implements ControllerInterface
             $this->redirectTo("forum", "showFullTopic", $_GET['id']);
         }
     }
-        /**
+    /**
      * mise à jour d'un post
      */
     public function updateTopic()
@@ -509,7 +518,7 @@ class ForumController extends AbstractController implements ControllerInterface
         if (isset($_POST['word'])) {
 
             $topicManager = new TopicManager();
-            
+
 
             $results = $topicManager->searchMotor($_POST['word']);
             echo json_encode($results);
