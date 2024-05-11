@@ -174,20 +174,19 @@ final class User extends Entity
      * @param [type] $role
      * @return boolean
      */
-    public function hasRole($role)
+    public function hasRole($_role)
     {
         if (!empty($this->role)) {
-            $roles = $this->role;
-            if (!is_iterable($roles)) {
-                $roles = json_decode($this->role);
-            }
+            $roles = is_iterable($this->role) ? $this->role : json_decode($this->role, true);
             foreach ($roles as $role) {
-                if (strcmp($role, $roles[0])) return true;
+                if ($role === $_role) {
+                    return true; 
+                }
             }
         }
-        return false;
+        return false; 
     }
-
+    
     public function __toString()
     {
         return $this->username;
