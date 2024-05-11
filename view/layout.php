@@ -56,6 +56,9 @@
                     <!-- content request -->
                 </ul>
             </nav>
+            <form id="token_form" method="post" action="./index.php?ctrl=forum&action=">
+                <input name="token-form-link" type="hidden" value="<?= $_SESSION["token"] ?>">
+            </form>
             <div id="page"><?= $page ?></div>
 
         </div>
@@ -65,7 +68,7 @@
     <script>
         // faire défiler la page jusqu'à une ancre
         document.addEventListener("DOMContentLoaded", function() {
-           
+
             scrollToAnchor("<?php echo $anchor; ?>");
         });
     </script>

@@ -1,3 +1,30 @@
+/**
+ * interception de click sur les lien edit, delete, répondre et ajout d'un token 
+ */
+function listenerLink() {
+
+    let tokenForm = document.getElementById('token_form');
+    let tokenLinks = document.querySelectorAll('.token-link');
+
+    tokenLinks.forEach(function (link) {
+        link.addEventListener('click', function (event) {
+            event.preventDefault();
+            // Récupérer l'action spécifique du lien
+            let action = this.getAttribute('data-action');
+            // Modifier l'action du formulaire
+            tokenForm.action = action;
+            tokenForm.submit();
+        });
+    });
+}
+
+
+function escapeHTML(html) {
+    let escapeEl = document.createElement('textarea');
+    escapeEl.textContent = html;
+    return escapeEl.innerHTML;
+}
+
 function displayFormConfirmDelete(id) {
     return ` <div class="uk-animation-fade uk-container">
     <div class="uk-grid-margin uk-grid uk-grid-stack" uk-grid>
@@ -28,23 +55,62 @@ function displayFormConfirmDelete(id) {
     </div>
     </div>`;
 }
-function displayFormEditPost() {
-    return `<div id="edit-topic" class=" uk-column-1-1">
-    <form id="add_post" name="add_post" action="./index.php?ctrl=forum&action=addPost&id=<?= $post->getId() ?>" method="post" class="uk-form-horizontal uk-margin-large">
-        <div class="uk-margin">
-            <textarea name="content" class="post"><?= $post->getContent() ?></textarea>
-        </div>
-        <input name="topic-id-reload" type="hidden" value="<?= $post->getTopic()->getId() ?>">
-        <input name="token-hidden" class="uk-input uk-form-large" type="text" value="<?= $_SESSION["token"] ?>" style="visibility:hidden">
-        <input type="submit" class="uk-button uk-button-primary uk-button-large uk-width-1-1">
-    </form>
-</div>`
+function displayResultSearchMotor(datas) {
+    console.log(datas);
+    let output = '';
+    datas.forEach(function (item) {
+
+        let escapedContent = escapeHTML(item.content);
+        let escapedTitle = escapeHTML(item.title);
+
+        if (escapedContent === "") {
+            escapedContent = "... aucun résultat";
+        } else {
+            `<span class="yellow">` + escapedContent + `</span>`;
+        }
+
+        if (escapedTitle === "") {
+            escapedTitle = "... aucun résultat";
+        } else {
+            `<span class="yellow">` + escapedTitle + `</span>`;
+        }
+        output += `
+        <h4>Résultats de recherche</h4>
+        <div id="card-`+ item.id + `" class="uk-card uk-card-default uk-card-body uk-margin-bottom">
+            <div class="uk-grid-small uk-flex-middle" uk-grid>
+                <div class="uk-width-auto">
+                    <img class="uk-border-circle" width="60" height="60" src="./public/img/profils/moi.jpg" alt="Avatar">
+                </div>
+                <div class="uk-width-expand">
+                    <h4 class="uk-card-title">` + escapedTitle + `</h4>
+                    <p class="color-secondary">
+
+                        <a href="index.php?ctrl=forum&action=showFullTopic&id=` + item.id +
+            `&anchor=card-` + item.id + `" class="color-link-topic-news"></a>
+                        ` + escapedContent + `
+                    </p>
+                        <span class="fas fa-user color-link"> ` + item.author + `</span><span class="color-primary"> Crée le: ` +
+            item.dateCreation +
+            `</span>
+                </div>
+                <div class="uk-width-auto">
+                    <a data-action="./index.php?ctrl=forum&action=showFullTopic&id=` +
+            item.id + `" href="#" class="token-link uk-icon-button uk-margin-small-right" uk-icon="icon: reply" uk-tooltip="title: Rejoindre le topic; pos: top-left"></a>
+                </div>
+            </div>
+        </div>`
+
+    });
+    return output;
 }
+// <?= htmlspecialchars_decode($post->getContent()) ?>
 // faire defiler la page jusqu'à une ancre déclarer dans la vue
 function scrollToAnchor(anchor) {
-    let element = document.querySelector(anchor);
-    if (element) {
-        element.scrollIntoView();
+    if (anchor) {
+        let element = document.querySelector(anchor);
+        if (element) {
+            element.scrollIntoView();
+        }
     }
 }
 // on limite une chaine de caractère à une certaine taille
@@ -141,7 +207,7 @@ function deleteAccount() {
             }
         })
         .then(data => {
-            console.log(data.id); // Afficher la réponse JSON
+            // Afficher la réponse JSON
             let page = document.getElementById('page');
             if (page) {
                 page.innerHTML = displayFormConfirmDelete(data.id);
@@ -161,6 +227,8 @@ $(document).ready(function () {
     limitCharFromString("uk-accordion-title", 40);
     // on modifie la taille des contenus des accordéons pour plus de style
     limitCharFromString("get-content-post", 40)
+    // Ecoute les click editer, delete ..
+    listenerLink();
     /* Elan masquage des alert() après 3sec */
     $(".message").each(function () {
         if ($(this).text().length > 0) {
@@ -232,21 +300,46 @@ $(document).ready(function () {
             }
         });
     }
+
+
     /**
-     * interception de click sur les lien edit, delete, répondre et ajout d'un token 
+     * input rechercher
      */
+    let searchInput = document.getElementById('searchInput');
 
-    let tokenForm = document.getElementById('token_form');
-    let tokenLinks = document.querySelectorAll('.token-link');
+    // Ajout d'un écouteur d'événements pour l'événement 'input'
+    searchInput.addEventListener('input', function (event) {
+        // Vérifie si la longueur de la valeur saisie est supérieure à 5
+        if (event.target.value.length > 4) {
+            let formData = new FormData();
+            let value = event.target.value;
+            // Ajout de la valeur saisie dans l'input à l'objet FormData
+            formData.append("word", value);
 
-    tokenLinks.forEach(function (link) {
-        link.addEventListener('click', function (event) {
-            event.preventDefault();
-            // Récupérer l'action spécifique du lien
-            let action = this.getAttribute('data-action');
-            // Modifier l'action du formulaire
-            tokenForm.action = action;
-            tokenForm.submit();
-        });
+            fetch(`index.php?ctrl=forum&action=searchMotor`, {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    // Affiche le contenu textuel de la réponse du serveur
+                    return response.text();
+                })
+                .then(text => {
+                    //console.log(text); // Afficher la réponse textuelle du serveur
+                    // Si la réponse est du JSON, essayez de le parser
+                    try {
+                        let jsonData = JSON.parse(text);
+                        document.getElementById("page").innerHTML = displayResultSearchMotor(jsonData)
+
+                    } catch (error) {
+                        console.error('Erreur lors de l\'analyse de la réponse JSON:', error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la soumission de recherche', error);
+                });
+        }
     });
+
+
 })

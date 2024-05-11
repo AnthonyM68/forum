@@ -27,31 +27,43 @@ $posts = $result["data"]['posts'];
                 <h4 class="uk-card-title"><?= $topic->getUser()->getUsername() ?></h4>
                 <h2><?= htmlspecialchars_decode($topic->getTitle()) ?></h2>
             </div>
-            <?php if (Session::getUser()) {
-            // XSCF
-        ?>
-            <form id="" method="post" action="./index.php?ctrl=forum&action=">
-                <input name="token-form-link" type="hidden" value="<?= $_SESSION["token"] ?>">
-            </form>
-            <?php
-            // Si l'utilisateur connecté est l'auteur du topic
-            if (Session::getUser()->getId() === $topic->getUser()->getId()) { 
+            <?php if (Session::getUser()
+            
+            
+            
+            ) {
+                // Si l'utilisateur connecté est l'auteur du topic
+                if (Session::getUser()->getId() === $topic->getUser()->getId()) { ?>
+                    <a data-action="./index.php?ctrl=forum&action=editTopic&id=<?= $topic->getId() ?>&anchor=card-<?= $topic->getId() ?> " href="#" class="token-link uk-icon-button uk-margin-small-right" uk-icon="icon: pencil" uk-tooltip="title: Éditer; pos: top-left"></a>
+                    <a data-action="./index.php?ctrl=forum&action=deleteTopicAndPosts&id=<?= $topic->getId() ?>" href="#" class="token-link uk-icon-button uk-margin-small-right uk-text-danger" uk-icon="icon: trash" uk-tooltip="title: Supprimer; pos: top-left"></a>
+            <?php }
+            } 
             ?>
-                <a data-action="./index.php?ctrl=forum&action=editPost&id=<?= $topic->getId() ?>&anchor=card-<?= $topic->getId() ?> " href="#" class="token-link uk-icon-button uk-margin-small-right" uk-icon="icon: pencil" uk-tooltip="title: Éditer; pos: top-left"></a>
-
-                <a data-action="./index.php?ctrl=forum&action=deleteTopicAndPosts&id=<?= $topic->getId() ?>" href="#" class="token-link uk-icon-button uk-margin-small-right" uk-icon="icon: trash" uk-tooltip="title: Supprimer; pos: top-left"></a>
-        <?php }
-        }
-        // LIKE en développement  
-        ?>
         </div>
-        
         <div class="uk-text-right">
-            <?= $ctrl->convertToString($topic->getUser()->getRole()) ?>
-            <?= $topic->getDateCreation() ?>
+            <i>
+                <?= $ctrl->convertToString($topic->getUser()->getRole()) ?>
+                <?= $topic->getDateCreation() ?>
+            </i>
         </div>
     </div>
-<?php }
+    <?php
+    // modifier un topic si l'utilisateur est l'auteur
+    if (Session::getUser() && 
+        Session::getUser()->getId() === $topic->getUser()->getId()
+        ){
+        if (isset($result['topic']) && $result['topic']) { ?>
+        <h4>Modifiez votre Topic</h4>
+            <form id="post" action="./index.php?ctrl=forum&action=updateTopic&id=<?= $topic->getId() ?>" method="post" class="uk-form-horizontal uk-margin-large">
+                <div class="uk-margin">
+                    <textarea name="content" class="post"><?= $topic->getTitle() ?></textarea>
+                    <input type="submit" class="uk-button uk-button-success uk-button-large uk-width-1-1">
+                    <input name="token-hidden" class="uk-input uk-form-large" type="text" value="<?= $_SESSION["token"] ?>" style="visibility:hidden">
+                </div>
+            </form>
+    <?php }
+    }
+}
 ?>
 <!-- LIST POSTS -->
 <?php
@@ -68,34 +80,34 @@ if ($posts) {
                     <p><?= htmlspecialchars_decode($post->getContent()) ?></p>
                 </div>
                 <div class="uk-width-auto">
-                    <?php if (Session::getUser()) {
-                        // XSCF
-                    ?>
-                        <form id="token_form" method="post" action="./index.php?ctrl=forum&action=">
-                            <input name="token-form-link" type="hidden" value="<?= $_SESSION["token"] ?>">
-                        </form>
-
-                        <!--<a data-action="./index.php?ctrl=forum&action=replyPost&id=<?= $post->getId() ?>" href="#" class="token-link uk-icon-button uk-margin-small-right" uk-icon="icon: reply" uk-tooltip="title: Répondre; pos: top-left"></a>-->
-                        <?php
+                    <?php
+                    if (Session::getUser() && Session::getUser()->hasRole(["ROLE_ADMIN"]) ||
                         // Si l'utilisateur connecté est l'auteur du post
-                        if (Session::getUser()->getId() === $post->getUser()->getId()) { // modifier topic
-                        ?>
-                            <a data-action="./index.php?ctrl=forum&action=editPost&id=<?= $post->getId() ?>&anchor=card-<?= $post->getId() ?> " href="#" class="token-link uk-icon-button uk-margin-small-right" uk-icon="icon: pencil" uk-tooltip="title: Éditer; pos: top-left"></a>
+                        Session::getUser()->getId() === $post->getUser()->getId()
+                    ) {// XSCF
+                    ?>
+                        <!--<form id="token_form" method="post" action="./index.php?ctrl=forum&action=">
+                            <input name="token-form-link" type="hidden" value="<?= $_SESSION["token"] ?>">
+                        </form>-->
+                        <!--<a data-action="./index.php?ctrl=forum&action=replyPost&id=<?= $post->getId() ?>" href="#" class="token-link uk-icon-button uk-margin-small-right" uk-icon="icon: reply" uk-tooltip="title: Répondre; pos: top-left"></a>-->
+                        <a data-action="./index.php?ctrl=forum&action=editPost&id=<?= $post->getId() ?>&anchor=card-<?= $post->getId() ?> " href="#" class="token-link uk-icon-button uk-margin-small-right" uk-icon="icon: pencil" uk-tooltip="title: Éditer; pos: top-left"></a>
 
-                            <a data-action="./index.php?ctrl=forum&action=deletePost&id=<?= $post->getId() ?>" href="#" class="token-link uk-icon-button uk-margin-small-right" uk-icon="icon: trash" uk-tooltip="title: Supprimer; pos: top-left"></a>
-                    <?php }
+                        <a data-action="./index.php?ctrl=forum&action=deletePost&id=<?= $post->getId() ?>" href="#" class="token-link uk-icon-button uk-margin-small-right uk-text-danger" uk-icon="icon: trash" uk-tooltip="title: Supprimer; pos: top-left"></a>
+                    <?php 
                     }
                     // LIKE en développement  
                     ?>
-                    <a href="#" class="uk-icon-button uk-margin-small-right" uk-icon="icon: heart" uk-tooltip="title: Like; pos: top-left"></a>
+                    <a href="#" class="uk-icon-button uk-margin-small-right uk-text-danger" uk-icon="icon: heart" uk-tooltip="title: Like; pos: top-left"></a>
                     <span>
                         10
                     </span>
                 </div>
             </div>
             <div class="uk-text-right">
-                <?= $ctrl->convertToString($post->getTopic()->getUser()->getRole()) ?>
-                <?= $post->getDateCreation() ?>
+                <i>
+                    <?= $ctrl->convertToString($post->getTopic()->getUser()->getRole()) ?>
+                    <?= $post->getDateCreation() ?>
+                </i>
             </div>
         </div>
         <?php

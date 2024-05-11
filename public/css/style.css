@@ -34,6 +34,9 @@ h5,
 h6 {
   color: var(--link-color) !important;
 }
+.yellow {
+  background-color:yellow !important;
+}
 /** GENERAL **/
 .color-primary {
   color: var(--primary-color) !important;
@@ -42,6 +45,9 @@ h6 {
   color: var(--secondary-color) !important;
 }
 .color-link-topic-news p {
+  color: var(--link-color) !important;
+}
+.color-link {
   color: var(--link-color) !important;
 }
 /* LINK GENERAL */

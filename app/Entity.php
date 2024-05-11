@@ -31,25 +31,7 @@ abstract class Entity
             $method = "set" . ucfirst($fieldArray[0]);
             // si setName est une méthode qui existe dans l'entité (this)
             if (method_exists($this, $method)) {
-                /**
-                 * Ajouts des convertions
-                 */
-                // on utilise ici une condition pour convertir les données reçus
-                if ($fieldArray[0] === 'role') {
-                    // Si le champ est 'roles' on décode (format enregistré en bdd)
-                    $this->$method(json_decode($value));
-                }
-                if ($fieldArray[0] === 'dateRegister') {
-                    $dateTime = DateTime::createFromFormat("Y-m-d H:i:s", $value);
-                    // on convertis les données Sql en un objet DateTime valide
-                    $formattedDate = $dateTime->format("d/m/Y H:i:s");
-                    $this->$method($formattedDate);
-                } 
-                else {
-                    // $this->setName("valeur")
-                    // Appel du setter avec la valeur appropriée
-                    $this->$method($value);
-                }
+                $this->$method($value);
             }
         }
     }

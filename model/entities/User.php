@@ -177,12 +177,12 @@ final class User extends Entity
     public function hasRole($role)
     {
         if (!empty($this->role)) {
-            $role = $this->role;
-            if (!is_iterable($role)) {
-                $role = json_decode($this->role);
+            $roles = $this->role;
+            if (!is_iterable($roles)) {
+                $roles = json_decode($this->role);
             }
-            foreach ($role as $role) {
-                if (strcmp($role, $role[0])) return true;
+            foreach ($roles as $role) {
+                if (strcmp($role, $roles[0])) return true;
             }
         }
         return false;

@@ -35,6 +35,43 @@ class TopicManager extends Manager
 
         return count($results);
     }
+    /**
+     * moteur de recherche
+     *
+     * @param [type] $search
+     * @return void
+     */
+    public function searchMotor($search)
+    {
+        $sql = "SELECT
+        'topic' as type,
+        t.title as title,
+        DATE_FORMAT(t.dateCreation, '%d/%m/%Y') AS dateCreation,
+        t.id_topic as id,
+        u.username as author, -- Ajout du nom de l'auteur du topic
+        null as content
+        FROM 
+        " . $this->tableName . " t
+        LEFT JOIN user u ON t.user_id = u.id_user -- Jointure avec la table des utilisateurs
+        WHERE 
+        t.title LIKE :search
+        UNION
+        SELECT
+        'post' as type,
+        null as title,
+        p.id_post as id,
+        p.content as content,
+        DATE_FORMAT(p.dateCreation, '%d/%m/%Y') AS dateCreation,
+        u.username as author -- Ajout du nom de l'auteur du post
+        FROM 
+        post p
+        LEFT JOIN user u ON p.user_id = u.id_user -- Jointure avec la table des utilisateurs
+        WHERE p.content LIKE :search";
+
+        return DAO::select($sql, [
+            'search' => '%' . $search . '%'
+        ]);
+    }
     // récupérer tous les topics d'une catégorie spécifique (par son id)
     public function findTopicsByCategory($id)
     {
@@ -124,5 +161,21 @@ class TopicManager extends Manager
             DAO::select($sql, ["category_id" => $id_category]),
             $this->className
         );
+    }
+        /**
+     * Undocumented function
+     *
+     * @param [type] $id
+     * @return void
+     */
+    public function updateTopic($id, $title)
+    {
+        $sql = "UPDATE " . $this->tableName . "
+        SET title = :title
+        WHERE id_" . $this->tableName . " = :id_topic";
+        return DAO::update($sql, [
+            'id_topic' => $id,
+            'title' => $title
+        ]);
     }
 }

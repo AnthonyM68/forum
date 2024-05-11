@@ -98,14 +98,13 @@ class PostManager extends Manager
     public function findAllByIdTopic($id)
     {
         $sql = "SELECT 
-                t.id_post,
-                t.content,
-                DATE_FORMAT(t.dateCreation, '%d/%m/%Y %H:%i:%s') AS dateCreation,
-                t.topic_id,
-                t.user_id
-                FROM " . $this->tableName . " t
-                WHERE t.topic_id = :topic_id
-                ";
+        t.id_post,
+        t.content,
+        DATE_FORMAT(t.dateCreation, '%d/%m/%Y %H:%i:%s') AS dateCreation,
+        t.topic_id,
+        t.user_id
+        FROM " . $this->tableName . " t
+        WHERE t.topic_id = :topic_id";
         //return DAO::select($sql, ['topic_id' => $id]);
         return $this->getMultipleResults(
             DAO::select($sql, ['topic_id' => $id]),
@@ -122,8 +121,7 @@ class PostManager extends Manager
     {
         $sql = "UPDATE " . $this->tableName . "
         SET content = :content
-        WHERE id_". $this->tableName ." = :id_post";
-        var_dump($sql);
+        WHERE id_" . $this->tableName . " = :id_post";
         return DAO::update($sql, [
             'id_post' => $id,
             'content' => $content
@@ -135,7 +133,7 @@ class PostManager extends Manager
      * @param [type] $id
      * @return void
      */
-   /* public function deleteByTopicId($id)
+    /* public function deleteByTopicId($id)
     {
         $sql = "DELETE 
                 FROM " . $this->tableName . " t

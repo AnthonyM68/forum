@@ -84,7 +84,12 @@
             </div>
             <div class="uk-navbar-right">
                 <ul class="uk-navbar-nav">
-                    <li><input class="uk-search-input" type="search" aria-label="…"></li>
+                    <li>
+                        <!--<form action="index.php?ctrl=forum&action=searchMotor" method="post" class="action">-->
+                        <input name="word" id="searchInput" class="uk-search-input" type="search" aria-label="…">
+                        <!--<input type="submit" class="uk-button uk-button-success uk-button-large uk-width-1-1">-->
+                    </form>
+                    </li>
                 </ul>
             </div>
         </div>

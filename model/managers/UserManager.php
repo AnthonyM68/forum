@@ -142,7 +142,7 @@ class UserManager extends Manager
         t.username,
         t.password,
         t.email,
-        t.dateRegister,
+        DATE_FORMAT(t.dateRegister, '%d/%m/%Y %H:%i:%s') AS dateRegister,
         t.role
         FROM " . $this->tableName . " t
         WHERE t.token = :token";
@@ -164,7 +164,7 @@ class UserManager extends Manager
         t.username,
         t.password,
         t.email,
-        t.dateRegister,
+        DATE_FORMAT(t.dateRegister, '%d/%m/%Y %H:%i:%s') AS dateRegister,
         t.role,
         t.token,
         t.tokenValidity

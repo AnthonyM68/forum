@@ -176,6 +176,7 @@ class ForumController extends AbstractController implements ControllerInterface
             "data" => []
         ];
     }
+    /*******************************TOPIC**************************/
     /**
      * Ajouter un Topic
      *
@@ -221,6 +222,73 @@ class ForumController extends AbstractController implements ControllerInterface
             "meta_description" => "Ajouter un Article : ",
             "data" => []
         ];
+    }
+    /**
+     * éditer un post
+     */
+    public function editTopic()
+    {
+        //XSCF
+        if (isset($_POST['token-form-link']) && $_POST['token-form-link'] === $_SESSION['token']) {
+            if (isset($_GET['id'])) {
+                $topicManager = new TopicManager();
+                $postManager = new PostManager();
+                $topic = $topicManager->findOneById($_GET['id']);
+                return [
+                    "view" => VIEW_DIR . "forum/topic.php",
+                    "topic" =>  true,
+                    "meta_description" => "Modifier un Article : ",
+                    "data" => [
+                        "topic" => $topic,
+                        "posts" => $postManager->findAllByIdTopic($_GET['id'])
+                    ]
+                ];
+            } else {
+                Session::addFlash("error", "Oups!, un problème est servenu");
+                $this->redirectTo("home", "index");
+            }
+        } else {
+            Session::addFlash("error", "L'identifiant de session n'est pas reconu, veuillez recommencer");
+            $this->redirectTo("forum", "showFullTopic", $_GET['id']);
+        }
+    }
+        /**
+     * mise à jour d'un post
+     */
+    public function updateTopic()
+    {
+        //XSCF
+        if (isset($_POST['token-hidden']) && $_POST['token-hidden'] === $_SESSION['token']) {
+
+            $content = filter_input(INPUT_POST, 'content', FILTER_SANITIZE_SPECIAL_CHARS);
+
+            if ($content && isset($_GET['id'])) {
+                $postManager = new PostManager();
+                $topicManager = new TopicManager();
+                if ($topicManager->updateTopic($_GET['id'], $content)) {
+
+                    Session::addFlash("success", "Topic mis à jour");
+                    $this->redirectTo("forum", "showFullTopic", $_GET['id'], "card-" . $_GET['id'] . "");
+                } else {
+                    Session::addFlash("error", "Une erreur lors de l'enregistrement en base de données");
+                    return [
+                        "view" => VIEW_DIR . "forum/topic.php",
+                        "edit" =>  false,
+                        "meta_description" => "Modifier un Article : ",
+                        "data" => [
+                            "topic" => $topicManager->findOneByIdTopic($_GET['id']),
+                            "posts" => $postManager->findAllByIdTopic($_GET['id'])
+                        ]
+                    ];
+                }
+            } else {
+                Session::addFlash("error", "Oups!, un problème est servenu");
+                $this->redirectTo("home", "index");
+            }
+        } else {
+            Session::addFlash("error", "L'identifiant de session n'est pas reconu, veuillez recommencer");
+            $this->redirectTo("forum", "showFullTopic", $_GET['id']);
+        }
     }
 
     /*************************TOPIC POSTS***************************** */
@@ -297,6 +365,7 @@ class ForumController extends AbstractController implements ControllerInterface
             if (isset($_GET['id'])) {
                 $postManager = new PostManager();
                 $post = $postManager->findOneById($_GET['id']);
+                var_dump($post);
                 return [
                     "view" => VIEW_DIR . "forum/topic.php",
                     "edit" =>  true,
@@ -433,5 +502,36 @@ class ForumController extends AbstractController implements ControllerInterface
             Session::addFlash("error", "L'identifiant de session n'est pas reconu, veuillez recommencer");
             $this->redirectTo("forum", "showFullTopic", $_GET['id']);
         }
+    }
+    public function searchMotor()
+    {
+        // Vérifie si la clé 'word' existe dans $_POST
+        if (isset($_POST['word'])) {
+
+            $topicManager = new TopicManager();
+            
+
+            $results = $topicManager->searchMotor($_POST['word']);
+            echo json_encode($results);
+            die;
+
+
+            // echo json_encode($results);
+
+            // Récupère la valeur associée à la clé 'word'
+            /*$searchWord = $_POST['word'];
+
+            // Faites quelque chose avec la valeur récupérée
+            echo json_encode($searchWord);
+            die;
+            // Il est recommandé de terminer le script PHP après avoir envoyé la réponse*/
+        }
+        die;
+        /*else {
+            // Si la clé 'word' n'existe pas dans $_POST, renvoie un message d'erreur
+
+            echo json_encode("Erreur : la valeur 'word' n'a pas été fournie dans la requête POST.");
+            die;
+        }*/
     }
 }
