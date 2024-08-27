@@ -24,9 +24,6 @@ class HomeController extends AbstractController implements ControllerInterface
         $postManager = new PostManager();
         $userManager = new UserManager();
 
-        $WebSocketServerController= new WebSocketServerController();
-        $WebSocketServerController->send();
-
         return [
             "view" => VIEW_DIR . "home.php",
             "section" => "home",
@@ -42,4 +39,24 @@ class HomeController extends AbstractController implements ControllerInterface
             "countCategories" => false // $categoryManager->countCategories()
         ];
     }
+
+
+
+
+    #[Route('/programme', name: 'programme', methods: ['GET'])]
+ 
+    public function index(
+       
+        ProgrammeRepository $repository
+       
+    ): Response {
+ 
+        $programmes = $repository->findAll();
+ 
+        return $this->render('/pages/programme/index.html.twig', [
+ 
+            'programmes' => $programmes
+        ]);
+    }
+}
 }
