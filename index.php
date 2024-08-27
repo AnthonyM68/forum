@@ -3,14 +3,12 @@
 namespace App;
 // Inclure l'autoloader de Faker pour générer des données 
 require_once 'vendor/autoload.php';
-// Importer la classe Faker
-use Faker\Factory;
-// Créer une instance de Faker
-$fakerFr = Factory::create('fr_FR');
+
 // on iclude la dépendance qui nous permet l'envois d'email d en local
 // si le site est réellement héberger cette méthode sera ignoré et la fonction
 // native mail() de php sera utiliser
 require_once 'vendor/phpmailer/phpmailer/src/PHPMailer.php';
+
 define('DS', DIRECTORY_SEPARATOR); // le caractère séparateur de dossier (/ ou \)
 // meilleure portabilité sur les différents systêmes.
 define('BASE_DIR', dirname(__FILE__) . DS); // pour se simplifier la vie
@@ -52,12 +50,14 @@ if (isset($_GET['action']) && method_exists($ctrl, $_GET['action'])) {
 }
 if (isset($_GET['id'])) {
     $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-} else $id = null;
+} 
+else $id = null;
 
 if (isset($_GET['anchor'])) {
     $anchor = filter_input(INPUT_GET, 'anchor', FILTER_SANITIZE_SPECIAL_CHARS);
     $anchor = $anchor ? '#' . $anchor : ''; 
-} else $anchor = null;
+} 
+else $anchor = null;
 //ex : HomeController->users(null)
 $result = $ctrl->$action($id);
 // Générate token unique pour la session

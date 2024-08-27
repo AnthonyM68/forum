@@ -189,6 +189,6 @@ final class User extends Entity
     
     public function __toString()
     {
-        return $this->username . " Inscrit depuis le: " . $this->dateRegister;
+        return $this->username;
     }
 }

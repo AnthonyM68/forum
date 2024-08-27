@@ -1,6 +1,8 @@
 <?php 
 $categoryDatas = $result['data']['categoryData'];
-$lastUser = $result['data']['lastUser'];
+
+
+
 ?>
 <!-- TITLE PAGE -->
 <h1 class="uk-padding-small uk-padding-remove-horizontal pridi-regular uk-animation-slide-bottom">Bienvenue sur le Forum
@@ -22,9 +24,11 @@ $lastUser = $result['data']['lastUser'];
                 <?php }
                 }
                 ?>
-
             </div>
             <div class="uk-width-1-4@m uk-padding-small">
+               <?php 
+               if(isset($result['data']['lastUser']) && $result['data']['lastUser'] !== false) {
+                ?>
                 <div class="uk-card uk-card-default accordion-card uk-width-1-1@m uk-box-shadow-large">
                     <div class="uk-card-header">
                         <h3 class="uk-card-title pridi-medium">Dernier inscrit</h3>
@@ -37,13 +41,14 @@ $lastUser = $result['data']['lastUser'];
                             <!-- USERNAME -->
                             <div class="uk-width-expand">
                                 <h3 class="uk-card-title uk-margin-remove-bottom  pridi-regular">
-                                    <?= $lastUser['username'] ?>
+                                    <?= $result['data']['lastUser'] ?>
                                 </h3>
                                 <p class="uk-text-meta uk-margin-remove-top"><time datetime="2016-04-01T19:00"><?= $lastUser['dateRegister'] ?></time></p>
                             </div>
                         </div>
                     </div>
                 </div>
+                <?php } ?>
                 <!-- STATES -->
                 <table class="uk-table uk-table-middle uk-table-divider">
                     <thead>

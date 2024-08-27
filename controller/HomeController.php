@@ -9,6 +9,7 @@ use Model\Managers\UserManager;
 use Model\Managers\TopicManager;
 use Model\Managers\PostManager;
 
+
 class HomeController extends AbstractController implements ControllerInterface
 {
     /**
@@ -22,19 +23,23 @@ class HomeController extends AbstractController implements ControllerInterface
         $topicManager = new TopicManager();
         $postManager = new PostManager();
         $userManager = new UserManager();
+
+        $WebSocketServerController= new WebSocketServerController();
+        $WebSocketServerController->send();
+
         return [
             "view" => VIEW_DIR . "home.php",
             "section" => "home",
             "meta_description" => "Page d'accueil du forum",
             "data" => [
-                "categoryData" => $categoryManager->findAll(["name", "ASC"]),
-                "lastUser" =>  $userManager->findLatestUser()
+                "categoryData" => false, //$categoryManager->findAll(["name", "ASC"]),
+                "lastUser" =>  false //$userManager->findLatestUser()
             ],
             // Statistiques pour la page d'accueil
-            "countUsers" => $userManager->countUser(),
-            "countTopics" => $topicManager->countTopics(),
-            "countPosts" => $postManager->countPosts(),
-            "countCategories" => $categoryManager->countCategories()
+            "countUsers" => false, //$userManager->countUser(),
+            "countTopics" => false, //$topicManager->countTopics(),
+            "countPosts" => false, //$postManager->countPosts(),
+            "countCategories" => false // $categoryManager->countCategories()
         ];
     }
 }

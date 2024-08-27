@@ -23,6 +23,7 @@ abstract class AbstractController
     private const REG_DATETIME = '/^\d{2}\-\d{2}\-\d{4} \d{2}:\d{2}:\d{2}$/';
     // 16 bytes init vector
     private static $ivVectorInit;
+    
 
     public function redirectTo($ctrl = null, $action = null, $id = null, $anchor = null)
     {

@@ -13,11 +13,8 @@ use Model\Managers\CategoryManager;
 use Model\Managers\TopicManager;
 use Model\Managers\PostManager;
 use Model\Managers\UserManager;
-//use Model\Managers\EmailManager;
 
 use DateTime;
-// on indique a l'application ou trouver le générateur de données fictifs
-use Faker\Factory;
 
 class ForumController extends AbstractController implements ControllerInterface
 {
@@ -163,11 +160,13 @@ class ForumController extends AbstractController implements ControllerInterface
                 $categoryManager = new CategoryManager();
                 
                 if ($categoryManager->add(["name" => $nameCategory])) {
+            
                     Session::addFlash("success", "Catégorie ajouté avec succès");
                 } else {
                     Session::addFlash("error", "Erreur lors de la soumission de la catégorie");
                 }
                 $this->redirectTo("forum", "listCategories");
+            
             } else {
                 Session::addFlash("error", "Oups!, un problème est servenu");
                 $this->redirectTo("home", "index");

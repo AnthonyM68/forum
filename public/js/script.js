@@ -1,3 +1,16 @@
+const socket = new WebSocket('ws://index.php?ctrl=WebSocketServer&action=:8080'); 
+socket.addEventListener('open', function (event) { 
+  socket.send('Hello Server!'); 
+}); 
+
+socket.addEventListener('message', function (event) { 
+  console.log('Message from server ', event.data); 
+});
+
+socket.addEventListener('close', function (event) { 
+  console.log('The connection has been closed'); 
+});
+
 /**
  * interception de click sur les lien edit, delete, répondre et ajout d'un token 
  */
@@ -24,6 +37,25 @@ function escapeHTML(html) {
     escapeEl.textContent = html;
     return escapeEl.innerHTML;
 }
+// <?= htmlspecialchars_decode($post->getContent()) ?>
+// faire defiler la page jusqu'à une ancre déclarer dans la vue
+function scrollToAnchor(anchor) {
+    if (anchor) {
+        let element = document.querySelector(anchor);
+        if (element) {
+            element.scrollIntoView();
+        }
+    }
+}
+// on limite une chaine de caractère à une certaine taille
+function limitCharFromString(parent, longueurMax) {
+    $(`.${parent}`).each(function () {
+        let texteComplet = $(this).text(); // Récupère le texte 
+        let texteLimite = texteComplet.substring(0, longueurMax);
+        $(this).text(`${texteLimite}...`); // Réaffiche le texte 
+    });
+}
+
 
 function displayFormConfirmDelete(id) {
     return ` <div class="uk-animation-fade uk-container">
@@ -103,24 +135,7 @@ function displayResultSearchMotor(datas) {
     });
     return output;
 }
-// <?= htmlspecialchars_decode($post->getContent()) ?>
-// faire defiler la page jusqu'à une ancre déclarer dans la vue
-function scrollToAnchor(anchor) {
-    if (anchor) {
-        let element = document.querySelector(anchor);
-        if (element) {
-            element.scrollIntoView();
-        }
-    }
-}
-// on limite une chaine de caractère à une certaine taille
-function limitCharFromString(parent, longueurMax) {
-    $(`.${parent}`).each(function () {
-        let texteComplet = $(this).text(); // Récupère le texte 
-        let texteLimite = texteComplet.substring(0, longueurMax);
-        $(this).text(`${texteLimite}...`); // Réaffiche le texte 
-    });
-}
+
 
 /**
  * Cette boucle est utile pour déterminer la hiérarchie actuelle de la page en fonction de l'URL et des mappings définis dans urlMappings.
@@ -184,9 +199,6 @@ function generateBreadcrumb(currentUrl, urlMappings) {
 
     return breadcrumb.join(' > '); // Utilisez ">" pour le symbole ">"
 }
-
-// IN WORKING 
-
 // effectuer la suppression du compte 
 function deleteAccount() {
     let element = document.querySelector("#delete-account-btn");
@@ -218,7 +230,6 @@ function deleteAccount() {
             alert("Une erreur s'est produite. Veuillez réessayer plus tard.");
         });
 }
-
 $(document).ready(function () {
     // on affiche le modal si dans la vue rendu il existe
     let modal = UIkit.modal("#loginSignin");
@@ -340,6 +351,4 @@ $(document).ready(function () {
                 });
         }
     });
-
-
 })
